@@ -136,6 +136,365 @@ typedef struct __natsOptions        natsOptions;
  */
 typedef char                        natsInbox;
 
+
+/**
+ * The JetStream context. Use for JetStream assets management and communication.
+ *
+ * \warning A context MUST not be destroyed concurrently with #natsJS API calls
+ * (for instance #natsJS_Publish or #natsJS_PublishAsync, etc...). However, it
+ * is safe to destroy the context while a #natsJSPubAckErrHandler callback is
+ * running or while inside #natsJS_PublishAsyncComplete.
+ */
+typedef struct __natsJS             natsJS;
+
+/**
+ * JetStream publish options.
+ *
+ * These are options that you can provide to JetStream publish APIs.
+ *
+ * The common usage will be to initialize a structure on the stack by
+ * calling #natsJSPubOptions_Init. Note that strings are owned by
+ * the application and need to be valid for the duration of the API
+ * call this object is passed to.
+ *
+ * \note It is the user responsibility to free the strings if they
+ * have been allocated.
+ *
+ * @see natsJSPubOptions_Init
+ */
+typedef struct natsJSPubOptions
+{
+        int64_t         MaxWait;                ///< Amount of time (in milliseconds) to wait for a publish response, default will the context's Wait value.
+        const char      *MsgId;                 ///< Message ID used for de-duplication.
+        const char      *ExpectStream;          ///< Expected stream to respond from the publish call.
+        const char      *ExpectLastMsgId;       ///< Expected last message ID in the stream.
+        uint64_t        ExpectLastSeq;          ///< Expected last message sequence in the stream.
+
+} natsJSPubOptions;
+
+/**
+ * Determines how messages in a set are retained.
+ */
+typedef enum
+{
+        natsJS_LimitsPolicy = 0,        ///< Specifies that messages are retained until any given limit is reached, which could be one of MaxMsgs, MaxBytes, or MaxAge. This is the default.
+        natsJS_InterestPolicy,	        ///< Specifies that when all known observables have acknowledged a message it can be removed.
+        natsJS_WorkQueuePolicy,         ///< Specifies that when the first worker or subscriber acknowledges the message it can be removed.
+
+} natsJSRetentionPolicy;
+
+/**
+ * Determines how to proceed when limits of messages or bytes are reached.
+ */
+typedef enum
+{
+        natsJS_DiscardOld = 0,  ///< Will remove older messages to return to the limits. This is the default.
+        natsJS_DiscardNew,      ///< Will fail to store new messages.
+
+} natsJSDiscardPolicy;
+
+/**
+ * Determines how messages are stored for retention.
+ */
+typedef enum
+{
+        natsJS_FileStorage = 0, ///< Specifies on disk storage. It's the default.
+        natsJS_MemoryStorage,   ///< Specifies in memory only.
+
+} natsJSStorageType;
+
+/**
+ * Used to guide placement of streams in clustered JetStream.
+ *
+ * Initialize the object with #natsJSPlacement_Init.
+ *
+ * \note The strings are applications owned and will not be freed by the library.
+ *
+ * See #natsJSStreamConfig for information on how to configure a stream.
+ *
+ * @see natsJSPlacement_Init
+ */
+typedef struct natsJSPlacement
+{
+        const char      *Cluster;       //`json:"cluster"`
+        const char      **Tags;         //`json:"tags,omitempty"`
+        int             TagsLen;
+
+} natsJSPlacement;
+
+/**
+ * Allows you to qualify access to a stream source in another account.
+ *
+ * Initialize the object with #natsJSExternalStream_Init.
+ *
+ * \note The strings are applications owned and will not be freed by the library.
+ *
+ * See #natsJSStreamConfig for information on how to configure a stream.
+ */
+typedef struct natsJSExternalStream
+{
+        const char      *APIPrefix;     //`json:"api"`
+        const char      *DeliverPrefix; //`json:"deliver"`
+
+} natsJSExternalStream;
+
+/**
+ * Dictates how streams can source from other streams.
+ *
+ * Initialize the object with #natsJSStreamSource_Init.
+ *
+ * \note The strings are applications owned and will not be freed by the library.
+ *
+ * See #natsJSStreamConfig for information on how to configure a stream.
+ */
+typedef struct natsJSStreamSource
+{
+        const char              *Name;          //`json:"name"`
+        uint64_t                OptStartSeq;    //`json:"opt_start_seq,omitempty"`
+        const char              *FilterSubject; //`json:"filter_subject,omitempty"`
+        natsJSExternalStream    *External;      //`json:"external,omitempty"`
+
+} natsJSStreamSource;
+
+/**
+ * Determine the properties for a stream.
+ * There are sensible defaults for most. If no subjects are
+ * given the name will be used as the only subject.
+ *
+ * In order to add/update a stream, a configuration needs to be set.
+ * The typical usage would be to initialize all required objects on the stack
+ * and configure them, then pass the pointer to the configuration to
+ * #natsJS_AddStream or #natsJS_UpdateStream.
+ *
+ * \note The strings are applications owned and will not be freed by the library.
+ *
+ * \code{.unparsed}
+ * natsJSStreamConfig   sc;
+ * natsJSPlacement      p;
+ * natsJSStreamSource   m;
+ * natsJSExternalStream esm;
+ * natsJSStreamSource   s1;
+ * natsJSStreamSource   s2;
+ * natsJSExternalStream esmS2;
+ * const char           *subjects[]     = {"foo", "bar"};
+ * const char           *tags[]         = {"tag1", "tag2"};
+ * natsJSStreamSource   *sources[]      = {&s1, &s2};
+ *
+ * natsJSStreamConfig_Init(&sc);
+ *
+ * natsJSPlacement_Init(&p);
+ * p.Cluster = "MyCluster";
+ * p.Tags = tags;
+ * p.TagsLen = 2;
+ *
+ * natsJSStreamSource_Init(&m);
+ * m.Name = "AStream";
+ * m.OptStartSeq = 100;
+ * m.FilterSubject = "foo";
+ * natsJSExternalStream_Init(&esm);
+ * esm.APIPrefix = "mirror.prefix.";
+ * esm.DeliverPrefix = "deliver.prefix.";
+ * m.External = &esm;
+ *
+ * natsJSStreamSource_Init(&s1);
+ * s1.Name = "StreamOne";
+ * s1.OptStartSeq = 10;
+ * s1.FilterSubject = "stream.one";
+ *
+ * natsJSStreamSource_Init(&s2);
+ * s2.Name = "StreamTwo";
+ * s2.FilterSubject = "stream.two";
+ * natsJSExternalStream_Init(&esmS2);
+ * esmS2.APIPrefix = "mirror.prefix.";
+ * esmS2.DeliverPrefix = "deliver.prefix.";
+ * s2.External = &esmS2;
+ *
+ * sc.Name = "MyStream";
+ * sc.Subjects = subjects;
+ * sc.SubjectsLen = 2;
+ * sc.Retention = natsJS_InterestPolicy;
+ * sc.Replicas = 3;
+ * sc.Placement = &p;
+ * sc.Mirror = &m;
+ * sc.Sources = sources;
+ * sc.SourcesLen = 2;
+ *
+ * s = natsJS_AddStream(&si, js, &sc, NULL, &jerr);
+ * \endcode
+ */
+typedef struct natsJSStreamConfig {
+        const char              *Name;              //`json:"name"`
+        const char              **Subjects;         //`json:"subjects,omitempty"`
+        int                     SubjectsLen;
+        natsJSRetentionPolicy   Retention;          //`json:"retention"`
+        int                     MaxConsumers;       //`json:"max_consumers"`
+        int64_t                 MaxMsgs;            //`json:"max_msgs"`
+        int64_t                 MaxBytes;           //`json:"max_bytes"`
+        int64_t                 MaxAge;             //`json:"max_age"`
+        int32_t                 MaxMsgSize;         //`json:"max_msg_size,omitempty"`
+        natsJSDiscardPolicy     Discard;            //`json:"discard"`
+        natsJSStorageType       Storage;            //`json:"storage"`
+        int                     Replicas;           //`json:"num_replicas"`
+        bool                    NoAck;              //`json:"no_ack,omitempty"`
+        const char              *Template;          //`json:"template_owner,omitempty"`
+        int64_t                 Duplicates;         //`json:"duplicate_window,omitempty"`
+        natsJSPlacement         *Placement;         //`json:"placement,omitempty"`
+        natsJSStreamSource      *Mirror;            //`json:"mirror,omitempty"`
+        natsJSStreamSource      **Sources;          //`json:"sources,omitempty"`
+        int                     SourcesLen;
+
+} natsJSStreamConfig;
+
+/**
+ * Information about the given stream.
+ */
+typedef struct natsJSStreamState
+{
+        uint64_t    Msgs;       //`json:"messages"`
+        uint64_t    Bytes;      //`json:"bytes"`
+        uint64_t    FirstSeq;   //`json:"first_seq"`
+        uint64_t    LastSeq;    //`json:"last_seq"`
+        int         Consumers;  //`json:"consumer_count"`
+
+} natsJSStreamState;
+
+/**
+ * Information about all the peers in the cluster that
+ * are supporting the stream or consumer.
+ */
+typedef struct natsJSPeerInfo
+{
+        char        *Name;      //`json:"name"`
+        bool        Current;    //`json:"current"`
+        bool        Offline;    //`json:"offline,omitempty"`
+        int64_t     Active;     //`json:"active"`
+        uint64_t    Lag;        //`json:"lag,omitempty"`
+
+} natsJSPeerInfo;
+
+/**
+ * Information about the underlying set of servers
+ * that make up the stream or consumer.
+ */
+typedef struct natsJSClusterInfo
+{
+        char            *Name;      //`json:"name,omitempty"`
+        char            *Leader;    //`json:"leader,omitempty"`
+        natsJSPeerInfo  **Replicas; //`json:"replicas,omitempty"`
+        int             ReplicasLen;
+
+} natsJSClusterInfo;
+
+/**
+ * Information about an upstream stream source.
+ */
+typedef struct natsJSStreamSourceInfo
+{
+        char                    *Name;          //`json:"name"`
+        int64_t                 Active;         //`json:"active"`
+        uint64_t                Lag;            //`json:"lag"`
+        natsJSExternalStream    *External;      //`json:"external,omitempty"`
+
+} natsJSStreamSourceInfo;
+
+/**
+ * Configuration and current state for this stream.
+ */
+typedef struct natsJSStreamInfo
+{
+        natsJSStreamConfig      *Config;    //`json:"config"`
+        char                    *Created;   //`json:"created"`
+        natsJSStreamState       State;      //`json:"state"`
+        natsJSClusterInfo       *Cluster;   //`json:"cluster,omitempty"`
+        natsJSStreamSourceInfo  *Mirror;    //`json:"mirror,omitempty"`
+        natsJSStreamSourceInfo  **Sources;  //`json:"sources,omitempty"`
+        int                     SourcesLen;
+
+} natsJSStreamInfo;
+
+/**
+ * Reports on API calls to JetStream for this account.
+ */
+typedef struct natsJSAPIStats
+{
+        uint64_t Total;  //`json:"total"`
+        uint64_t Errors; //`json:"errors"`
+
+} natsJSAPIStats;
+
+/**
+ * Includes the JetStream limits of the current account.
+ */
+typedef struct  natsJSAccountLimits
+{
+        int64_t MaxMemory;      //`json:"max_memory"`
+        int64_t MaxStore;       //`json:"max_storage"`
+        int     MaxStreams;     //`json:"max_streams"`
+        int     MaxConsumers;   //`json:"max_consumers"`
+
+} natsJSAccountLimits;
+
+/**
+ * Information about the JetStream usage from the current account.
+ */
+typedef struct natsJSAccountInfo
+{
+        uint64_t                Memory;         //`json:"memory"`
+        uint64_t                Store;          //`json:"storage"`
+        int                     Streams;        //`json:"streams"`
+        int                     Consumers;      //`json:"consumers"`
+        char                    *Domain;        //`json:"domain,omitempty"`
+        natsJSAPIStats          API;            //`json:"api"`
+        natsJSAccountLimits     Limits;         //`json:"limits"`
+
+} natsJSAccountInfo;
+
+/**
+ * Ack received after successfully publishing a message.
+ */
+typedef struct natsJSPubAck
+{
+        char            *Stream;        //`json:"stream"`
+        uint64_t        Sequence;       //`json:"seq"`
+        bool            Duplicate;      //`json:"duplicate,omitempty"`
+
+} natsJSPubAck;
+
+/**
+ * Publish acknowledgment failure that will be passed to the optional
+ * #natsJSPubAckErrHandler callback.
+ */
+typedef struct natsJSPubAckErr
+{
+        natsMsg         *Msg;
+        natsStatus      Err;
+        natsJSErrCode   ErrCode;
+        const char      *ErrText;
+
+} natsJSPubAckErr;
+
+#ifndef BUILD_IN_DOXYGEN
+// Forward declaration
+typedef void (*natsJSPubAckErrHandler)(natsJS *js, natsJSPubAckErr *pae, void *closure);
+#endif
+
+/**
+ * JetStream context options.
+ *
+ * Initialize the object with #natsJSOptions_Init.
+ */
+typedef struct natsJSOptions
+{
+        const char              *Prefix;                        ///< JetStream prefix, default is "$JS.API"
+        const char              *Domain;                        ///< Domain changes the domain part of JetSteam API prefix.
+        int64_t                 Wait;                           ///< Amount of time (in milliseconds) to wait for various JetStream API requests, default is 5000 ms (5 seconds).
+        int                     PublishAsyncMaxPending;         ///< Maximum outstanding asynchronous publishes that can be inflight at one time.
+        natsJSPubAckErrHandler  PublishAsyncErrHandler;         ///< Callback invoked when error encountered publishing a given message.
+        void                    *PublishAsyncErrHandlerClosure; ///< Closure (or user data) passed to #natsJSPubAckErrHandler callback.
+        int64_t                 PublishAsyncStallWait;          ///< Amount of time (in milliseconds) to wait in a PublishAsync call when there is MaxPending inflight messages, default is 200 ms.
+
+} natsJSOptions;
+
 #if defined(NATS_HAS_STREAMING)
 /** \brief A connection to a `NATS Streaming Server`.
  *
@@ -381,6 +740,43 @@ typedef void (*natsOnCompleteCB)(void *closure);
  */
 typedef int64_t (*natsCustomReconnectDelayHandler)(natsConnection *nc, int attempts, void *closure);
 
+#ifdef BUILD_IN_DOXYGEN
+/** \brief Callback used to process asynchronous publish errors from JetStream.
+ *
+ * Callback used to process asynchronous publish errors from JetStream #natsJS_PublishAsync
+ * and #natsJS_PublishMsgAsync. The provided #natsJSPubAckErr gives the user
+ * access to the encountered error along with the original message sent to the server
+ * for possible restransmitting.
+ *
+ * \note If the message is resent, the library will not destroy the original
+ * message and once again take ownership of it. To resend the message, do the
+ * following so that the library knows no to destroy the message (since the
+ * call will clear the `Msg` field from the #natsJSPubAckErr object.
+ *
+ * \code{.unparsed}
+ * void myPAECallback(natsJS *js, natsJSPubAckErr *pae)
+ * {
+ *      ...
+ *      // Resend the message
+ *      natsJS_PublishMsgAsync(js, &(pae->Msg), NULL, NULL);
+ * }
+ * \endcode
+ *
+ * \warning The #natsJSPubAckErr object and its content will be invalid as
+ * soon as the callback returns.
+ *
+ * \warning Unlike a NATS message callback, the user does not have to destroy
+ * the original NATS message (present in the #natsJSPubAckErr object), the
+ * library will do it.
+ *
+ * @param js the pointer to the #natsJS object.
+ * @param pae the pointer to the #natsJSPubAckErr object.
+ * @param closure an optional pointer to a user defined object that was specified when
+ * registering the callback.
+ */
+typedef void (*natsJSPubAckErrHandler)(natsJS *js, natsJSPubAckErr *pae, void *closure);
+#endif
+
 #if defined(NATS_HAS_STREAMING)
 /** \brief Callback used to notify of an asynchronous publish result.
  *
@@ -448,7 +844,7 @@ NATS_EXTERN natsStatus
 nats_Open(int64_t lockSpinCount);
 
 
-/** \brief Returns the Library's version
+/** \brief Returns the Library's version.
  *
  * Returns the version of the library your application is linked with.
  */
@@ -4036,6 +4432,337 @@ stanSubscription_Destroy(stanSubscription *sub);
 
 /** @} */ // end of stanSubGroup
 #endif
+
+/** \defgroup jsGroup JetStream
+ *
+ *  JetStream.
+ *  @{
+ */
+
+/** \brief Initializes a streaming context options structure.
+ *
+ * Use this before setting specific stream context options and passing it
+ * to JetStream APIs.
+ *
+ * @param opts the pointer to the #natsJSOptions to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSOptions_Init(natsJSOptions *opts);
+
+/** \brief Returns a new JetStream context.
+ *
+ * A JetStream context is used for messaging and assets management.
+ *
+ * Since the underlying NATS connection is used for communication, the NATS connection
+ * should stay valid while using the JetStream context. That is, do not close/destroy
+ * the NATS connection before destroying the JetStream context.
+ *
+ * \note When done, the context should be destroyed to release memory.
+ *
+ * @param js the location where to store the pointer to the newly created #natsJS object.
+ * @param nc the pointer to the #natsConnection object from which to get the JetStream context.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ */
+NATS_EXTERN natsStatus
+natsJS_NewContext(natsJS **js, natsConnection *nc, natsJSOptions *opts);
+
+/** \brief Destroys the JetStream context.
+ *
+ * Releases memory used by the context object.
+ *
+ * @param js the pointer to the #natsJS object to destroy.
+ */
+NATS_EXTERN void
+natsJS_DestroyContext(natsJS *js);
+
+/** \defgroup jsAssetsGroup JetStream Assets Management
+ *
+ *  JetStream Assets Management
+ *  @{
+ */
+
+/** \brief Initializes a streaming configuration structure.
+ *
+ * Use this before setting specific stream configuration options and passing this
+ * configuration to some of the stream management APIs.
+ *
+ * @param cfg the pointer to the #natsJSStreamConfig to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSStreamConfig_Init(natsJSStreamConfig *cfg);
+
+/** \brief Initializes a placement configuration structure.
+ *
+ * Use this before setting specific stream placement options.
+ *
+ * @param placement the pointer to the #natsJSPlacement to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSPlacement_Init(natsJSPlacement *placement);
+
+/** \brief Initializes a stream source configuration structure.
+ *
+ * Use this before setting specific stream source options.
+ *
+ * @param source the pointer to the #natsJSStreamSource to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSStreamSource_Init(natsJSStreamSource *source);
+
+/** \brief Initializes an external stream configuration structure.
+ *
+ * Use this before setting specific external stream options.
+ *
+ * @param external the pointer to the #natsJSExternalStream to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSExternalStream_Init(natsJSExternalStream *external);
+
+/** \brief Creates a stream.
+ *
+ * Creates a stream based on the provided configuration (that cannot be `NULL`).
+ * The name is mandatory and cannot contain <c>.</c> characters.
+ *
+ * \note If you do not need a #natsJSStreamInfo to be returned, you can pass `NULL`,
+ * otherwise, on success you are responsible for freeing this object.
+ *
+ * @see natsJSStreamConfig_Init
+ * @see natsJSStreamInfo_Destroy
+ *
+ * @param si the location where to store the pointer to the new #natsJSStreamInfo object in
+ * response to the creation request, or `NULL` if the stream information is not needed.
+ * @param js the pointer to the #natsJS context.
+ * @param cfg the pointer to the #natsJSStreamConfig.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_AddStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Updates a stream.
+ *
+ * Updates a stream based on the provided configuration (that cannot be `NULL`).
+ * The name is mandatory and cannot contain <c>.</c> characters.
+ *
+ * \note If you do not need a #natsJSStreamInfo to be returned, you can pass `NULL`,
+ * otherwise, on success you are responsible for freeing this object.
+ *
+ * @see natsJSStreamConfig_Init
+ * @see natsJSStreamInfo_Destroy
+ *
+ * @param si the location where to store the pointer to the new #natsJSStreamInfo object in
+ * response to the creation request, or `NULL` if the stream information is not needed.
+ * @param js the pointer to the #natsJS context.
+ * @param cfg the pointer to the #natsJSStreamConfig.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_UpdateStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Purges a stream.
+ *
+ * Purges the stream named <c>stream</c>.
+ *
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream to purge.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_PurgeStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Deletes a stream.
+ *
+ * Deletes the stream named <c>stream</c>.
+ *
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream to delete.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_DeleteStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Retreives information from a stream.
+ *
+ * Returns information about the stream named <c>stream</c>.
+ * s
+ * \note You need to free the returned object.
+ *
+ * @see natsJSStreamInfo_Destroy
+ *
+ * @param si the location where to store the pointer to the new #natsJSStreamInfo object in
+ * response to the creation request.
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream which information is retrieved.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_GetStreamInfo(natsJSStreamInfo **si, natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Destroys the stream information object.
+ *
+ * Releases memory allocated for this stream information object.
+ *
+ * @param si the pointer to the #natsJSStreamInfo object.
+ */
+NATS_EXTERN void
+natsJSStreamInfo_Destroy(natsJSStreamInfo *si);
+
+/** \brief Retrieves information about the JetStream usage from an account.
+ *
+ * Retrieves information about the JetStream usage from an account.
+ *
+ * \note The returned object should be destroyed using #natsJSAccountInfo_Destroy in order
+ * to free allocated memory.
+ *
+ * @param js the pointer to the #natsJS context.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param ai the location where to store the pointer to the new #natsJSAccountInfo object in
+ * response to the account information request.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_GetAccountInfo(natsJSAccountInfo **ai, natsJS *js, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Destroys the account information object.
+ *
+ * Releases memory allocated for this account information object.
+ *
+ * @param ai the pointer to the #natsJSAccountInfo object.
+ */
+NATS_EXTERN void
+natsJSAccountInfo_Destroy(natsJSAccountInfo *ai);
+
+/** @} */ // end of jsAssetsGroup
+
+/** \defgroup jsPubGroup Publishing
+ *
+ *  Publishing functions
+ *  @{
+ */
+
+/** \brief Initializes a publish options structure.
+ *
+ * Use this before setting specific publish options and passing this
+ * configuration to the JetStream publish APIs.
+ *
+ * @param opts the pointer to the #natsJSPubOptions to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSPubOptions_Init(natsJSPubOptions *opts);
+
+/** \brief Publishes data on a subject to JetStream.
+ *
+ * Publishes the data to the given subject to JetStream.
+ *
+ * See #natsJS_PublishMsg for details.
+ *
+ * @param pubAck the location where to store the pub acknowledgment, or `NULL` if not needed.
+ * @param js the pointer to the #natsJS object.
+ * @param subj the subject the data is sent to.
+ * @param data the data to be sent, can be `NULL`.
+ * @param dataLen the length of the data to be sent.
+ * @param opts the publish options, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_Publish(natsJSPubAck **pubAck, natsJS *js, const char *subj, const void *data, int dataLen,
+               natsJSPubOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Publishes a message to JetStream.
+ *
+ * Publishes the given message to JetStream.
+ *
+ * \note If you are not interested in inspecting the publish acknowledgment, you can
+ * pass `NULL`, but keep in mind that the publish acknowledgment is still sent by
+ * the server.
+ * \note The returned #natsJSPubAck object needs to be destroyed with #natsJSPubAck_Destroy
+ * when no longer needed.
+ *
+ * @see natsJSPubAck_Destroy
+ *
+ * @param pubAck the location where to store the pub acknowledgment, or `NULL` if not needed.
+ * @param js the pointer to the #natsJS object.
+ * @param msg the pointer to the #natsMsg object to send.
+ * @param opts the publish options, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_PublishMsg(natsJSPubAck **pubAck, natsJS *js, natsMsg *msg,
+                  natsJSPubOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Destroys the publish acknowledgment object.
+ *
+ * Releases memory allocated for this publish acknowledgment object.
+ *
+ * @param pubAck the #natsJSPubAck object to destroy.
+ */
+NATS_EXTERN void
+natsJSPubAck_Destroy(natsJSPubAck *pubAck);
+
+/** \brief Publishes data to JetStream but does not wait for a #natsJSPubAck.
+ *
+ * See #natsJS_PublishMsgAsync for details.
+ *
+ * @param js the pointer to the #natsJS object.
+ * @param subj the subject the data is sent to.
+ * @param data the data to be sent, can be `NULL`.
+ * @param dataLen the length of the data to be sent.
+ * @param opts the publish options, possibly `NULL`.
+ */
+NATS_EXTERN natsStatus
+natsJS_PublishAsync(natsJS *js, const char *subj, const void *data, int dataLen,
+                    natsJSPubOptions *opts);
+
+/** \brief Publishes a message to JetStream but does not wait for a #natsJSPubAck.
+ *
+ * Publishes a message asynchronously to JetStream. User can call #natsJS_PublishAsyncComplete
+ * to be notified when all publish acknowledgments for the pending publish calls
+ * have been received.
+ *
+ * \warning The message should not be destroyed by the caller. The library takes
+ * ownership and will either destroy it or pass it to the optional error callback.
+ *
+ * @see natsJS_PublishAsyncComplete
+ * @see natsJSPubAckErrHandler
+ *
+ * @param js the pointer to the #natsJS object.
+ * @param msg the memory location where the pointer to the #natsMsg object to send is located.
+ * If the library takes ownership of the message, this location will be cleared so a following
+ * call to #natsMsg_Destroy would have no effect.
+ * @param opts the publish options, possibly `NULL`.
+ */
+NATS_EXTERN natsStatus
+natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts);
+
+/** \brief Wait for all outstanding messages to be acknowledged.
+ *
+ * This call will block until the library has received acknowledgment for
+ * all outstanding published messages.
+ *
+ * To limit the wait, user can pass a #natsJSPubOptions with a `MaxWait` set to the
+ * maximum number of milliseconds that the call should block.
+ *
+ * @param js the pointer to the #natsJS object.
+ * @param opts the publish options, possibly `NULL`.
+ */
+NATS_EXTERN natsStatus
+natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts);
+
+/** @} */ // end of jsPubGroup
+
+/** @} */ // end of jsGroup
 
 /** @} */ // end of funcGroup
 

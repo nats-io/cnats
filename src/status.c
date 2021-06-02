@@ -1,4 +1,4 @@
-// Copyright 2015-2019 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -68,6 +68,10 @@ static const char *statusText[] = {
     "Invalid queue name",
 
     "No responders available for request",
+
+    "JetStream not enabled",
+    "Stream name is required",
+    "Invalid stream name",
 };
 
 const char*

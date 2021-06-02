@@ -200,6 +200,14 @@ ServerPoolUpdatedOnClusterUpdate
 ReconnectJitter
 CustomReconnectDelay
 LameDuckMode
+JetStreamUnmarshalAccInfo
+JetStreamUnmarshalStreamCfg
+JetStreamMarshalStreamCfg
+JetStreamContext
+JetStreamDomain
+JetStreamMgtStreams
+JetStreamPublish
+JetStreamPublishAsync
 StanPBufAllocator
 StanConnOptions
 StanSubOptions

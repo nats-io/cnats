@@ -1,4 +1,4 @@
-// Copyright 2015-2020 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,14 +39,19 @@ struct __natsMsg
     const char          *subject;
     const char          *reply;
     char                *hdr;
-    int                 hdrLen;
-    bool                hdrLift;
+    natsStrHash         *headers;
     const char          *data;
     int                 dataLen;
-    natsStrHash         *headers;
+    int                 hdrLen;
 
     // subscription (needed when delivery done by connection)
     struct __natsSubscription *sub;
+
+    bool                hdrLift;
+    // True if the reply is set after the message was created and
+    // therefore msg->reply points to a memory location outside
+    // of the message object and needs to be freed separately.
+    bool                freeRply;
 
     // Must be last field!
     struct __natsMsg    *next;
@@ -81,6 +86,9 @@ natsMsg_create(natsMsg **newMsg,
                const char *subject, int subjLen,
                const char *reply, int replyLen,
                const char *buf, int bufLen, int hdrLen);
+
+void
+natsMsg_freeHeaders(natsMsg *msg);
 
 // This needs to follow the nats_FreeObjectCb prototype (see gc.h)
 void

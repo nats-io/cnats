@@ -1,4 +1,4 @@
-// Copyright 2015-2019 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -126,7 +126,91 @@ typedef enum
 
     NATS_NO_RESPONDERS,                 ///< No responders were running when the server received the request.
 
+    NATS_JS_NOT_ENABLED,                ///< JetStream is not enabled on this server or for the user account.
+    NATS_JS_STREAM_NAME_REQUIRED,       ///< A stream name is required.
+    NATS_JS_INVALID_STREAM_NAME,        ///< The stream name is invalid (for instance, cannot contain '.' character),
+
 } natsStatus;
+
+typedef enum {
+
+    JSAccountResourcesExceededErr = 10002,              ///< Resource limits exceeded for account
+    JSBadRequestErr = 10003,                            ///< Bad request
+    JSClusterIncompleteErr = 10004,                     ///< Incomplete results
+    JSClusterNoPeersErr = 10005,                        ///< No suitable peers for placement
+    JSClusterNotActiveErr = 10006,                      ///< JetStream not in clustered mode
+    JSClusterNotAssignedErr = 10007,                    ///< JetStream cluster not assigned to this server
+    JSClusterNotAvailErr = 10008,                       ///< JetStream system temporarily unavailable
+    JSClusterNotLeaderErr = 10009,                      ///< JetStream cluster can not handle request
+    JSClusterRequiredErr = 10010,                       ///< JetStream clustering support required
+    JSClusterTagsErr = 10011,                           ///< Tags placement not supported for operation
+    JSConsumerCreateErr = 10012,                        ///< General consumer creation failure string
+    JSConsumerNameExistErr = 10013,                     ///< Consumer name already in use
+    JSConsumerNotFoundErr = 10014,                      ///< Consumer not found
+    JSSnapshotDeliverSubjectInvalidErr = 10015,         ///< Deliver subject not valid
+    JSConsumerDurableNameNotInSubjectErr = 10016,       ///< Consumer expected to be durable but no durable name set in subject
+    JSConsumerDurableNameNotMatchSubjectErr = 10017,    ///< Consumer name in subject does not match durable name in request
+    JSConsumerDurableNameNotSetErr = 10018,             ///< Consumer expected to be durable but a durable name was not set
+    JSConsumerEphemeralWithDurableInSubjectErr = 10019, ///< Consumer expected to be ephemeral but detected a durable name set in subject
+    JSConsumerEphemeralWithDurableNameErr = 10020,      ///< Consumer expected to be ephemeral but a durable name was set in request
+    JSStreamExternalApiOverlapErr = 10021,              ///< Stream external api prefix must not overlap
+    JSStreamExternalDelPrefixOverlapsErr = 10022,       ///< Stream external delivery prefix overlaps with stream subject
+    JSInsufficientResourcesErr = 10023,                 ///< Insufficient resources
+    JSStreamInvalidExternalDeliverySubjErr = 10024,     ///< Stream external delivery prefix must not contain wildcards
+    JSInvalidJSONErr = 10025,                           ///< Invalid JSON
+    JSMaximumConsumersLimitErr = 10026,                 ///< Maximum consumers exceeds account limit
+    JSMaximumStreamsLimitErr = 10027,                   ///< Maximum number of streams reached
+    JSMemoryResourcesExceededErr = 10028,               ///< Insufficient memory resources available
+    JSMirrorConsumerSetupFailedErr = 10029,             ///< Generic mirror consumer setup failure
+    JSMirrorMaxMessageSizeTooBigErr = 10030,            ///< Stream mirror must have max message size >= source
+    JSMirrorWithSourcesErr = 10031,                     ///< Stream mirrors can not also contain other sources
+    JSMirrorWithStartSeqAndTimeErr = 10032,             ///< Stream mirrors can not have both start seq and start time configured
+    JSMirrorWithSubjectFiltersErr = 10033,              ///< Stream mirrors can not contain filtered subjects
+    JSMirrorWithSubjectsErr = 10034,                    ///< Stream mirrors can not also contain subjects
+    JSNoAccountErr = 10035,                             ///< Account not found
+    JSClusterUnSupportFeatureErr = 10036,               ///< Not currently supported in clustered mode
+    JSNoMessageFoundErr = 10037,                        ///< No message found
+    JSNotEmptyRequestErr = 10038,                       ///< Expected an empty request payload
+    JSNotEnabledForAccountErr = 10039,                  ///< JetStream not enabled for account
+    JSClusterPeerNotMemberErr = 10040,                  ///< Peer not a member
+    JSRaftGeneralErr = 10041,                           ///< General RAFT error
+    JSRestoreSubscribeFailedErr = 10042,                ///< JetStream unable to subscribe to restore snapshot
+    JSSequenceNotFoundErr = 10043,                      ///< Sequence not found
+    JSClusterServerNotMemberErr = 10044,                ///< Server is not a member of the cluster
+    JSSourceConsumerSetupFailedErr = 10045,             ///< General source consumer setup failure
+    JSSourceMaxMessageSizeTooBigErr = 10046,            ///< Stream source must have max message size >= target
+    JSStorageResourcesExceededErr = 10047,              ///< Insufficient storage resources available
+    JSStreamAssignmentErr = 10048,                      ///< Generic stream assignment error
+    JSStreamCreateErr = 10049,                          ///< Generic stream creation error
+    JSStreamDeleteErr = 10050,                          ///< General stream deletion error
+    JSStreamGeneralError = 10051,                       ///< General stream failure
+    JSStreamInvalidConfig = 10052,                      ///< Stream configuration validation error
+    JSStreamLimitsErr = 10053,                          ///< General stream limits exceeded error
+    JSStreamMessageExceedsMaximumErr = 10054,           ///< Message size exceeds maximum allowed
+    JSStreamMirrorNotUpdatableErr = 10055,              ///< Mirror configuration can not be updated
+    JSStreamMismatchErr = 10056,                        ///< Stream name in subject does not match request
+    JSStreamMsgDeleteFailed = 10057,                    ///< Generic message deletion failure error
+    JSStreamNameExistErr = 10058,                       ///< Stream name already in use
+    JSStreamNotFoundErr = 10059,                        ///< Stream not found
+    JSStreamNotMatchErr = 10060,                        ///< Expected stream does not match
+    JSStreamReplicasNotUpdatableErr = 10061,            ///< Replicas configuration can not be updated
+    JSStreamRestoreErr = 10062,                         ///< Restore failed
+    JSStreamSequenceNotMatchErr = 10063,                ///< Expected stream sequence does not match
+    JSStreamSnapshotErr = 10064,                        ///< Snapshot failed
+    JSStreamSubjectOverlapErr = 10065,                  ///< Subjects overlap with an existing stream
+    JSStreamTemplateCreateErr = 10066,                  ///< Generic template creation failed
+    JSStreamTemplateDeleteErr = 10067,                  ///< Generic stream template deletion failed error
+    JSStreamTemplateNotFoundErr = 10068,                ///< Template not found
+    JSStreamUpdateErr = 10069,                          ///< Generic stream update error
+    JSStreamWrongLastMsgIDErr = 10070,                  ///< Wrong last msg ID
+    JSStreamWrongLastSequenceErr = 10071,               ///< Wrong last sequence
+    JSTempStorageFailedErr = 10072,                     ///< JetStream unable to open temp storage for restore
+    JSTemplateNameNotMatchSubjectErr = 10073,           ///< Template name in subject does not match request
+    JSStreamReplicasNotSupportedErr = 10074,            ///< Replicas > 1 not supported in non-clustered mode
+    JSPeerRemapErr = 10075,                             ///< Peer remap failed
+    JSNotEnabledErr = 10076,                            ///< JetStream not enabled
+
+} natsJSErrCode;
 
 #ifdef __cplusplus
 }

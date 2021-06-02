@@ -1,4 +1,4 @@
-// Copyright 2015-2019 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,15 +16,19 @@
 
 #include "natsp.h"
 
+#define JSON_MAX_NEXTED 100
+
+extern int jsonMaxNested;
+
 #define TYPE_NOT_SET    (0)
 #define TYPE_STR        (1)
 #define TYPE_BOOL       (2)
 #define TYPE_NUM        (3)
 #define TYPE_INT        (4)
-#define TYPE_LONG       (5)
+#define TYPE_UINT       (5)
 #define TYPE_DOUBLE     (6)
 #define TYPE_ARRAY      (7)
-#define TYPE_ULONG      (8)
+#define TYPE_OBJECT     (8)
 
 typedef struct
 {
@@ -38,24 +42,28 @@ typedef struct
 
 typedef struct
 {
+    char        *str;
+    natsStrHash *fields;
+
+} nats_JSON;
+
+typedef struct
+{
     char    *name;
     int     typ;
     union
     {
             char            *vstr;
             bool            vbool;
+            uint64_t        vuint;
+            int64_t         vint;
             long double     vdec;
             nats_JSONArray  *varr;
+            nats_JSON       *vobj;
     } value;
+    int     numTyp;
 
 } nats_JSONField;
-
-typedef struct
-{
-    char        *str;
-    natsStrHash *fields;
-
-} nats_JSON;
 
 #define nats_IsStringEmpty(s) (((s == NULL) || (s[0] == '\0')) ? true : false)
 
@@ -97,6 +105,12 @@ natsStatus
 nats_JSONGetInt(nats_JSON *json, const char *fieldName, int *value);
 
 natsStatus
+nats_JSONGetInt32(nats_JSON *json, const char *fieldName, int32_t *value);
+
+natsStatus
+nats_JSONGetUInt16(nats_JSON *json, const char *fieldName, uint16_t *value);
+
+natsStatus
 nats_JSONGetBool(nats_JSON *json, const char *fieldName, bool *value);
 
 natsStatus
@@ -109,10 +123,58 @@ natsStatus
 nats_JSONGetDouble(nats_JSON *json, const char *fieldName, long double *value);
 
 natsStatus
+nats_JSONGetObject(nats_JSON *json, const char *fieldName, nats_JSON **value);
+
+natsStatus
 nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, nats_JSONField **retField);
 
 natsStatus
+nats_JSONArrayAsStrings(nats_JSONArray *arr, char ***array, int *arraySize);
+
+natsStatus
 nats_JSONGetArrayStr(nats_JSON *json, const char *fieldName, char ***array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsBools(nats_JSONArray *arr, bool **array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayBool(nats_JSON *json, const char *fieldName, bool **array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsDoubles(nats_JSONArray *arr, long double **array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayDouble(nats_JSON *json, const char *fieldName, long double **array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsInts(nats_JSONArray *arr, int **array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayInt(nats_JSON *json, const char *fieldName, int **array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsLongs(nats_JSONArray *arr, int64_t **array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayLong(nats_JSON *json, const char *fieldName, int64_t **array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsULongs(nats_JSONArray *arr, uint64_t **array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayULong(nats_JSON *json, const char *fieldName, uint64_t **array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsObjects(nats_JSONArray *arr, nats_JSON ***array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayObject(nats_JSON *json, const char *fieldName, nats_JSON ***array, int *arraySize);
+
+natsStatus
+nats_JSONArrayAsArrays(nats_JSONArray *arr, nats_JSONArray ***array, int *arraySize);
+
+natsStatus
+nats_JSONGetArrayArray(nats_JSON *json, const char *fieldName, nats_JSONArray ***array, int *arraySize);
 
 void
 nats_JSONDestroy(nats_JSON *json);

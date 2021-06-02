@@ -161,7 +161,12 @@ natsStatus
 natsBuf_Append(natsBuffer *buf, const char* data, int dataLen)
 {
     natsStatus  s = NATS_OK;
-    int64_t     n = (int64_t) buf->len + dataLen;
+    int64_t     n;
+
+    if (dataLen == -1)
+        dataLen = (int) strlen(data);
+
+    n = (int64_t) buf->len + dataLen;
 
     if ((n < 0) || (n >= 0x7FFFFFFF))
         return nats_setDefaultError(NATS_NO_MEMORY);

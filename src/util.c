@@ -1,4 +1,4 @@
-// Copyright 2015-2019 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,6 +20,70 @@
 
 #include "util.h"
 #include "mem.h"
+
+int jsonMaxNested = JSON_MAX_NEXTED;
+
+// Forward declarations due to recursive calls
+static natsStatus _jsonParse(nats_JSON **newJSON, int *parsedLen, const char *jsonStr, int jsonLen, int nested);
+static natsStatus _jsonParseValue(char **str, nats_JSONField *field, int nested);
+static void       _jsonFreeArray(nats_JSONArray *arr, bool freeObj);
+
+#define JSON_GET_AS(jt, t) \
+natsStatus      s      = NATS_OK;                       \
+nats_JSONField  *field = NULL;                          \
+s = nats_JSONGetField(json, fieldName, (jt), &field);   \
+if (s == NATS_NOT_FOUND)                                \
+    return s;                                           \
+else if (s == NATS_OK)                                  \
+{                                                       \
+    switch (field->numTyp)                              \
+    {                                                   \
+        case TYPE_INT:                                  \
+            *value = (t)field->value.vint;  break;      \
+        case TYPE_UINT:                                 \
+            *value = (t)field->value.vuint; break;      \
+        default:                                        \
+            *value = (t)field->value.vdec;              \
+    }                                                   \
+}                                                       \
+return NATS_UPDATE_ERR_STACK(s);
+
+#define JSON_ARRAY_AS(t) \
+int i;                                              \
+t* values = (t*) NATS_CALLOC(arr->size, sizeof(t)); \
+if (values == NULL)                                 \
+    return nats_setDefaultError(NATS_NO_MEMORY);    \
+for (i=0; i<arr->size; i++)                         \
+    values[i] = ((t*) arr->values)[i];              \
+*array     = values;                                \
+*arraySize = arr->size;                             \
+return NATS_OK;
+
+#define JSON_ARRAY_AS_NUM(t) \
+int i;                                                      \
+t* values = (t*) NATS_CALLOC(arr->size, sizeof(t));         \
+if (values == NULL)                                         \
+    return nats_setDefaultError(NATS_NO_MEMORY);            \
+for (i=0; i<arr->size; i++)                                 \
+{                                                           \
+    void *ptr = NULL;                                       \
+    ptr = (void*) ((char*)(arr->values)+(i*jsonMaxNumSize));\
+    values[i] = *(t*) ptr;                                  \
+}                                                           \
+*array     = values;                                        \
+*arraySize = arr->size;                                     \
+return NATS_OK;
+
+#define JSON_GET_ARRAY(t, f) \
+natsStatus      s      = NATS_OK;                           \
+nats_JSONField  *field = NULL;                              \
+s = nats_JSONGetArrayField(json, fieldName, (t), &field);   \
+if (s == NATS_NOT_FOUND)                                    \
+    return s;                                               \
+else if (s == NATS_OK)                                      \
+    s = (f)(field->value.varr, array, arraySize);           \
+return NATS_UPDATE_ERR_STACK(s);
+
 
 #define ASCII_0 (48)
 #define ASCII_9 (57)
@@ -317,13 +381,41 @@ _jsonCreateField(nats_JSONField **newField, char *fieldName)
 }
 
 static void
+_jsonFreeArray(nats_JSONArray *arr, bool freeObj)
+{
+    if (arr == NULL)
+        return;
+
+    if ((arr->typ == TYPE_OBJECT) || (arr->typ == TYPE_ARRAY))
+    {
+        int i;
+
+        for (i=0; i<arr->size; i++)
+        {
+            if (arr->typ == TYPE_OBJECT)
+            {
+                nats_JSON *fjson = ((nats_JSON**)arr->values)[i];
+                nats_JSONDestroy(fjson);
+            }
+            else
+            {
+                nats_JSONArray *farr = ((nats_JSONArray**)arr->values)[i];
+                _jsonFreeArray(farr, true);
+            }
+        }
+    }
+    NATS_FREE(arr->values);
+    if (freeObj)
+        NATS_FREE(arr);
+}
+
+static void
 _jsonFreeField(nats_JSONField *field)
 {
     if (field->typ == TYPE_ARRAY)
-    {
-        NATS_FREE(field->value.varr->values);
-        NATS_FREE(field->value.varr);
-    }
+        _jsonFreeArray(field->value.varr, true);
+    else if (field->typ == TYPE_OBJECT)
+        nats_JSONDestroy(field->value.vobj);
     NATS_FREE(field);
 }
 
@@ -376,14 +468,18 @@ _jsonGetStr(char **ptr, char **value)
                         }
                         else
                         {
-                            return nats_setError(NATS_INVALID_ARG, "%s", "error parsing string: invalid unicode character");
+                            return nats_setError(NATS_ERR,
+                                                 "error parsing string '%s': invalid unicode character",
+                                                 p);
                         }
                     }
                     p--;
                     break;
                 }
                 default:
-                    return nats_setError(NATS_INVALID_ARG, "%s", "error parsing string: invalid control character");
+                    return nats_setError(NATS_ERR,
+                                         "error parsing string '%s': invalid control character",
+                                         p);
             }
         }
         p++;
@@ -396,36 +492,40 @@ _jsonGetStr(char **ptr, char **value)
         *ptr = (char*) (p + 1);
         return NATS_OK;
     }
-    return nats_setError(NATS_INVALID_ARG, "%s",
-                         "error parsing string: unexpected end of JSON input");
+    return nats_setError(NATS_ERR,
+                         "error parsing string '%s': unexpected end of JSON input",
+                         *ptr);
 }
 
 static natsStatus
-_jsonGetNum(char **ptr, long double *val)
+_jsonGetNum(char **ptr, nats_JSONField *field)
 {
     char        *p             = *ptr;
     bool        expIsNegative  = false;
-    int64_t     intVal         = 0;
-    int64_t     decVal         = 0;
-    int64_t     decPower       = 1;
-    int64_t     sign           = 1;
+    uint64_t    uintVal        = 0;
+    uint64_t    decVal         = 0;
+    uint64_t    decPower       = 1;
+    long double sign           = 1.0;
     long double ePower         = 1.0;
-    long double res            = 0.0;
     int         decPCount      = 0;
+    int         numTyp         = 0;
 
     while (isspace(*p))
         p++;
 
-    sign = (*p == '-' ? -1 : 1);
+    sign = (*p == '-' ? -1.0 : 1.0);
 
     if ((*p == '-') || (*p == '+'))
         p++;
 
     while (isdigit(*p))
-        intVal = intVal * 10 + (*p++ - '0');
+        uintVal = uintVal * 10 + (*p++ - '0');
 
     if (*p == '.')
+    {
         p++;
+        numTyp = TYPE_DOUBLE;
+    }
 
     while (isdigit(*p))
     {
@@ -437,6 +537,8 @@ _jsonGetNum(char **ptr, long double *val)
     if ((*p == 'e') || (*p == 'E'))
     {
         int64_t eVal = 0;
+
+        numTyp = TYPE_DOUBLE;
 
         p++;
 
@@ -472,28 +574,46 @@ _jsonGetNum(char **ptr, long double *val)
         }
     }
 
-    // If we don't end with a ' ', ',' or '}', this is syntax error.
-    if ((*p != ' ') && (*p != ',') && (*p != '}'))
-        return NATS_ERR;
+    // If we don't end with a ' ', ',', ']', or '}', this is syntax error.
+    if ((*p != ' ') && (*p != ',') && (*p != '}') && (*p != ']'))
+        return nats_setError(NATS_ERR,
+                             "error parsing number '%s': missing separator or unexpected end of JSON input",
+                             *ptr);
 
-    if (decVal > 0)
-        res = (long double) (sign * (intVal * decPower + decVal));
-    else
-        res = (long double) (sign * intVal);
-
-    if (ePower > 1)
+    if (numTyp == TYPE_DOUBLE)
     {
-        if (expIsNegative)
-            res /= ePower;
+        long double res = 0.0;
+
+        if (decVal > 0)
+            res = sign * (long double) (uintVal * decPower + decVal);
         else
-            res *= ePower;
+            res = sign * (long double) uintVal;
+
+        if (ePower > 1)
+        {
+            if (expIsNegative)
+                res /= ePower;
+            else
+                res *= ePower;
+        }
+        else if (decVal > 0)
+        {
+            res /= decPower;
+        }
+        field->value.vdec = res;
     }
-    else if (decVal > 0)
+    else if (sign < 0)
     {
-        res /= decPower;
+        numTyp = TYPE_INT;
+        field->value.vint = -((int64_t) uintVal);
+    }
+    else
+    {
+        numTyp = TYPE_UINT;
+        field->value.vuint = uintVal;
     }
     *ptr = p;
-    *val = res;
+    field->numTyp = numTyp;
     return NATS_OK;
 }
 
@@ -512,44 +632,61 @@ _jsonGetBool(char **ptr, bool *val)
         *ptr += 5;
         return NATS_OK;
     }
-    return nats_setError(NATS_INVALID_ARG,
+    return nats_setError(NATS_ERR,
                          "error parsing boolean, got: '%s'", *ptr);
 }
 
 static natsStatus
-_jsonGetArray(char **ptr, nats_JSONArray **newArray)
+_jsonGetArray(char **ptr, nats_JSONArray **newArray, int nested)
 {
     natsStatus      s       = NATS_OK;
     char            *p      = *ptr;
-    char            *val    = NULL;
     bool            end     = false;
+    int             typ     = TYPE_NOT_SET;
+    nats_JSONField  field;
     nats_JSONArray  array;
+
+    if (nested >= jsonMaxNested)
+        return nats_setError(NATS_ERR, "json reached maximum nested arrays of %d", jsonMaxNested);
 
     // Initialize our stack variable
     memset(&array, 0, sizeof(nats_JSONArray));
-
-    // We support only string array for now
-    array.typ     = TYPE_STR;
-    array.eltSize = sizeof(char*);
-    array.size    = 0;
-    array.cap     = 4;
-    array.values  = NATS_CALLOC(array.cap, array.eltSize);
 
     while ((s == NATS_OK) && (*p != '\0'))
     {
         p = _jsonTrimSpace(p);
 
-        // We support only array of strings for now
-        if (*p != '"')
+        // Initialize the field before parsing.
+        memset(&field, 0, sizeof(nats_JSONField));
+
+        s = _jsonParseValue(&p, &field, nested);
+        if (s == NATS_OK)
         {
-            s = nats_setError(NATS_NOT_PERMITTED,
-                              "only string arrays supported, got '%s'", p);
-            break;
+            if (typ == TYPE_NOT_SET)
+            {
+                typ       = field.typ;
+                array.typ = field.typ;
+
+                // Set the element size based on type.
+                switch (typ)
+                {
+                    case TYPE_STR:      array.eltSize = sizeof(char*);              break;
+                    case TYPE_BOOL:     array.eltSize = sizeof(bool);               break;
+                    case TYPE_NUM:      array.eltSize = jsonMaxNumSize;             break;
+                    case TYPE_OBJECT:   array.eltSize = sizeof(nats_JSON*);         break;
+                    case TYPE_ARRAY:    array.eltSize = sizeof(nats_JSONArray*);    break;
+                    default:
+                        s = nats_setError(NATS_ERR,
+                                          "array of type %d not supported", typ);
+                }
+            }
+            else if (typ != field.typ)
+            {
+                s = nats_setError(NATS_ERR,
+                                  "array content of different types '%s'",
+                                  *ptr);
+            }
         }
-
-        p += 1;
-
-        s = _jsonGetStr(&p, &val);
         if (s != NATS_OK)
             break;
 
@@ -558,7 +695,10 @@ _jsonGetArray(char **ptr, nats_JSONArray **newArray)
             char **newValues  = NULL;
             int newCap      = 2 * array.cap;
 
-            newValues = (char**) NATS_REALLOC(array.values, newCap * sizeof(char*));
+            if (newCap == 0)
+                newCap = 4;
+
+            newValues = (char**) NATS_REALLOC(array.values, newCap * array.eltSize);
             if (newValues == NULL)
             {
                 s = nats_setDefaultError(NATS_NO_MEMORY);
@@ -567,7 +707,45 @@ _jsonGetArray(char **ptr, nats_JSONArray **newArray)
             array.values = (void**) newValues;
             array.cap    = newCap;
         }
-        ((char**)array.values)[array.size++] = val;
+        // Set value based on type
+        switch (typ)
+        {
+            case TYPE_STR:
+                ((char**)array.values)[array.size++] = field.value.vstr;
+                break;
+            case TYPE_BOOL:
+                ((bool*)array.values)[array.size++] = field.value.vbool;
+                 break;
+            case TYPE_NUM:
+            {
+                void    *ptr = NULL;
+                size_t  sz   = 0;
+
+                switch (field.numTyp)
+                {
+                    case TYPE_INT:
+                        ptr = &(field.value.vint);
+                        sz  = sizeof(int64_t);
+                        break;
+                    case TYPE_UINT:
+                        ptr = &(field.value.vuint);
+                        sz  = sizeof(uint64_t);
+                        break;
+                    default:
+                        ptr = &(field.value.vdec);
+                        sz  = sizeof(long double);
+                }
+                memcpy((void*)(((char *)array.values)+(array.size*array.eltSize)), ptr, sz);
+                array.size++;
+                break;
+            }
+            case TYPE_OBJECT:
+                ((nats_JSON**)array.values)[array.size++] = field.value.vobj;
+                break;
+            case TYPE_ARRAY:
+                ((nats_JSONArray**)array.values)[array.size++] = field.value.varr;
+                break;
+        }
 
         p = _jsonTrimSpace(p);
         if (*p == '\0')
@@ -607,50 +785,9 @@ _jsonGetArray(char **ptr, nats_JSONArray **newArray)
         }
     }
     if (s != NATS_OK)
-    {
-        int i;
-        for (i=0; i<array.size; i++)
-        {
-            p = ((char**)array.values)[i];
-            *(p + strlen(p)) = '"';
-        }
-        NATS_FREE(array.values);
-    }
+        _jsonFreeArray(&array, false);
 
     return NATS_UPDATE_ERR_STACK(s);
-}
-
-static char*
-_jsonSkipUnknownType(char *ptr)
-{
-    char    *p = ptr;
-    int     skip = 0;
-    bool    quoteOpen = false;
-
-    while (*p != '\0')
-    {
-        if (((*p == ',') || (*p == '}')) && (skip == 0))
-            break;
-        else if ((*p == '{') || (*p == '['))
-            skip++;
-        else if ((*p == '}') || (*p == ']'))
-            skip--;
-        else if ((*p == '"') && (*(p-1) != '\\'))
-        {
-            if (quoteOpen)
-            {
-                quoteOpen = false;
-                skip--;
-            }
-            else
-            {
-                quoteOpen = true;
-                skip++;
-            }
-        }
-        p += 1;
-    }
-    return p;
 }
 
 #define JSON_STATE_START        (0)
@@ -661,8 +798,62 @@ _jsonSkipUnknownType(char *ptr)
 #define JSON_STATE_NEXT_FIELD   (5)
 #define JSON_STATE_END          (6)
 
-natsStatus
-nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
+static natsStatus
+_jsonParseValue(char **str, nats_JSONField *field, int nested)
+{
+    natsStatus  s    = NATS_OK;
+    char        *ptr = *str;
+
+    // Parsing value here. Determine the type based on first character.
+    if (*ptr == '"')
+    {
+        ptr += 1;
+        field->typ = TYPE_STR;
+        s = _jsonGetStr(&ptr, &field->value.vstr);
+    }
+    else if ((*ptr == 't') || (*ptr == 'f'))
+    {
+        field->typ = TYPE_BOOL;
+        s = _jsonGetBool(&ptr, &field->value.vbool);
+    }
+    else if (isdigit(*ptr) || (*ptr == '-'))
+    {
+        field->typ = TYPE_NUM;
+        s = _jsonGetNum(&ptr, field);
+    }
+    else if (*ptr == '[')
+    {
+        ptr += 1;
+        field->typ = TYPE_ARRAY;
+        s = _jsonGetArray(&ptr, &field->value.varr, nested+1);
+    }
+    else if (*ptr == '{')
+    {
+        nats_JSON   *object = NULL;
+        int         objLen  = 0;
+
+        ptr += 1;
+        field->typ = TYPE_OBJECT;
+        s = _jsonParse(&object, &objLen, ptr, -1, nested+1);
+        if (s == NATS_OK)
+        {
+            field->value.vobj = object;
+            ptr += objLen;
+        }
+    }
+    else
+    {
+        s = nats_setError(NATS_ERR,
+                            "looking for value, got: '%s'", ptr);
+    }
+    if (s == NATS_OK)
+        *str = ptr;
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+static natsStatus
+_jsonParse(nats_JSON **newJSON, int *parsedLen, const char *jsonStr, int jsonLen, int nested)
 {
     natsStatus      s         = NATS_OK;
     nats_JSON       *json     = NULL;
@@ -672,6 +863,13 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
     char            *fieldName = NULL;
     int             state;
     char            *copyStr  = NULL;
+    bool            breakLoop = false;
+
+    if (parsedLen != NULL)
+        *parsedLen = 0;
+
+    if (nested >= jsonMaxNested)
+        return nats_setError(NATS_ERR, "json reached maximum nested objects of %d", jsonMaxNested);
 
     if (jsonLen < 0)
     {
@@ -711,9 +909,9 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
         nats_JSONDestroy(json);
         return nats_setDefaultError(NATS_NO_MEMORY);
     }
-    state = JSON_STATE_START;
+    state = (nested == 0 ? JSON_STATE_START : JSON_STATE_NO_FIELD_YET);
 
-    while ((s == NATS_OK) && (*ptr != '\0'))
+    while ((s == NATS_OK) && (*ptr != '\0') && !breakLoop)
     {
         ptr = _jsonTrimSpace(ptr);
         if (*ptr == '\0')
@@ -759,10 +957,7 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
                 ptr += 1;
                 s = _jsonGetStr(&ptr, &fieldName);
                 if (s != NATS_OK)
-                {
-                    s = nats_setError(NATS_ERR, "invalid field name: '%s'", ptr);
                     break;
-                }
                 s = _jsonCreateField(&field, fieldName);
                 if (s != NATS_OK)
                 {
@@ -797,74 +992,7 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
             }
             case JSON_STATE_VALUE:
             {
-                // Parsing value here. Determine the type based on first character.
-                if (*ptr == '"')
-                {
-                    field->typ = TYPE_STR;
-                    ptr += 1;
-                    s = _jsonGetStr(&ptr, &field->value.vstr);
-                    if (s != NATS_OK)
-                        s = nats_setError(NATS_ERR,
-                                          "invalid string value for field '%s': '%s'",
-                                          fieldName, ptr);
-                }
-                else if ((*ptr == 't') || (*ptr == 'f'))
-                {
-                    field->typ = TYPE_BOOL;
-                    s = _jsonGetBool(&ptr, &field->value.vbool);
-                    if (s != NATS_OK)
-                        s = nats_setError(NATS_ERR,
-                                          "invalid boolean value for field '%s': '%s'",
-                                          fieldName, ptr);
-                }
-                else if (isdigit(*ptr) || (*ptr == '-'))
-                {
-                    field->typ = TYPE_NUM;
-                    s = _jsonGetNum(&ptr, &field->value.vdec);
-                    if (s != NATS_OK)
-                        s = nats_setError(NATS_ERR,
-                                          "invalid numeric value for field '%s': '%s'",
-                                          fieldName, ptr);
-                }
-                else if ((*ptr == '[') || (*ptr == '{'))
-                {
-                    bool doSkip = true;
-
-                    if (*ptr == '[')
-                    {
-                        ptr += 1;
-                        s = _jsonGetArray(&ptr, &field->value.varr);
-                        if (s == NATS_OK)
-                        {
-                            field->typ = TYPE_ARRAY;
-                            doSkip = false;
-                        }
-                        else  if (s == NATS_NOT_PERMITTED)
-                        {
-                            // This is an array but we don't support the
-                            // type of elements, so skip.
-                            s = NATS_OK;
-                            // Clear error stack
-                            nats_clearLastError();
-                            // Need to go back to the '[' character.
-                            ptr -= 1;
-                        }
-                    }
-                    if ((s == NATS_OK) && doSkip)
-                    {
-                        // Don't support, skip until next field.
-                        ptr = _jsonSkipUnknownType(ptr);
-                        // Destroy the field that we have created
-                        natsStrHash_Remove(json->fields, fieldName);
-                        _jsonFreeField(field);
-                        field = NULL;
-                    }
-                }
-                else
-                {
-                    s = nats_setError(NATS_ERR,
-                                      "looking for value, got: '%s'", ptr);
-                }
+                s = _jsonParseValue(&ptr, field, nested);
                 if (s == NATS_OK)
                     state = JSON_STATE_NEXT_FIELD;
                 break;
@@ -886,6 +1014,11 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
             }
             case JSON_STATE_END:
             {
+                if (nested > 0)
+                {
+                    breakLoop = true;
+                    break;
+                }
                 // If we are here it means that there was a character after the '}'
                 // so that's considered a failure.
                 s = nats_setError(NATS_ERR,
@@ -901,7 +1034,11 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
             s = nats_setError(NATS_ERR, "%s", "JSON string not properly closed");
     }
     if (s == NATS_OK)
+    {
+        if (parsedLen != NULL)
+            *parsedLen = (int) (ptr - json->str);
         *newJSON = json;
+    }
     else
         nats_JSONDestroy(json);
 
@@ -911,22 +1048,26 @@ nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
 }
 
 natsStatus
+nats_JSONParse(nats_JSON **newJSON, const char *jsonStr, int jsonLen)
+{
+    natsStatus s = _jsonParse(newJSON, NULL, jsonStr, jsonLen, 0);
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+natsStatus
 nats_JSONGetField(nats_JSON *json, const char *fieldName, int fieldType, nats_JSONField **retField)
 {
     nats_JSONField *field = NULL;
 
     field = (nats_JSONField*) natsStrHash_Get(json->fields, (char*) fieldName);
-    *retField = field;
-    // If unknown field, just ignore
     if (field == NULL)
-        return NATS_OK;
+        return NATS_NOT_FOUND;
 
     // Check parsed type matches what is being asked.
     switch (fieldType)
     {
         case TYPE_INT:
-        case TYPE_LONG:
-        case TYPE_ULONG:
+        case TYPE_UINT:
         case TYPE_DOUBLE:
             if (field->typ != TYPE_NUM)
                 return nats_setError(NATS_INVALID_ARG,
@@ -935,6 +1076,7 @@ nats_JSONGetField(nats_JSON *json, const char *fieldName, int fieldType, nats_JS
             break;
         case TYPE_BOOL:
         case TYPE_STR:
+        case TYPE_OBJECT:
             if (field->typ != fieldType)
                 return nats_setError(NATS_INVALID_ARG,
                                      "Asked for field '%s' as type %d, but got type %d when parsing",
@@ -945,6 +1087,7 @@ nats_JSONGetField(nats_JSON *json, const char *fieldName, int fieldType, nats_JS
                                  "Asked for field '%s' as type %d, but this type does not exist",
                                  field->name, fieldType);
     }
+    *retField = field;
     return NATS_OK;
 }
 
@@ -955,7 +1098,9 @@ nats_JSONGetStr(nats_JSON *json, const char *fieldName, char **value)
     nats_JSONField  *field = NULL;
 
     s = nats_JSONGetField(json, fieldName, TYPE_STR, &field);
-    if ((s == NATS_OK) && (field != NULL))
+    if (s == NATS_NOT_FOUND)
+        return s;
+    else if (s == NATS_OK)
     {
         if (field->value.vstr == NULL)
         {
@@ -969,20 +1114,25 @@ nats_JSONGetStr(nats_JSON *json, const char *fieldName, char **value)
             *value = tmp;
         }
     }
-    return s;
+    return NATS_UPDATE_ERR_STACK(s);
 }
 
 natsStatus
 nats_JSONGetInt(nats_JSON *json, const char *fieldName, int *value)
 {
-    natsStatus      s      = NATS_OK;
-    nats_JSONField  *field = NULL;
+    JSON_GET_AS(TYPE_INT, int);
+}
 
-    s = nats_JSONGetField(json, fieldName, TYPE_INT, &field);
-    if ((s == NATS_OK) && (field != NULL))
-        *value = (int)field->value.vdec;
+natsStatus
+nats_JSONGetInt32(nats_JSON *json, const char *fieldName, int32_t *value)
+{
+    JSON_GET_AS(TYPE_INT, int32_t);
+}
 
-    return NATS_UPDATE_ERR_STACK(s);
+natsStatus
+nats_JSONGetUInt16(nats_JSON *json, const char *fieldName, uint16_t *value)
+{
+    JSON_GET_AS(TYPE_UINT, uint16_t);
 }
 
 natsStatus
@@ -992,7 +1142,9 @@ nats_JSONGetBool(nats_JSON *json, const char *fieldName, bool *value)
     nats_JSONField  *field = NULL;
 
     s = nats_JSONGetField(json, fieldName, TYPE_BOOL, &field);
-    if ((s == NATS_OK) && (field != NULL))
+    if (s == NATS_NOT_FOUND)
+        return s;
+    else if (s == NATS_OK)
         *value = field->value.vbool;
 
     return NATS_UPDATE_ERR_STACK(s);
@@ -1001,38 +1153,32 @@ nats_JSONGetBool(nats_JSON *json, const char *fieldName, bool *value)
 natsStatus
 nats_JSONGetLong(nats_JSON *json, const char *fieldName, int64_t *value)
 {
-    natsStatus      s      = NATS_OK;
-    nats_JSONField  *field = NULL;
-
-    s = nats_JSONGetField(json, fieldName, TYPE_LONG, &field);
-    if ((s == NATS_OK) && (field != NULL))
-        *value = (int64_t) field->value.vdec;
-
-    return NATS_UPDATE_ERR_STACK(s);
+    JSON_GET_AS(TYPE_INT, int64_t);
 }
 
 natsStatus
 nats_JSONGetULong(nats_JSON *json, const char *fieldName, uint64_t *value)
 {
-    natsStatus      s      = NATS_OK;
-    nats_JSONField  *field = NULL;
-
-    s = nats_JSONGetField(json, fieldName, TYPE_ULONG, &field);
-    if ((s == NATS_OK) && (field != NULL))
-        *value = (uint64_t) field->value.vdec;
-
-    return NATS_UPDATE_ERR_STACK(s);
+    JSON_GET_AS(TYPE_UINT, uint64_t);
 }
 
 natsStatus
 nats_JSONGetDouble(nats_JSON *json, const char *fieldName, long double *value)
 {
+    JSON_GET_AS(TYPE_DOUBLE, long double);
+}
+
+natsStatus
+nats_JSONGetObject(nats_JSON *json, const char *fieldName, nats_JSON **value)
+{
     natsStatus      s      = NATS_OK;
     nats_JSONField  *field = NULL;
 
-    s = nats_JSONGetField(json, fieldName, TYPE_DOUBLE, &field);
-    if ((s == NATS_OK) && (field != NULL))
-        *value = (long double) field->value.vdec;
+    s = nats_JSONGetField(json, fieldName, TYPE_OBJECT, &field);
+    if (s == NATS_NOT_FOUND)
+        return s;
+    else if (s == NATS_OK)
+        *value = field->value.vobj;
 
     return NATS_UPDATE_ERR_STACK(s);
 }
@@ -1043,10 +1189,8 @@ nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, na
     nats_JSONField  *field   = NULL;
 
     field = (nats_JSONField*) natsStrHash_Get(json->fields, (char*) fieldName);
-    *retField = field;
-    // If unknown field, just ignore
     if (field == NULL)
-        return NATS_OK;
+        return NATS_NOT_FOUND;
 
     // Check parsed type matches what is being asked.
     if (field->typ != TYPE_ARRAY)
@@ -1058,54 +1202,134 @@ nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, na
                              "Asked for field '%s' as an array of type: %d, but it is an array of type: %d",
                              field->name, fieldType, field->typ);
 
-    if (fieldType != TYPE_STR)
-        return nats_setError(NATS_INVALID_ARG, "%s",
-                             "Only string arrays are supported");
-
+    *retField = field;
     return NATS_OK;
+}
+
+natsStatus
+nats_JSONArrayAsStrings(nats_JSONArray *arr, char ***array, int *arraySize)
+{
+    natsStatus  s = NATS_OK;
+    int         i;
+
+    char **values = NATS_CALLOC(arr->size, arr->eltSize);
+    if (values == NULL)
+        return nats_setDefaultError(NATS_NO_MEMORY);
+
+    for (i=0; i<arr->size; i++)
+    {
+        values[i] = NATS_STRDUP((char*)(arr->values[i]));
+        if (values[i] == NULL)
+        {
+            s = nats_setDefaultError(NATS_NO_MEMORY);
+            break;
+        }
+    }
+    if (s != NATS_OK)
+    {
+        int j;
+
+        for (j=0; j<i; j++)
+            NATS_FREE(values[i]);
+
+        NATS_FREE(values);
+    }
+    else
+    {
+        *array     = values;
+        *arraySize = arr->size;
+    }
+    return NATS_UPDATE_ERR_STACK(s);
 }
 
 natsStatus
 nats_JSONGetArrayStr(nats_JSON *json, const char *fieldName, char ***array, int *arraySize)
 {
-    natsStatus      s      = NATS_OK;
-    nats_JSONField  *field = NULL;
+    JSON_GET_ARRAY(TYPE_STR, nats_JSONArrayAsStrings);
+}
 
-    s = nats_JSONGetArrayField(json, fieldName, TYPE_STR, &field);
-    if ((s == NATS_OK) && (field != NULL))
-    {
-        int i;
+natsStatus
+nats_JSONArrayAsBools(nats_JSONArray *arr, bool **array, int *arraySize)
+{
+    JSON_ARRAY_AS(bool);
+}
 
-        char **values = NATS_CALLOC(field->value.varr->size, field->value.varr->eltSize);
-        if (values == NULL)
-            return nats_setDefaultError(NATS_NO_MEMORY);
+natsStatus
+nats_JSONGetArrayBool(nats_JSON *json, const char *fieldName, bool **array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_BOOL, nats_JSONArrayAsBools);
+}
 
-        for (i=0; i<field->value.varr->size; i++)
-        {
-            values[i] = NATS_STRDUP((char*)(field->value.varr->values[i]));
-            if (values[i] == NULL)
-            {
-                s = nats_setDefaultError(NATS_NO_MEMORY);
-                break;
-            }
-        }
-        if (s != NATS_OK)
-        {
-            int j;
+natsStatus
+nats_JSONArrayAsDoubles(nats_JSONArray *arr, long double **array, int *arraySize)
+{
+    JSON_ARRAY_AS_NUM(long double);
+}
 
-            for (j=0; j<i; j++)
-                NATS_FREE(values[i]);
+natsStatus
+nats_JSONGetArrayDouble(nats_JSON *json, const char *fieldName, long double **array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_NUM, nats_JSONArrayAsDoubles);
+}
 
-            NATS_FREE(values);
-        }
-        else
-        {
-            *array     = values;
-            *arraySize = field->value.varr->size;
-        }
-    }
+natsStatus
+nats_JSONArrayAsInts(nats_JSONArray *arr, int **array, int *arraySize)
+{
+    JSON_ARRAY_AS_NUM(int);
+}
 
-    return NATS_UPDATE_ERR_STACK(s);
+natsStatus
+nats_JSONGetArrayInt(nats_JSON *json, const char *fieldName, int **array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_NUM, nats_JSONArrayAsInts);
+}
+
+natsStatus
+nats_JSONArrayAsLongs(nats_JSONArray *arr, int64_t **array, int *arraySize)
+{
+    JSON_ARRAY_AS_NUM(int64_t);
+}
+
+natsStatus
+nats_JSONGetArrayLong(nats_JSON *json, const char *fieldName, int64_t **array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_NUM, nats_JSONArrayAsLongs);
+}
+
+natsStatus
+nats_JSONArrayAsULongs(nats_JSONArray *arr, uint64_t **array, int *arraySize)
+{
+    JSON_ARRAY_AS_NUM(uint64_t);
+}
+
+natsStatus
+nats_JSONGetArrayULong(nats_JSON *json, const char *fieldName, uint64_t **array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_NUM, nats_JSONArrayAsULongs);
+}
+
+natsStatus
+nats_JSONArrayAsObjects(nats_JSONArray *arr, nats_JSON ***array, int *arraySize)
+{
+    JSON_ARRAY_AS(nats_JSON*);
+}
+
+natsStatus
+nats_JSONGetArrayObject(nats_JSON *json, const char *fieldName, nats_JSON ***array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_OBJECT, nats_JSONArrayAsObjects);
+}
+
+natsStatus
+nats_JSONArrayAsArrays(nats_JSONArray *arr, nats_JSONArray ***array, int *arraySize)
+{
+    JSON_ARRAY_AS(nats_JSONArray*);
+}
+
+natsStatus
+nats_JSONGetArrayArray(nats_JSON *json, const char *fieldName, nats_JSONArray ***array, int *arraySize)
+{
+    JSON_GET_ARRAY(TYPE_ARRAY, nats_JSONArrayAsArrays);
 }
 
 void

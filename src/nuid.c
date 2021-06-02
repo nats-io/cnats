@@ -1,4 +1,4 @@
-// Copyright 2016-2018 The NATS Authors
+// Copyright 2016-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -85,6 +85,12 @@ _rand64(int64_t maxValue)
     v = v % maxValue;
 
     return v;
+}
+
+int64_t
+nats_Rand64(void)
+{
+    return _rand64(0x7FFFFFFFFFFFFFFF);
 }
 
 // A unique identifier generator that is high performance, very fast, and entropy pool friendly.

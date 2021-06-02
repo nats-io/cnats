@@ -506,36 +506,22 @@ _processInfo(natsConnection *nc, char *info, int len)
     if (s != NATS_OK)
         return NATS_UPDATE_ERR_STACK(s);
 
-    if (s == NATS_OK)
-        s = nats_JSONGetStr(json, "server_id", &(nc->info.id));
-    if (s == NATS_OK)
-        s = nats_JSONGetStr(json, "version", &(nc->info.version));
-    if (s == NATS_OK)
-        s = nats_JSONGetStr(json, "host", &(nc->info.host));
-    if (s == NATS_OK)
-        s = nats_JSONGetInt(json, "port", &(nc->info.port));
-    if (s == NATS_OK)
-        s = nats_JSONGetBool(json, "auth_required", &(nc->info.authRequired));
-    if (s == NATS_OK)
-        s = nats_JSONGetBool(json, "tls_required", &(nc->info.tlsRequired));
-    if (s == NATS_OK)
-        s = nats_JSONGetLong(json, "max_payload", &(nc->info.maxPayload));
-    if (s == NATS_OK)
-        s = nats_JSONGetArrayStr(json, "connect_urls",
-                                 &(nc->info.connectURLs),
-                                 &(nc->info.connectURLsCount));
-    if (s == NATS_OK)
-        s = nats_JSONGetInt(json, "proto", &(nc->info.proto));
-    if (s == NATS_OK)
-        s = nats_JSONGetULong(json, "client_id", &(nc->info.CID));
-    if (s == NATS_OK)
-        s = nats_JSONGetStr(json, "nonce", &(nc->info.nonce));
-    if (s == NATS_OK)
-        s = nats_JSONGetStr(json, "client_ip", &(nc->info.clientIP));
-    if (s == NATS_OK)
-        s = nats_JSONGetBool(json, "ldm", &(nc->info.lameDuckMode));
-    if (s == NATS_OK)
-        s = nats_JSONGetBool(json, "headers", &(nc->info.headers));
+    IFOK_INF(s, nats_JSONGetStr(json, "server_id", &(nc->info.id)));
+    IFOK_INF(s, nats_JSONGetStr(json, "version", &(nc->info.version)));
+    IFOK_INF(s, nats_JSONGetStr(json, "host", &(nc->info.host)));
+    IFOK_INF(s, nats_JSONGetInt(json, "port", &(nc->info.port)));
+    IFOK_INF(s, nats_JSONGetBool(json, "auth_required", &(nc->info.authRequired)));
+    IFOK_INF(s, nats_JSONGetBool(json, "tls_required", &(nc->info.tlsRequired)));
+    IFOK_INF(s, nats_JSONGetLong(json, "max_payload", &(nc->info.maxPayload)));
+    IFOK_INF(s, nats_JSONGetArrayStr(json, "connect_urls",
+                                     &(nc->info.connectURLs),
+                                     &(nc->info.connectURLsCount)));
+    IFOK_INF(s, nats_JSONGetInt(json, "proto", &(nc->info.proto)));
+    IFOK_INF(s, nats_JSONGetULong(json, "client_id", &(nc->info.CID)));
+    IFOK_INF(s, nats_JSONGetStr(json, "nonce", &(nc->info.nonce)));
+    IFOK_INF(s, nats_JSONGetStr(json, "client_ip", &(nc->info.clientIP)));
+    IFOK_INF(s, nats_JSONGetBool(json, "ldm", &(nc->info.lameDuckMode)));
+    IFOK_INF(s, nats_JSONGetBool(json, "headers", &(nc->info.headers)));
 
     // The array could be empty/not present on initial connect,
     // if advertise is disabled on that server, or servers that

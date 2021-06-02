@@ -643,6 +643,24 @@ natsMsgHeader_Delete(natsMsg *msg, const char *key)
 }
 
 void
+natsMsg_freeHeaders(natsMsg *msg)
+{
+    natsStrHashIter iter;
+    void            *p = NULL;
+
+    if (msg->headers == NULL)
+        return;
+
+    natsStrHashIter_Init(&iter, msg->headers);
+    for (;natsStrHashIter_Next(&iter, NULL, &p);)
+    {
+        natsHeaderValue *v = (natsHeaderValue *)p;
+        natsHeaderValue_free(v, true);
+    }
+    natsStrHash_Destroy(msg->headers);
+}
+
+void
 natsMsg_free(void *object)
 {
     natsMsg *msg;
@@ -652,19 +670,10 @@ natsMsg_free(void *object)
 
     msg = (natsMsg*) object;
 
-    if (msg->headers != NULL)
-    {
-        natsStrHashIter iter;
-        void            *p = NULL;
+    if (msg->freeRply && (msg->reply != NULL))
+        NATS_FREE((char*) msg->reply);
 
-        natsStrHashIter_Init(&iter, msg->headers);
-        for (;natsStrHashIter_Next(&iter, NULL, &p);)
-        {
-            natsHeaderValue *v = (natsHeaderValue *)p;
-            natsHeaderValue_free(v, true);
-        }
-        natsStrHash_Destroy(msg->headers);
-    }
+    natsMsg_freeHeaders(msg);
 
     NATS_FREE(msg);
 }
@@ -759,6 +768,7 @@ natsMsg_create(natsMsg **newMsg,
     msg->hdrLift = false;
     msg->headers = NULL;
     msg->sub     = NULL;
+    msg->freeRply= false;
     msg->next    = NULL;
 
     ptr = (char*) (((char*) &(msg->next)) + sizeof(msg->next));

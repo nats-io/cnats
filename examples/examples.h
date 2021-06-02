@@ -59,6 +59,8 @@ bool        deliverLast = true;
 uint64_t    deliverSeq  = 0;
 bool        unsubscribe = false;
 
+const char  *stream     = "foo";
+
 static natsStatus
 printStats(int mode, natsConnection *conn, natsSubscription *sub,
            natsStatistics *stats)
@@ -380,6 +382,13 @@ parseArgs(int argc, char **argv, const char *usage)
                 printUsageAndExit(argv[0], usage);
 
             s = natsOptions_SetWriteDeadline(opts, atol(argv[++i]));
+        }
+        else if (strcasecmp(argv[i], "-stream") == 0)
+        {
+            if (i + 1 == argc)
+                printUsageAndExit(argv[0], usage);
+
+            stream = argv[++i];
         }
         else
         {

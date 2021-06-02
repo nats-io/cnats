@@ -23,8 +23,10 @@ This NATS Client implementation is heavily based on the [NATS GO Client](https:/
     * [Testing](#testing)
 - [Documentation](#documentation)
 - [NATS Client](#nats-client)
-    * [JetStream](#jetstream)
     * [Important Changes](#important-changes)
+    * [JetStream](#jetstream)
+        * [JetStream Basic Usage](#jetstream-basic-usage)
+        * [JetStream Basic Management](#jetstream-basic-usage)
 	* [Getting Started](#getting-started)
 	* [Basic Usage](#basic-usage)
     * [Headers](#headers)
@@ -310,14 +312,6 @@ The source code is also quite documented.
 
 # NATS Client
 
-## JetStream
-
-In order to use the NATS C client to interact with JetStream, you need to add the option:
-```c
-natsOptions_UseOldRequestStyle(opts, true);
-```
-before creating the connection issuing requests to JetStream server.
-
 ## Important Changes
 
 This section lists important changes such as deprecation notices, etc...
@@ -426,6 +420,73 @@ onMsg(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void *closure)
     // Don't forget to destroy the message!
     natsMsg_Destroy(msg);
 }
+```
+
+## JetStream
+
+Support for JetStream starts with the version `v3.0.0` of the library and NATS Server `v2.2.0+`, although getting JetStream
+specific error codes requires the server at version `v2.3.0+`.
+
+Look at examples named `js-xxx.c` in the `examples` directory for examples on how to use the API.
+The new objects and APIs are full documented in the online [documentation](http://nats-io.github.io/nats.c/group__js_group.html).
+
+### JetStream Basic Usage
+
+```c
+// Connect to NATS
+natsConnection_Connect(&conn, opts);
+
+// Initialize and set some JetStream options
+natsJSOptions_Init(&jsOpts);
+jsOpts.PublishAsyncMaxPending = 256;
+
+// Create JetStream Context
+natsJS_NewContext(&js, conn, &jsOpts);
+
+// Simple Stream Publisher
+natsJS_Publish(&pa, js, "ORDERS.scratch", (const void*) "hello", 5, NULL, &jerr);
+
+// Simple Async Stream Publisher
+for (i=0; i < 500; i++)
+{
+    natsJS_PublishAsync(js, "ORDERS.scratch", (const void*) "hello", 5, NULL);
+}
+
+// Wait for up to 5 seconds to receive all publish acknowledgments.
+natsJSPubOptions_Init(&jsPubOpts);
+jsPubOpts.MaxWait = 5000;
+natsJS_PublishAsyncComplete(js, &jsPubOpts);
+```
+
+### JetStream Basic Management
+
+```c
+natsJSStreamConfig  cfg;
+const char          *subjects = {"ORDERS.*"};
+
+// Connect to NATS
+natsConnection_Connect(&conn, opts);
+
+// Create JetStream Context
+natsJS_NewContext(&js, conn, NULL);
+
+// Initialize the configuration structure.
+natsJSStreamConfig_Init(&cfg);
+// Provide a name
+cfg.Name = "ORDERS";
+// Array of subjects and its size
+cfg.Subjects = subjects;
+cfg.SubjectsLen = 1;
+
+// Create a Stream
+natsJS_AddStream(NULL, js, &cfg, NULL, &jerr);
+
+// Update a Stream
+cfg.MaxBytes = 8;
+natsJS_UpdateStream(NULL, js, &cfg, NULL, &jerr);
+
+// Delete a Stream
+natsJS_DeleteStream(js, "ORDERS", NULL, &jerr);
 ```
 
 ## Headers
