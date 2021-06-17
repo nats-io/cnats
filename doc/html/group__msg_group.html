@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>NATS C Client with Streaming support: Message</title>
+<title>NATS C Client with JetStream and Streaming support: Message</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -32,8 +32,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;" >
-   <div id="projectname">NATS C Client with Streaming support
-   &#160;<span id="projectnumber">2.5.0</span>
+   <div id="projectname">NATS C Client with JetStream and Streaming support
+   &#160;<span id="projectnumber">3.0.0-beta01</span>
    </div>
    <div id="projectbrief">The nats.io C Client, Supported by Synadia Communications Inc.</div>
   </td>
@@ -51,6 +51,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="modules.html"><span>Modules</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -335,8 +336,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>It will replace any existing value associated with <code>key</code>.</p>
-<dl class="section note"><dt>Note</dt><dd>The <code>key</code> will be store in its canonical form, that is, the key "my-key" is stored as "My-Key".</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.0.0, the <code>key</code> was stored in its canonical form, this is no longer the case. Header keys are now case sensitive.</dd>
+<dd>
+Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>the pointer to the <a class="el" href="group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a" title="A structure holding a subject, optional reply and payload. ">natsMsg</a> object. </td></tr>
@@ -378,8 +380,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>It will append to any existing values associated with <code>key</code>.</p>
-<dl class="section note"><dt>Note</dt><dd>The <code>key</code> will be store in its canonical form, that is, the key "my-key" is stored as "My-Key".</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.0.0, the <code>key</code> was stored in its canonical form, this is no longer the case. Header keys are now case sensitive.</dd>
+<dd>
+Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>the pointer to the <a class="el" href="group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a" title="A structure holding a subject, optional reply and payload. ">natsMsg</a> object. </td></tr>
@@ -421,8 +424,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>If more than one entry for the <code>key</code> is available, the first is returned. The returned value is owned by the library and MUST not be freed or altered.</p>
-<dl class="section note"><dt>Note</dt><dd>The <code>key</code> will be store as its canonical form, that is, the key "my-key" is stored as "My-Key".</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.0.0, the <code>key</code> was stored in its canonical form, this is no longer the case. Header keys are now case sensitive.</dd>
+<dd>
+Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>the pointer to the <a class="el" href="group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a" title="A structure holding a subject, optional reply and payload. ">natsMsg</a> object. </td></tr>
@@ -471,8 +475,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>The returned strings are own by the library and MUST not be freed or altered. However, the returned array <code>values</code> MUST be freed by the user.</p>
-<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span>* *values = NULL;</div><div class="line"><span class="keywordtype">int</span>         count   = 0;</div><div class="line"></div><div class="line">s = <a class="code" href="group__msg_group.html#gae1ce9c9d82d151a3ea9dc03da048f66f">natsMsgHeader_Values</a>(msg, <span class="stringliteral">&quot;My-Key&quot;</span>, &amp;values, &amp;count);</div><div class="line"><span class="keywordflow">if</span> (s == <a class="code" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80a9cee6c417868ecaa69f99ff4f6576990">NATS_OK</a>)</div><div class="line">{</div><div class="line">     <span class="comment">// do something with the values</span></div><div class="line"></div><div class="line">     <span class="comment">// then free the array of pointers.</span></div><div class="line">     free((<span class="keywordtype">void</span>*) values);</div><div class="line">}</div></div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The <code>key</code> will be store as its canonical form, that is, the key "my-key" is stored as "My-Key".</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span>* *values = NULL;</div><div class="line"><span class="keywordtype">int</span>         count   = 0;</div><div class="line"></div><div class="line">s = <a class="code" href="group__msg_group.html#gae1ce9c9d82d151a3ea9dc03da048f66f">natsMsgHeader_Values</a>(msg, <span class="stringliteral">&quot;My-Key&quot;</span>, &amp;values, &amp;count);</div><div class="line"><span class="keywordflow">if</span> (s == <a class="code" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80a9cee6c417868ecaa69f99ff4f6576990">NATS_OK</a>)</div><div class="line">{</div><div class="line">     <span class="comment">// do something with the values</span></div><div class="line"></div><div class="line">     <span class="comment">// then free the array of pointers.</span></div><div class="line">     free((<span class="keywordtype">void</span>*) values);</div><div class="line">}</div></div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>Prior to v3.0.0, the <code>key</code> was stored in its canonical form, this is no longer the case. Header keys are now case sensitive.</dd>
+<dd>
+Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>the pointer to the <a class="el" href="group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a" title="A structure holding a subject, optional reply and payload. ">natsMsg</a> object. </td></tr>
@@ -552,8 +557,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section note"><dt>Note</dt><dd>The canonical form of <code>key</code> is used for looking up and then deleting the entry.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.0.0, the <code>key</code> was stored in its canonical form, this is no longer the case. Header keys are now case sensitive.</dd>
+<dd>
+Headers are not thread-safe, that is, you must not set/add/get values or delete keys for the same message from different threads. The internal structure of <code>natsMsg</code> may possible be altered during this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>the pointer to the <a class="el" href="group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a" title="A structure holding a subject, optional reply and payload. ">natsMsg</a> object. </td></tr>

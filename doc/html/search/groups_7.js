@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['publishing',['Publishing',['../group__conn_pub_group.html',1,'']]],
-  ['publishing',['Publishing',['../group__stan_conn_pub_group.html',1,'']]]
+  ['options',['Options',['../group__opts_group.html',1,'']]]
 ];

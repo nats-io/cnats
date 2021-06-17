@@ -12,5 +12,6 @@ var group__func_group =
     [ "Connection", "group__conn_group.html", "group__conn_group" ],
     [ "Subscription", "group__sub_group.html", "group__sub_group" ],
     [ "Streaming Connection", "group__stan_conn_group.html", "group__stan_conn_group" ],
-    [ "Streaming Subscription", "group__stan_sub_group.html", "group__stan_sub_group" ]
+    [ "Streaming Subscription", "group__stan_sub_group.html", "group__stan_sub_group" ],
+    [ "JetStream", "group__js_group.html", "group__js_group" ]
 ];
