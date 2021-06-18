@@ -9,6 +9,7 @@ var structnats_j_s_stream_config =
     [ "MaxBytes", "structnats_j_s_stream_config.html#a3537c5e3e34828bfb3839d1864c6be25", null ],
     [ "MaxAge", "structnats_j_s_stream_config.html#a8e2bf3f913a2ce6e16cff348c85c5564", null ],
     [ "MaxMsgSize", "structnats_j_s_stream_config.html#adb3df323d95fdab8fc9db7a90a144dcc", null ],
+    [ "MaxMsgsPerSubject", "structnats_j_s_stream_config.html#a1cabe12c2e054753ee25fc81ffa24816", null ],
     [ "Discard", "structnats_j_s_stream_config.html#ad2a00eae1f2ffd97c88e36ee3790f427", null ],
     [ "Storage", "structnats_j_s_stream_config.html#ab42e6e55de0dc949c8c6fcc42c412917", null ],
     [ "Replicas", "structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8", null ],

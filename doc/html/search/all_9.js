@@ -7,6 +7,7 @@ var searchData=
   ['maxmemory',['MaxMemory',['../structnats_j_s_account_limits.html#add443db27c99178878b79a89624a762a',1,'natsJSAccountLimits']]],
   ['maxmsgs',['MaxMsgs',['../structnats_j_s_stream_config.html#a0707c98e03ced635a398858d9bf47568',1,'natsJSStreamConfig']]],
   ['maxmsgsize',['MaxMsgSize',['../structnats_j_s_stream_config.html#adb3df323d95fdab8fc9db7a90a144dcc',1,'natsJSStreamConfig']]],
+  ['maxmsgspersubject',['MaxMsgsPerSubject',['../structnats_j_s_stream_config.html#a1cabe12c2e054753ee25fc81ffa24816',1,'natsJSStreamConfig']]],
   ['maxstore',['MaxStore',['../structnats_j_s_account_limits.html#a59dd6c9aa043618ff1e96c69ebedb88c',1,'natsJSAccountLimits']]],
   ['maxstreams',['MaxStreams',['../structnats_j_s_account_limits.html#a02d825cc0481926b3434ced88c2439f6',1,'natsJSAccountLimits']]],
   ['maxwait',['MaxWait',['../structnats_j_s_pub_options.html#a6b152f86c87c68034486eb3b292ce1b5',1,'natsJSPubOptions']]],
