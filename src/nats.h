@@ -332,6 +332,7 @@ typedef struct natsJSStreamConfig {
         int64_t                 MaxBytes;           //`json:"max_bytes"`
         int64_t                 MaxAge;             //`json:"max_age"`
         int32_t                 MaxMsgSize;         //`json:"max_msg_size,omitempty"`
+        int64_t                 MaxMsgsPerSubject;  //`json:"max_msgs_per_subject"`
         natsJSDiscardPolicy     Discard;            //`json:"discard"`
         natsJSStorageType       Storage;            //`json:"storage"`
         int                     Replicas;           //`json:"num_replicas"`

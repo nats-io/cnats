@@ -20022,7 +20022,7 @@ test_JetStreamUnmarshalStreamConfig(void)
 
     test("Stream config with all required: ");
     snprintf(tmp, sizeof(tmp), "{\"name\":\"TEST\",\"retention\":\"workqueue\","\
-        "\"max_consumers\":5,\"max_msgs\":10,\"max_bytes\":1000,\"max_age\":20000000,"\
+        "\"max_consumers\":5,\"max_msgs\":10,\"max_bytes\":1000,\"max_msgs_per_subject\":1,\"max_age\":20000000,"\
         "\"discard\":\"new\",\"storage\":\"memory\",\"num_replicas\":3}");
     s = nats_JSONParse(&json, tmp, (int) strlen(tmp));
     IFOK(s, natsJS_unmarshalStreamConfig(&sc, json));
@@ -20033,6 +20033,7 @@ test_JetStreamUnmarshalStreamConfig(void)
                 && (sc->MaxMsgs == 10)
                 && (sc->MaxBytes == 1000)
                 && (sc->MaxAge == 20000000)
+                && (sc->MaxMsgsPerSubject == 1)
                 && (sc->Discard == natsJS_DiscardNew)
                 && (sc->Storage == natsJS_MemoryStorage)
                 && (sc->Replicas == 3));
@@ -20044,7 +20045,7 @@ test_JetStreamUnmarshalStreamConfig(void)
     test("Stream config with all: ");
     if (snprintf(tmp, sizeof(tmp), "{\"name\":\"TEST\",\"subjects\":[\"foo\",\"bar\"],"\
         "\"retention\":\"workqueue\",\"max_consumers\":5,\"max_msgs\":10,\"max_bytes\":1000,"\
-        "\"max_age\":20000000,\"max_msg_size\":1024,\"discard\":\"new\",\"storage\":\"memory\","\
+        "\"max_age\":20000000,\"max_msg_size\":1024,\"max_msgs_per_subject\":1,\"discard\":\"new\",\"storage\":\"memory\","\
         "\"num_replicas\":3,\"no_ack\":true,\"template_owner\":\"owner\","\
         "\"duplicate_window\":100000000000,\"placement\":{\"cluster\":\"cluster\",\"tags\":[\"tag1\",\"tag2\"]},"\
         "\"mirror\":{\"name\":\"TEST2\",\"opt_start_seq\":10,\"filter_subject\":\"foo\",\"external\":{\"api\":\"my_prefix\",\"deliver\":\"deliver_prefix\"}},"\
@@ -20059,6 +20060,7 @@ test_JetStreamUnmarshalStreamConfig(void)
                 && (sc->SubjectsLen == 2)
                 && (strcmp(sc->Subjects[0], "foo") == 0)
                 && (strcmp(sc->Subjects[1], "bar") == 0)
+                && (sc->MaxMsgsPerSubject == 1)
                 && (sc->MaxMsgSize == 1024)
                 && (sc->NoAck)
                 && (strcmp(sc->Template, "owner") == 0)
@@ -20118,6 +20120,7 @@ test_JetStreamMarshalStreamConfig(void)
     sc.MaxAge = 4;
     sc.MaxMsgSize = 5;
     sc.Duplicates = 6;
+    sc.MaxMsgsPerSubject = 1;
     sc.Discard = natsJS_DiscardNew;
     sc.Storage = natsJS_MemoryStorage;
     sc.Replicas = 3;
@@ -20180,6 +20183,7 @@ test_JetStreamMarshalStreamConfig(void)
                 && (rsc->MaxBytes == 3)
                 && (rsc->MaxAge == 4)
                 && (rsc->MaxMsgSize == 5)
+                && (rsc->MaxMsgsPerSubject == 1)
                 && (rsc->Duplicates == 6)
                 && (rsc->Discard == natsJS_DiscardNew)
                 && (rsc->Storage == natsJS_MemoryStorage)
@@ -20401,6 +20405,7 @@ test_JetStreamContextDomain(void)
     testCond((s == NATS_OK)
                 && (jerr == 0)
                 && (ai != NULL)
+                && (strcmp(ai->Domain, "ABC") == 0)
                 && (ai->Limits.MaxMemory == -1)
                 && (ai->Limits.MaxStore == -1));
     natsJSAccountInfo_Destroy(ai);
@@ -20428,6 +20433,7 @@ test_JetStreamContextDomain(void)
     testCond((s == NATS_OK)
                 && (jerr == 0)
                 && (ai != NULL)
+                && (strcmp(ai->Domain, "ABC") == 0)
                 && (ai->Limits.MaxMemory == -1)
                 && (ai->Limits.MaxStore == -1));
     natsJSAccountInfo_Destroy(ai);
@@ -20447,6 +20453,7 @@ test_JetStreamContextDomain(void)
     testCond((s == NATS_OK)
                 && (jerr == 0)
                 && (ai != NULL)
+                && (strcmp(ai->Domain, "ABC") == 0)
                 && (ai->Limits.MaxMemory == -1)
                 && (ai->Limits.MaxStore == -1));
     natsJSAccountInfo_Destroy(ai);
@@ -20459,6 +20466,7 @@ test_JetStreamContextDomain(void)
     testCond((s == NATS_OK)
                 && (jerr == 0)
                 && (ai != NULL)
+                && (strcmp(ai->Domain, "ABC") == 0)
                 && (ai->Limits.MaxMemory == -1)
                 && (ai->Limits.MaxStore == -1));
     natsJSAccountInfo_Destroy(ai);

@@ -447,6 +447,7 @@ natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *jcfg)
     IFOK(s, nats_JSONGetLong(jcfg, "max_bytes", &(cfg->MaxBytes)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_age", &(cfg->MaxAge)));
     IFOK_INF(s, nats_JSONGetInt32(jcfg, "max_msg_size", &(cfg->MaxMsgSize)));
+    IFOK(s, nats_JSONGetLong(jcfg, "max_msgs_per_subject", &(cfg->MaxMsgsPerSubject)));
     IFOK(s, nats_JSONGetStr(jcfg, "discard", &tmpStr));
     IFOK(s, _unmarshalDiscardPolicy(&(cfg->Discard), &tmpStr));
     IFOK(s, nats_JSONGetStr(jcfg, "storage", &tmpStr));
@@ -538,6 +539,10 @@ natsJS_marshalStreamConfig(natsBuffer **new_buf, natsJSStreamConfig *cfg)
 
     IFOK(s, natsBuf_Append(buf, ",\"max_msg_size\":", -1));
     snprintf(temp, sizeof(temp), "%d", (int) cfg->MaxMsgSize);
+    IFOK(s, natsBuf_Append(buf, temp, -1));
+
+    IFOK(s, natsBuf_Append(buf, ",\"max_msgs_per_subject\":", -1));
+    snprintf(temp, sizeof(temp), "%d", (int) cfg->MaxMsgsPerSubject);
     IFOK(s, natsBuf_Append(buf, temp, -1));
 
     IFOK(s, _marshalDiscardPolicy(cfg->Discard, buf));
