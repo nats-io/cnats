@@ -11,6 +11,7 @@ var searchData=
   ['natsjspuback',['natsJSPubAck',['../structnats_j_s_pub_ack.html',1,'']]],
   ['natsjspubackerr',['natsJSPubAckErr',['../structnats_j_s_pub_ack_err.html',1,'']]],
   ['natsjspuboptions',['natsJSPubOptions',['../structnats_j_s_pub_options.html',1,'']]],
+  ['natsjspurgeoptions',['natsJSPurgeOptions',['../structnats_j_s_purge_options.html',1,'']]],
   ['natsjsstreamconfig',['natsJSStreamConfig',['../structnats_j_s_stream_config.html',1,'']]],
   ['natsjsstreaminfo',['natsJSStreamInfo',['../structnats_j_s_stream_info.html',1,'']]],
   ['natsjsstreamsource',['natsJSStreamSource',['../structnats_j_s_stream_source.html',1,'']]],

@@ -109,6 +109,11 @@ var group__types_group =
       [ "ErrCode", "structnats_j_s_pub_ack_err.html#a4a5b0e8d6e1c1ee18695e90a25f775ed", null ],
       [ "ErrText", "structnats_j_s_pub_ack_err.html#a279b0804343c03e5636513ef36558d94", null ]
     ] ],
+    [ "natsJSPurgeOptions", "structnats_j_s_purge_options.html", [
+      [ "Subject", "structnats_j_s_purge_options.html#a894c47b6bd0c08222dc68a9e302596a4", null ],
+      [ "Sequence", "structnats_j_s_purge_options.html#a9b2336ed218e1fb7189bb76c98a88a29", null ],
+      [ "Keep", "structnats_j_s_purge_options.html#a08b34404c58eecb4fc1faa144ca5294d", null ]
+    ] ],
     [ "natsJSOptions", "structnats_j_s_options.html", [
       [ "Prefix", "structnats_j_s_options.html#af3dbdcf6326bf1cf3d0feb64b737b41b", null ],
       [ "Domain", "structnats_j_s_options.html#ab51a4042e1f0a840023a2ceeae2263d7", null ],
@@ -116,7 +121,8 @@ var group__types_group =
       [ "PublishAsyncMaxPending", "structnats_j_s_options.html#ade56d397700121cad8f3b18333b96392", null ],
       [ "PublishAsyncErrHandler", "structnats_j_s_options.html#a8d484c1b12b2c2ea2445c690536b89e8", null ],
       [ "PublishAsyncErrHandlerClosure", "structnats_j_s_options.html#a9cafe89994a2a1edf9de1feaecf43ca9", null ],
-      [ "PublishAsyncStallWait", "structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c", null ]
+      [ "PublishAsyncStallWait", "structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c", null ],
+      [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ]
     ] ],
     [ "natsConnection", "group__types_group.html#gaf88dca0a18efb5c5e994d265a9f04aec", null ],
     [ "natsStatistics", "group__types_group.html#ga57a4b8c7109e2773878655722ce028aa", null ],
@@ -140,6 +146,7 @@ var group__types_group =
     [ "natsJSAccountInfo", "group__types_group.html#ga2016a7fc3460b079134c31098435ef67", null ],
     [ "natsJSPubAck", "group__types_group.html#ga8f102acafd680ec83c71d49cedd80203", null ],
     [ "natsJSPubAckErr", "group__types_group.html#gaa236f3abe77ed87fee9421509210cc8c", null ],
+    [ "natsJSPurgeOptions", "group__types_group.html#ga5718ed2a2d49a7c311e10ef383635163", null ],
     [ "natsJSOptions", "group__types_group.html#gabd9eacdfaa4e1eb16554026eff4d170c", null ],
     [ "stanConnection", "group__types_group.html#ga9e826493769d23086cfccefe95cdf64c", null ],
     [ "stanSubscription", "group__types_group.html#gae4dae869fb614536f0f027c2e2660cc5", null ],

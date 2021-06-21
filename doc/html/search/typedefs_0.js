@@ -22,6 +22,7 @@ var searchData=
   ['natsjspubackerr',['natsJSPubAckErr',['../group__types_group.html#gaa236f3abe77ed87fee9421509210cc8c',1,'nats.h']]],
   ['natsjspubackerrhandler',['natsJSPubAckErrHandler',['../group__callbacks_group.html#ga7b42fb8d4ba4ffdedf638baf3f21efd4',1,'nats.h']]],
   ['natsjspuboptions',['natsJSPubOptions',['../group__types_group.html#gae205311caed55289fbe725c8ede34869',1,'nats.h']]],
+  ['natsjspurgeoptions',['natsJSPurgeOptions',['../group__types_group.html#ga5718ed2a2d49a7c311e10ef383635163',1,'nats.h']]],
   ['natsjsstreamconfig',['natsJSStreamConfig',['../group__types_group.html#gabb0b8c3e01b8d3c31871ca165afc9086',1,'nats.h']]],
   ['natsjsstreaminfo',['natsJSStreamInfo',['../group__types_group.html#ga3e372350ef24216c98592f0491588448',1,'nats.h']]],
   ['natsjsstreamsource',['natsJSStreamSource',['../group__types_group.html#gad0ce5471d2fcbe0073d759dc19d43514',1,'nats.h']]],

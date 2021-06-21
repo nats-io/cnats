@@ -142,6 +142,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_pub_ack_err.html">natsJSPubAckErr</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_purge_options.html">natsJSPurgeOptions</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_options.html">natsJSOptions</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -197,6 +199,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:ga8f102acafd680ec83c71d49cedd80203"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa236f3abe77ed87fee9421509210cc8c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structnats_j_s_pub_ack_err.html">natsJSPubAckErr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__types_group.html#gaa236f3abe77ed87fee9421509210cc8c">natsJSPubAckErr</a></td></tr>
 <tr class="separator:gaa236f3abe77ed87fee9421509210cc8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5718ed2a2d49a7c311e10ef383635163"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structnats_j_s_purge_options.html">natsJSPurgeOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__types_group.html#ga5718ed2a2d49a7c311e10ef383635163">natsJSPurgeOptions</a></td></tr>
+<tr class="separator:ga5718ed2a2d49a7c311e10ef383635163"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabd9eacdfaa4e1eb16554026eff4d170c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structnats_j_s_options.html">natsJSOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__types_group.html#gabd9eacdfaa4e1eb16554026eff4d170c">natsJSOptions</a></td></tr>
 <tr class="separator:gabd9eacdfaa4e1eb16554026eff4d170c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9e826493769d23086cfccefe95cdf64c"><td class="memItemLeft" align="right" valign="top">typedef struct __stanConnection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__types_group.html#ga9e826493769d23086cfccefe95cdf64c">stanConnection</a></td></tr>
@@ -534,6 +538,30 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Publish acknowledgment failure that will be passed to the optional <a class="el" href="group__callbacks_group.html#ga7b42fb8d4ba4ffdedf638baf3f21efd4" title="Callback used to process asynchronous publish errors from JetStream. ">natsJSPubAckErrHandler</a> callback. </p>
+
+</div>
+</div>
+<a class="anchor" id="ga5718ed2a2d49a7c311e10ef383635163"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structnats_j_s_purge_options.html">natsJSPurgeOptions</a>  <a class="el" href="structnats_j_s_purge_options.html">natsJSPurgeOptions</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Advanced stream purge options</p>
+<p><a class="el" href="structnats_j_s_purge_options.html">natsJSPurgeOptions</a> is an optional request information to the purge API.</p>
+<ul>
+<li><code>Subject</code> will filter the purge request to only messages that match the subject, which can have wildcards.<br />
+</li>
+<li><code>Sequence</code> will purge up to but not including this sequence and can be combined with subject filtering.<br />
+</li>
+<li><code>Keep</code> will specify how many messages to keep. This can also be combined with subject filtering.<br />
+</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd><code>Sequence</code> and <code>Keep</code> are mutually exclusive, so both can not be set at the same time.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__js_assets_group.html#gad571cd853b4ae663405bf59f73e7ed5c" title="Initializes a streaming purge options structure. ">natsJSPurgeOptions_Init</a> </dd></dl>
 
 </div>
 </div>

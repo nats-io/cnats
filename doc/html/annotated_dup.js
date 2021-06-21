@@ -11,6 +11,7 @@ var annotated_dup =
     [ "natsJSPubAck", "structnats_j_s_pub_ack.html", "structnats_j_s_pub_ack" ],
     [ "natsJSPubAckErr", "structnats_j_s_pub_ack_err.html", "structnats_j_s_pub_ack_err" ],
     [ "natsJSPubOptions", "structnats_j_s_pub_options.html", "structnats_j_s_pub_options" ],
+    [ "natsJSPurgeOptions", "structnats_j_s_purge_options.html", "structnats_j_s_purge_options" ],
     [ "natsJSStreamConfig", "structnats_j_s_stream_config.html", "structnats_j_s_stream_config" ],
     [ "natsJSStreamInfo", "structnats_j_s_stream_info.html", "structnats_j_s_stream_info" ],
     [ "natsJSStreamSource", "structnats_j_s_stream_source.html", "structnats_j_s_stream_source" ],

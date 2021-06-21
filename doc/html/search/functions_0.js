@@ -78,6 +78,7 @@ var searchData=
   ['natsjsplacement_5finit',['natsJSPlacement_Init',['../group__js_assets_group.html#ga72b252208fcf36cc33d9c34be4baa3bd',1,'nats.h']]],
   ['natsjspuback_5fdestroy',['natsJSPubAck_Destroy',['../group__js_pub_group.html#ga3cec994c3e4870b9608cccccf86c0e54',1,'nats.h']]],
   ['natsjspuboptions_5finit',['natsJSPubOptions_Init',['../group__js_pub_group.html#ga4e908d09e096e28ef5f40499cd56b02a',1,'nats.h']]],
+  ['natsjspurgeoptions_5finit',['natsJSPurgeOptions_Init',['../group__js_assets_group.html#gad571cd853b4ae663405bf59f73e7ed5c',1,'nats.h']]],
   ['natsjsstreamconfig_5finit',['natsJSStreamConfig_Init',['../group__js_assets_group.html#ga6969b50b1ad8ee2442d5e6be604b27e3',1,'nats.h']]],
   ['natsjsstreaminfo_5fdestroy',['natsJSStreamInfo_Destroy',['../group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d',1,'nats.h']]],
   ['natsjsstreamsource_5finit',['natsJSStreamSource_Init',['../group__js_assets_group.html#ga3c274a9ec83b77a02fd4745d2c8e4739',1,'nats.h']]],

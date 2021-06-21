@@ -6,6 +6,7 @@ var group__js_assets_group =
     [ "natsJSExternalStream_Init", "group__js_assets_group.html#ga86d70ec24a33afb45aecbdc877884501", null ],
     [ "natsJS_AddStream", "group__js_assets_group.html#ga3956208708637c74aa88ec2b2e382a29", null ],
     [ "natsJS_UpdateStream", "group__js_assets_group.html#gadeb06517a65b5ce415f842312c95eec6", null ],
+    [ "natsJSPurgeOptions_Init", "group__js_assets_group.html#gad571cd853b4ae663405bf59f73e7ed5c", null ],
     [ "natsJS_PurgeStream", "group__js_assets_group.html#ga86dca645b49130e76531e4ae2fa4cbde", null ],
     [ "natsJS_DeleteStream", "group__js_assets_group.html#gac817a8cba121886f3722419ebc04e89c", null ],
     [ "natsJS_GetStreamInfo", "group__js_assets_group.html#gad9a2f6223dbd417da06060cb4b26b464", null ],
