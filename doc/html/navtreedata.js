@@ -36,7 +36,7 @@ var NAVTREEINDEX =
 "annotated.html",
 "group__msg_group.html#ga098e4fec1c5a71c00a0d092fbd6d1a21",
 "group__sub_group.html#ga6538a5d78dfb0f16514b94c8e74c11af",
-"structnats_j_s_account_info.html#ab85d6601508d0f8893cb9da1f7c35847"
+"structnats_j_s_account_limits.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

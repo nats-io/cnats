@@ -1,8 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"structnats_j_s_account_info.html#ab85d6601508d0f8893cb9da1f7c35847":[2,0,12,3],
-"structnats_j_s_account_info.html#aefc7a8df0e6071e3fc89213b8be444c0":[2,0,12,0],
-"structnats_j_s_account_info.html#af287e7e9b719e2da1aed0838ad76be37":[2,0,12,6],
 "structnats_j_s_account_limits.html":[2,0,11],
 "structnats_j_s_account_limits.html#a02d825cc0481926b3434ced88c2439f6":[2,0,11,2],
 "structnats_j_s_account_limits.html#a59dd6c9aa043618ff1e96c69ebedb88c":[2,0,11,1],

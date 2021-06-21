@@ -44,10 +44,7 @@ var status_8h =
       [ "NATS_NOT_YET_CONNECTED", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a49a1ea653ce112b3c53eedebcd60811d", null ],
       [ "NATS_DRAINING", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a07fdbda44f43cef9866a75b25053c2ae", null ],
       [ "NATS_INVALID_QUEUE_NAME", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a8a0d239cfdfa30fe730afea65941779b", null ],
-      [ "NATS_NO_RESPONDERS", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80aab97324e40ccfe1360080c651c330e62", null ],
-      [ "NATS_JS_NOT_ENABLED", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a403916b028eb970b6f53f3c5891ccc5a", null ],
-      [ "NATS_JS_STREAM_NAME_REQUIRED", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a0366da704d026e2e89669ddad7d5ea50", null ],
-      [ "NATS_JS_INVALID_STREAM_NAME", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80a8c372d9480584735544b42be28ce2b7f", null ]
+      [ "NATS_NO_RESPONDERS", "status_8h.html#a36c934157b663b7b5fb5d6609c897c80aab97324e40ccfe1360080c651c330e62", null ]
     ] ],
     [ "natsJSErrCode", "status_8h.html#a11455f12227b601c67e9bff2b2af703d", [
       [ "JSAccountResourcesExceededErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703da26a33a6e2296eb0ac0370176fb08ed9a", null ],
