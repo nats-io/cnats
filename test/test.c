@@ -20490,9 +20490,12 @@ test_JetStreamMgtStreams(void)
     natsJSStreamConfig  cfg;
     natsJSErrCode       jerr = 0;
     natsMsg             *resp = NULL;
+    natsSubscription    *sub  = NULL;
     const char          *subjects[] = {"foo", "bar"};
     char                datastore[256] = {'\0'};
     char                cmdLine[1024] = {'\0'};
+    natsJSOptions       o;
+    natsJSPurgeOptions  po;
 
     _makeUniqueDir(datastore, sizeof(datastore), "datastore_");
 
@@ -20627,6 +20630,80 @@ test_JetStreamMgtStreams(void)
     natsJSStreamInfo_Destroy(si);
     si = NULL;
 
+    test("Create stream: ");
+    natsJSStreamConfig_Init(&cfg);
+    cfg.Name = "TEST3";
+    cfg.Subjects = subjects;
+    cfg.SubjectsLen = 2;
+    s = natsJS_AddStream(NULL, js, &cfg, NULL, &jerr);
+    testCond((s == NATS_OK) && (jerr == 0));
+
+    test("Create sub to check purge req: ");
+    s = natsConnection_SubscribeSync(&sub, nc, "$JS.API.STREAM.PURGE.TEST3");
+    testCond(s == NATS_OK);
+
+    test("Purge options init (bad args): ");
+    s = natsJSPurgeOptions_Init(NULL);
+    testCond(s == NATS_INVALID_ARG);
+    nats_clearLastError();
+
+    test("Purge with options (subj+seq): ");
+    natsJSPurgeOptions_Init(&po);
+    // Will purge only messages from "foo"
+    po.Subject = "foo";
+    // Purge up-to but do not include this sequence.
+    po.Sequence = 4;
+    natsJSOptions_Init(&o);
+    o.Purge = &po;
+    // We care only on the outbound request, not the result of the API call.
+    natsJS_PurgeStream(js, "TEST3", &o, NULL);
+    nats_clearLastError();
+    s = natsSubscription_NextMsg(&resp, sub, 1000);
+    testCond((s == NATS_OK)
+                && (resp != NULL)
+                && (strncmp("{\"filter\":\"foo\",\"seq\":4}",
+                            natsMsg_GetData(resp),
+                            natsMsg_GetDataLength(resp)) == 0));
+    natsMsg_Destroy(resp);
+    resp = NULL;
+
+    test("Purge with options (seq and keep mutually exclusive): ");
+    natsJSPurgeOptions_Init(&po);
+    po.Subject = "bar";
+    po.Sequence = 8;
+    po.Keep = 2;
+    natsJSOptions_Init(&o);
+    o.Purge = &po;
+    s = natsJS_PurgeStream(js, "TEST3", &o, &jerr);
+    testCond((s == NATS_INVALID_ARG)
+                && (jerr == 0)
+                && (strstr(nats_GetLastError(NULL), "exclusive") != NULL));
+    nats_clearLastError();
+
+    test("Check no request was sent: ");
+    s = natsSubscription_NextMsg(&resp, sub, 500);
+    testCond((s == NATS_TIMEOUT) && (resp == NULL));
+    nats_clearLastError();
+
+    test("Purge with options (subj+keep): ");
+    natsJSPurgeOptions_Init(&po);
+    po.Subject = "bar";
+    // Keep 2 messages in the stream's bar subject space.
+    po.Keep = 2;
+    natsJSOptions_Init(&o);
+    o.Purge = &po;
+    // We care only on the outbound request, not the result of the API call.
+    natsJS_PurgeStream(js, "TEST3", &o, NULL);
+    nats_clearLastError();
+    s = natsSubscription_NextMsg(&resp, sub, 1000);
+    testCond((s == NATS_OK)
+                && (resp != NULL)
+                && (strncmp("{\"filter\":\"bar\",\"keep\":2}",
+                            natsMsg_GetData(resp),
+                            natsMsg_GetDataLength(resp)) == 0));
+    natsMsg_Destroy(resp);
+    resp = NULL;
+
     test("Delete stream (bad args): ");
     s = natsJS_DeleteStream(NULL, "TEST2", NULL, &jerr);
     testCond(s == NATS_INVALID_ARG);
@@ -20649,6 +20726,7 @@ test_JetStreamMgtStreams(void)
                 && ((jerr == 0) || (jerr == JSStreamNotFoundErr)));
 
     natsJS_DestroyContext(js);
+    natsSubscription_Destroy(sub);
     natsConnection_Destroy(nc);
     _stopServer(pid);
     rmtree(datastore);

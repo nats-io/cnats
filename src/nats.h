@@ -480,6 +480,27 @@ typedef void (*natsJSPubAckErrHandler)(natsJS *js, natsJSPubAckErr *pae, void *c
 #endif
 
 /**
+ * Advanced stream purge options
+ *
+ * #natsJSPurgeOptions is an optional request information to the purge API.
+ *
+ * * `Subject` will filter the purge request to only messages that match the subject, which can have wildcards.<br>
+ * * `Sequence` will purge up to but not including this sequence and can be combined with subject filtering.<br>
+ * * `Keep` will specify how many messages to keep. This can also be combined with subject filtering.<br>
+ *
+ * \note `Sequence` and `Keep` are mutually exclusive, so both can not be set at the same time.
+ *
+ * @see natsJSPurgeOptions_Init
+ */
+typedef struct natsJSPurgeOptions
+{
+        const char              *Subject;                       ///< This is the subject to match against messages for the purge command.
+        uint64_t                Sequence;                       ///< Purge up to but not including sequence.
+        uint64_t                Keep;                           ///< Number of messages to keep.
+
+} natsJSPurgeOptions;
+
+/**
  * JetStream context options.
  *
  * Initialize the object with #natsJSOptions_Init.
@@ -493,6 +514,7 @@ typedef struct natsJSOptions
         natsJSPubAckErrHandler  PublishAsyncErrHandler;         ///< Callback invoked when error encountered publishing a given message.
         void                    *PublishAsyncErrHandlerClosure; ///< Closure (or user data) passed to #natsJSPubAckErrHandler callback.
         int64_t                 PublishAsyncStallWait;          ///< Amount of time (in milliseconds) to wait in a PublishAsync call when there is MaxPending inflight messages, default is 200 ms.
+        natsJSPurgeOptions      *Purge;                         ///< Optional stream purge options.
 
 } natsJSOptions;
 
@@ -4563,9 +4585,35 @@ natsJS_AddStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, nat
 NATS_EXTERN natsStatus
 natsJS_UpdateStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, natsJSOptions *opts, natsJSErrCode *errCode);
 
+/** \brief Initializes a streaming purge options structure.
+ *
+ * Use this before setting stream purge options.
+ *
+ * \code{.unparsed}
+ * natsJSOptions        o;
+ * natsJSPurgeOptions   po;
+ *
+ * natsJSPurgeOptions_Init(&po);
+ * po.Subject = "foo";
+ * po.Sequence = 4;
+ * natsJSOptions_Init(&o);
+ * o.Purge = &o;
+ *
+ * natsJS_PurgeStream(js, "MY_STREAM", &o, &jerr);
+ * \endcode
+ *
+ * @param opts the pointer to the #natsJSPurgeOptions to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSPurgeOptions_Init(natsJSPurgeOptions *opts);
+
 /** \brief Purges a stream.
  *
  * Purges the stream named <c>stream</c>.
+ *
+ * For more advanced purge options, see #natsJSPurgeOptions
+ *
+ * @see natsJSPurgeOptions_Init
  *
  * @param js the pointer to the #natsJS context.
  * @param stream the name of the stream to purge.

@@ -959,6 +959,62 @@ _unmarshalStreamPurgeOrDelResp(streamPurgeOrDel *pdr, natsMsg *resp)
 }
 
 static natsStatus
+_marshalPurgeRequest(natsBuffer **new_buf, natsJSPurgeOptions *opts)
+{
+    natsStatus          s       = NATS_OK;
+    natsBuffer          *buf    = NULL;
+    bool                comma   = false;
+    char                temp[64]= {'0'};
+
+    if (nats_IsStringEmpty(opts->Subject) && (opts->Sequence <= 0) && opts->Keep <= 0)
+        return NATS_OK;
+
+    if ((opts->Sequence > 0) && (opts->Keep > 0))
+        return nats_setError(NATS_INVALID_ARG,
+                             "Sequence (%" PRIu64 ") and Keep (%" PRIu64 " are mutually exclusive",
+                             opts->Sequence, opts->Keep);
+
+    s = natsBuf_Create(&buf, 128);
+    IFOK(s, natsBuf_AppendByte(buf, '{'));
+    if ((s == NATS_OK) && !nats_IsStringEmpty(opts->Subject))
+    {
+        s = natsBuf_Append(buf, "\"filter\":\"", -1);
+        IFOK(s, natsBuf_Append(buf, opts->Subject, -1));
+        IFOK(s, natsBuf_AppendByte(buf, '"'));
+        comma = true;
+    }
+    if ((s == NATS_OK) && (opts->Sequence > 0))
+    {
+        snprintf(temp, sizeof(temp), "%" PRIu64, opts->Sequence);
+
+        if (comma)
+            s = natsBuf_AppendByte(buf, ',');
+
+        IFOK(s, natsBuf_Append(buf, "\"seq\":", -1));
+        IFOK(s, natsBuf_Append(buf, temp, -1));
+        comma = true;
+    }
+    if ((s == NATS_OK) && (opts->Keep > 0))
+    {
+        snprintf(temp, sizeof(temp), "%" PRIu64, opts->Keep);
+
+        if (comma)
+            s = natsBuf_AppendByte(buf, ',');
+
+        IFOK(s, natsBuf_Append(buf, "\"keep\":", -1));
+        IFOK(s, natsBuf_Append(buf, temp, -1));
+    }
+    IFOK(s, natsBuf_AppendByte(buf, '}'));
+
+    if (s == NATS_OK)
+        *new_buf = buf;
+    else
+        natsBuf_Destroy(buf);
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+static natsStatus
 _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode)
 {
     natsStatus          s       = NATS_OK;
@@ -967,6 +1023,9 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
     natsConnection      *nc     = NULL;
     const char          *apiT   = (purge ? jsApiStreamPurgeT : jsApiStreamDeleteT);
     bool                freePfx = false;
+    natsBuffer          *buf    = NULL;
+    const void          *data   = NULL;
+    int                 dlen    = 0;
     streamPurgeOrDel    pdResp;
     natsJSOptions       o;
 
@@ -985,9 +1044,18 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
         if (freePfx)
             NATS_FREE((char*) o.Prefix);
     }
+    if ((s == NATS_OK) && purge && (opts != NULL) && (opts->Purge != NULL))
+    {
+        s = _marshalPurgeRequest(&buf, opts->Purge);
+        if ((s == NATS_OK) && (buf != NULL))
+        {
+            data = (const void*) natsBuf_Data(buf);
+            dlen = natsBuf_Len(buf);
+        }
+    }
 
     // Send the request
-    IFOK_JSR(s, natsConnection_Request(&resp, js->nc, subj, NULL, 0, o.Wait));
+    IFOK_JSR(s, natsConnection_Request(&resp, js->nc, subj, data, dlen, o.Wait));
 
     IFOK(s, _unmarshalStreamPurgeOrDelResp(&pdResp, resp));
     if (s == NATS_OK)
@@ -1003,8 +1071,10 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
             s = nats_setError(NATS_ERR, "failed to %s stream %s",
                               (purge ? "purge" : "delete"), stream);
         }
+        natsJS_freeApiRespContent(&(pdResp.ar));
     }
 
+    natsBuf_Destroy(buf);
     natsMsg_Destroy(resp);
     NATS_FREE(subj);
 
@@ -1176,5 +1246,15 @@ natsJSExternalStream_Init(natsJSExternalStream *external)
         return nats_setDefaultError(NATS_INVALID_ARG);
 
     memset(external, 0, sizeof(natsJSExternalStream));
+    return NATS_OK;
+}
+
+natsStatus
+natsJSPurgeOptions_Init(natsJSPurgeOptions *po)
+{
+    if (po == NULL)
+        return nats_setDefaultError(NATS_INVALID_ARG);
+
+    memset(po, 0, sizeof(natsJSPurgeOptions));
     return NATS_OK;
 }
