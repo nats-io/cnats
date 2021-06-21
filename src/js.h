@@ -94,8 +94,8 @@ extern const int64_t    jsDefaultRequestWait;
 #define natsJS_apiSubj(s, o, f, ...) (nats_asprintf((s), (f), (o)->Prefix, __VA_ARGS__) < 0 ? NATS_NO_MEMORY : NATS_OK)
 
 // Execute the JS API request if status is OK on entry. If the result is NATS_NO_RESPONDERS,
-// sets the status to NATS_JS_NOT_ENABLED and if `errCode` is not NULL, set it to JSNotEnabledErr.
-#define IFOK_JSR(s, c)  if (s == NATS_OK) { s = (c); if (s == NATS_NO_RESPONDERS) { if (errCode != NULL) { *errCode = JSNotEnabledErr; } s = nats_setDefaultError(NATS_JS_NOT_ENABLED); } }
+// and `errCode` is not NULL, set it to JSNotEnabledErr.
+#define IFOK_JSR(s, c)  if (s == NATS_OK) { s = (c); if ((s == NATS_NO_RESPONDERS) && (errCode != NULL)) { *errCode = JSNotEnabledErr; } }
 
 // Returns true if the API response has a Code or ErrCode that is not 0.
 #define natsJS_apiResponseIsErr(ar)	(((ar)->Error.Code != 0) || ((ar)->Error.ErrCode != 0))

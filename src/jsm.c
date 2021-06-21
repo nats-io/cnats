@@ -835,10 +835,10 @@ _addUpdateOrGet(natsJSStreamInfo **new_si, jsStreamAction action, natsJS *js, na
         return nats_setDefaultError(NATS_INVALID_ARG);
 
     if ((cfg == NULL) || nats_IsStringEmpty(cfg->Name))
-        return nats_setDefaultError(NATS_JS_STREAM_NAME_REQUIRED);
+        return nats_setError(NATS_INVALID_ARG, "%s", "stream name is required");
 
     if (strchr(cfg->Name, '.'))
-        return nats_setDefaultError(NATS_JS_INVALID_STREAM_NAME);
+        return nats_setError(NATS_INVALID_ARG, "invalid stream name '%s' (cannot contain '.')", cfg->Name);
 
     switch (action)
     {
@@ -1033,7 +1033,7 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
         return nats_setDefaultError(NATS_INVALID_ARG);
 
     if (nats_IsStringEmpty(stream))
-        return nats_setDefaultError(NATS_JS_STREAM_NAME_REQUIRED);
+        return nats_setError(NATS_INVALID_ARG, "%s", "stream name is required");
 
     s = natsJS_setOpts(&nc, &freePfx, js, opts, &o);
     if (s == NATS_OK)

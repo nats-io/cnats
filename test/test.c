@@ -20277,7 +20277,7 @@ test_JetStreamContext(void)
 
     test("Get account fail: ");
     s = natsJS_GetAccountInfo(&ai, js, NULL, &jerr);
-    testCond((s == NATS_JS_NOT_ENABLED) && (ai == NULL) && (jerr == JSNotEnabledErr));
+    testCond((s == NATS_NO_RESPONDERS) && (ai == NULL) && (jerr == JSNotEnabledErr));
     nats_clearLastError();
     jerr = 0;
 
@@ -20306,7 +20306,7 @@ test_JetStreamContext(void)
 
     test("Get account info with unknown prefix: ");
     s = natsJS_GetAccountInfo(&ai, js, NULL, &jerr);
-    testCond((s == NATS_JS_NOT_ENABLED) && (ai == NULL) && (jerr == JSNotEnabledErr));
+    testCond((s == NATS_NO_RESPONDERS) && (ai == NULL) && (jerr == JSNotEnabledErr));
     nats_clearLastError();
     jerr = 0;
 
@@ -20414,7 +20414,7 @@ test_JetStreamContextDomain(void)
     test("Get account with wrong domain override: ");
     o.Domain = "DEF";
     s = natsJS_GetAccountInfo(&ai, js, &o, &jerr);
-    testCond((s == NATS_JS_NOT_ENABLED) && (ai == NULL) && (jerr == JSNotEnabledErr));
+    testCond((s == NATS_NO_RESPONDERS) && (ai == NULL) && (jerr == JSNotEnabledErr));
     nats_clearLastError();
     jerr = 0;
 
@@ -20528,15 +20528,19 @@ test_JetStreamMgtStreams(void)
 
     test("Stream name required: ");
     s = natsJS_AddStream(&si, js, NULL, NULL, NULL);
-    if (s == NATS_JS_STREAM_NAME_REQUIRED)
+    if (s == NATS_INVALID_ARG)
         s = natsJS_AddStream(&si, js, &cfg, NULL, NULL);
-    testCond((s == NATS_JS_STREAM_NAME_REQUIRED) && (si == NULL));
+    testCond((s == NATS_INVALID_ARG)
+                && (si == NULL)
+                && (strstr(nats_GetLastError(NULL), "stream name is required") != NULL));
     nats_clearLastError();
 
     test("Invalid stream name: ");
     cfg.Name = "invalid.stream.name";
     s = natsJS_AddStream(&si, js, &cfg, NULL, NULL);
-    testCond((s == NATS_JS_INVALID_STREAM_NAME) && (si == NULL));
+    testCond((s == NATS_INVALID_ARG)
+                && (si == NULL)
+                && (strstr(nats_GetLastError(NULL), "invalid stream name") != NULL));
     nats_clearLastError();
 
     test("Create basic: ");
@@ -20592,7 +20596,10 @@ test_JetStreamMgtStreams(void)
 
     test("Get stream info (stream name missing): ");
     s = natsJS_GetStreamInfo(&si, js, NULL, NULL, NULL);
-    testCond((s == NATS_JS_STREAM_NAME_REQUIRED) && (si == NULL));
+    testCond((s == NATS_INVALID_ARG)
+                && (si == NULL)
+                && (strstr(nats_GetLastError(NULL), "stream name is required") != NULL));
+    nats_clearLastError();
 
     test("Get stream info: ");
     s = natsJS_GetStreamInfo(&si, js, "TEST2", NULL, &jerr);
@@ -20612,7 +20619,9 @@ test_JetStreamMgtStreams(void)
 
     test("Purge stream (stream name missing): ");
     s = natsJS_PurgeStream(js, NULL, NULL, &jerr);
-    testCond((s == NATS_JS_STREAM_NAME_REQUIRED) && (jerr == 0));
+    testCond((s == NATS_INVALID_ARG)
+                && (jerr == 0)
+                && (strstr(nats_GetLastError(NULL), "stream name is required") != NULL));
     nats_clearLastError();
 
     test("Purge stream: ");
@@ -20711,7 +20720,9 @@ test_JetStreamMgtStreams(void)
 
     test("Delete stream (stream name missing): ");
     s = natsJS_DeleteStream(js, NULL, NULL, &jerr);
-    testCond((s == NATS_JS_STREAM_NAME_REQUIRED) && (jerr == 0));
+    testCond((s == NATS_INVALID_ARG)
+                && (jerr == 0)
+                && (strstr(nats_GetLastError(NULL), "stream name is required") != NULL));
     nats_clearLastError();
 
     test("Delete stream: ");

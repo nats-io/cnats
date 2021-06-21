@@ -126,10 +126,6 @@ typedef enum
 
     NATS_NO_RESPONDERS,                 ///< No responders were running when the server received the request.
 
-    NATS_JS_NOT_ENABLED,                ///< JetStream is not enabled on this server or for the user account.
-    NATS_JS_STREAM_NAME_REQUIRED,       ///< A stream name is required.
-    NATS_JS_INVALID_STREAM_NAME,        ///< The stream name is invalid (for instance, cannot contain '.' character),
-
 } natsStatus;
 
 typedef enum {
