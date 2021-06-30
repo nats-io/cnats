@@ -32,8 +32,11 @@ static void       _jsonFreeArray(nats_JSONArray *arr, bool freeObj);
 natsStatus      s      = NATS_OK;                       \
 nats_JSONField  *field = NULL;                          \
 s = nats_JSONGetField(json, fieldName, (jt), &field);   \
-if (s == NATS_NOT_FOUND)                                \
-    return s;                                           \
+if ((s == NATS_OK) && (field == NULL))                  \
+{                                                       \
+    *value = 0;                                         \
+    return NATS_OK;                                     \
+}                                                       \
 else if (s == NATS_OK)                                  \
 {                                                       \
     switch (field->numTyp)                              \
@@ -78,8 +81,12 @@ return NATS_OK;
 natsStatus      s      = NATS_OK;                           \
 nats_JSONField  *field = NULL;                              \
 s = nats_JSONGetArrayField(json, fieldName, (t), &field);   \
-if (s == NATS_NOT_FOUND)                                    \
-    return s;                                               \
+if ((s == NATS_OK) && (field == NULL))                      \
+{                                                           \
+    *array      = NULL;                                     \
+    *arraySize  = 0;                                        \
+    return NATS_OK;                                         \
+}                                                           \
 else if (s == NATS_OK)                                      \
     s = (f)(field->value.varr, array, arraySize);           \
 return NATS_UPDATE_ERR_STACK(s);
@@ -1061,7 +1068,10 @@ nats_JSONGetField(nats_JSON *json, const char *fieldName, int fieldType, nats_JS
 
     field = (nats_JSONField*) natsStrHash_Get(json->fields, (char*) fieldName);
     if (field == NULL)
-        return NATS_NOT_FOUND;
+    {
+        *retField = NULL;
+        return NATS_OK;
+    }
 
     // Check parsed type matches what is being asked.
     switch (fieldType)
@@ -1098,13 +1108,12 @@ nats_JSONGetStr(nats_JSON *json, const char *fieldName, char **value)
     nats_JSONField  *field = NULL;
 
     s = nats_JSONGetField(json, fieldName, TYPE_STR, &field);
-    if (s == NATS_NOT_FOUND)
-        return s;
-    else if (s == NATS_OK)
+    if (s == NATS_OK)
     {
-        if (field->value.vstr == NULL)
+        if ((field == NULL) || (field->value.vstr == NULL))
         {
             *value = NULL;
+            return NATS_OK;
         }
         else
         {
@@ -1142,11 +1151,11 @@ nats_JSONGetBool(nats_JSON *json, const char *fieldName, bool *value)
     nats_JSONField  *field = NULL;
 
     s = nats_JSONGetField(json, fieldName, TYPE_BOOL, &field);
-    if (s == NATS_NOT_FOUND)
-        return s;
-    else if (s == NATS_OK)
-        *value = field->value.vbool;
-
+    if (s == NATS_OK)
+    {
+        *value = (field == NULL ? false : field->value.vbool);
+        return NATS_OK;
+    }
     return NATS_UPDATE_ERR_STACK(s);
 }
 
@@ -1175,11 +1184,11 @@ nats_JSONGetObject(nats_JSON *json, const char *fieldName, nats_JSON **value)
     nats_JSONField  *field = NULL;
 
     s = nats_JSONGetField(json, fieldName, TYPE_OBJECT, &field);
-    if (s == NATS_NOT_FOUND)
-        return s;
-    else if (s == NATS_OK)
-        *value = field->value.vobj;
-
+    if (s == NATS_OK)
+    {
+        *value = (field == NULL ? NULL : field->value.vobj);
+        return NATS_OK;
+    }
     return NATS_UPDATE_ERR_STACK(s);
 }
 
@@ -1201,8 +1210,11 @@ nats_JSONGetTime(nats_JSON *json, const char *fieldName, int64_t *timeUTC)
     struct tm   tp;
 
     s = nats_JSONGetStr(json, fieldName, &str);
-    if (s == NATS_NOT_FOUND)
-        return s;
+    if ((s == NATS_OK) && (str == NULL))
+    {
+        *timeUTC = 0;
+        return NATS_OK;
+    }
     else if (s != NATS_OK)
         return NATS_UPDATE_ERR_STACK(s);
 
@@ -1329,7 +1341,10 @@ nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, na
 
     field = (nats_JSONField*) natsStrHash_Get(json->fields, (char*) fieldName);
     if (field == NULL)
-        return NATS_NOT_FOUND;
+    {
+        *retField = NULL;
+        return NATS_OK;
+    }
 
     // Check parsed type matches what is being asked.
     if (field->typ != TYPE_ARRAY)

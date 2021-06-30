@@ -133,9 +133,6 @@
 
 #define IFOK(s, c)      if (s == NATS_OK) { s = (c); }
 
-// Same than IFOK, but ignore NATS_NOT_FOUND
-#define IFOK_INF(s, c)  if (s == NATS_OK) { s = (c); if (s == NATS_NOT_FOUND) s = NATS_OK; }
-
 extern int jsonMaxNumSize;
 
 extern int64_t gLockSpinCount;

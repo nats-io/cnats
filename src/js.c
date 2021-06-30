@@ -167,15 +167,11 @@ natsJS_unmarshalResponse(natsJSApiResponse *ar, nats_JSON **new_json, natsMsg *r
 
     // Check if there is an "error" field.
     s = nats_JSONGetObject(json, "error", &err);
-    if (s == NATS_OK)
+    if ((s == NATS_OK) && (err != NULL))
     {
         s = nats_JSONGetInt(err, "code", &(ar->Error.Code));
-        IFOK_INF(s, nats_JSONGetUInt16(err, "err_code", &(ar->Error.ErrCode)));
+        IFOK(s, nats_JSONGetUInt16(err, "err_code", &(ar->Error.ErrCode)));
         IFOK(s, nats_JSONGetStr(err, "description", &(ar->Error.Description)));
-    }
-    else if (s == NATS_NOT_FOUND)
-    {
-        s = NATS_OK;
     }
 
     if (s == NATS_OK)
@@ -481,7 +477,7 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
             {
                 s = nats_JSONGetStr(json, "stream", &(pa->Stream));
                 IFOK(s, nats_JSONGetULong(json, "seq", &(pa->Sequence)));
-                IFOK_INF(s, nats_JSONGetBool(json, "duplicate", &(pa->Duplicate)));
+                IFOK(s, nats_JSONGetBool(json, "duplicate", &(pa->Duplicate)));
 
                 if (s == NATS_OK)
                     *new_puback = pa;

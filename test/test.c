@@ -3028,7 +3028,7 @@ test_natsJSON(void)
     test("Empty string: ");
     s = nats_JSONParse(&json, "{}", -1);
     IFOK(s, nats_JSONGetInt(json, "test", &intVal));
-    testCond((s == NATS_NOT_FOUND)
+    testCond((s == NATS_OK)
                 && (json != NULL)
                 && (json->fields != NULL)
                 && (json->fields->used == 0)
@@ -3588,7 +3588,7 @@ test_natsJSON(void)
     nats_JSONDestroy(json);
     json = NULL;
 
-    test("Check no change to vars for unknown fields: ");
+    test("Check no error and set to default for vars for unknown fields: ");
     {
         const char *initStr = "test";
         const char *initStrArr[] = {"a", "b"};
@@ -3601,21 +3601,20 @@ test_natsJSON(void)
         arrVal = (char**)initStrArr;
         arrCount = 2;
         s = nats_JSONParse(&json, "{\"test\":true}", -1);
-        IFOK_INF(s, nats_JSONGetStr(json, "str", &strVal));
-        IFOK_INF(s, nats_JSONGetInt(json, "int", &intVal));
-        IFOK_INF(s, nats_JSONGetLong(json, "long", &longVal));
-        IFOK_INF(s, nats_JSONGetBool(json, "bool", &boolVal));
-        IFOK_INF(s, nats_JSONGetDouble(json, "bool", &doubleVal));
-        IFOK_INF(s, nats_JSONGetArrayStr(json, "array", &arrVal, &arrCount));
+        IFOK(s, nats_JSONGetStr(json, "str", &strVal));
+        IFOK(s, nats_JSONGetInt(json, "int", &intVal));
+        IFOK(s, nats_JSONGetLong(json, "long", &longVal));
+        IFOK(s, nats_JSONGetBool(json, "bool", &boolVal));
+        IFOK(s, nats_JSONGetDouble(json, "bool", &doubleVal));
+        IFOK(s, nats_JSONGetArrayStr(json, "array", &arrVal, &arrCount));
         testCond((s == NATS_OK)
-                    && (strcmp(strVal, initStr) == 0)
-                    && boolVal
-                    && (intVal == 123)
-                    && (longVal == 456)
-                    && (doubleVal == 789)
-                    && (arrCount == 2)
-                    && (strcmp(arrVal[0], "a") == 0)
-                    && (strcmp(arrVal[1], "b") == 0));
+                    && (strVal == NULL)
+                    && (boolVal == false)
+                    && (intVal == 0)
+                    && (longVal == 0)
+                    && (doubleVal == 0)
+                    && (arrCount == 0)
+                    && (arrVal == NULL));
         nats_JSONDestroy(json);
         json = NULL;
     }
@@ -13544,6 +13543,9 @@ test_ServersOption(void)
 
     s = natsOptions_Create(&opts);
     IFOK(s, natsOptions_SetNoRandomize(opts, true));
+#ifdef _WIN32
+    IFOK(s, natsOptions_SetTimeout(opts, 250));
+#endif
 
     if (s != NATS_OK)
         FAIL("Unable to create options for test ServerOptions");
@@ -20137,12 +20139,14 @@ test_JetStreamUnmarshalAccountInfo(void)
     char tmp[512];
     int i;
 
-    for (i=0; i<11; i++)
+    for (i=0; i<(int)(sizeof(missing)/sizeof(char*)); i++)
     {
         test("Missing fields: ");
         s = nats_JSONParse(&json, missing[i], (int) strlen(missing[i]));
         IFOK(s, natsJS_unmarshalAccountInfo(&ai, json));
-        testCond((s == NATS_NOT_FOUND) && (ai == NULL));
+        testCond((s == NATS_OK) && (ai != NULL));
+        natsJSAccountInfo_Destroy(ai);
+        ai = NULL;
         nats_JSONDestroy(json);
         json = NULL;
     }
@@ -20236,12 +20240,14 @@ test_JetStreamUnmarshalStreamConfig(void)
     char tmp[1024];
     int i;
 
-    for (i=0; i<8; i++)
+    for (i=0; i<(int)(sizeof(missing)/sizeof(char*)); i++)
     {
         test("Missing fields: ");
         s = nats_JSONParse(&json, missing[i], (int) strlen(missing[i]));
         IFOK(s, natsJS_unmarshalStreamConfig(&sc, json));
-        testCond((s == NATS_NOT_FOUND) == (sc == NULL));
+        testCond((s == NATS_OK) && (sc != NULL));
+        natsJS_destroyStreamConfig(sc);
+        sc = NULL;
         nats_JSONDestroy(json);
         json = NULL;
     }

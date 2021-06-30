@@ -237,11 +237,11 @@ _unmarshalStreamSource(natsJSStreamSource **new_source, nats_JSON *obj)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(obj, "name", (char**) &(source->Name));
-    IFOK_INF(s, nats_JSONGetULong(obj, "opt_start_seq", &(source->OptStartSeq)));
-    IFOK_INF(s, nats_JSONGetTime(obj, "opt_start_time", &(source->OptStartTime)));
-    IFOK_INF(s, nats_JSONGetStr(obj, "filter_subject", (char**) &(source->FilterSubject)));
-    IFOK_INF(s, nats_JSONGetObject(obj, "external", &jext));
-    if (jext != NULL)
+    IFOK(s, nats_JSONGetULong(obj, "opt_start_seq", &(source->OptStartSeq)));
+    IFOK(s, nats_JSONGetTime(obj, "opt_start_time", &(source->OptStartTime)));
+    IFOK(s, nats_JSONGetStr(obj, "filter_subject", (char**) &(source->FilterSubject)));
+    IFOK(s, nats_JSONGetObject(obj, "external", &jext));
+    if ((s == NATS_OK) && (jext != NULL))
         s = _unmarshalExternalStream(&(source->External), jext);
 
     if (s == NATS_OK)
@@ -326,7 +326,7 @@ _unmarshalPlacement(natsJSPlacement **new_placement, nats_JSON *jpl)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(jpl, "cluster", (char**) &(placement->Cluster));
-    IFOK_INF(s, nats_JSONGetArrayStr(jpl, "tags", (char***) &(placement->Tags), &(placement->TagsLen)));
+    IFOK(s, nats_JSONGetArrayStr(jpl, "tags", (char***) &(placement->Tags), &(placement->TagsLen)));
 
     if (s == NATS_OK)
         *new_placement = placement;
@@ -368,6 +368,9 @@ _unmarshalRetentionPolicy(natsJSRetentionPolicy *policy, char **pStr)
     natsStatus  s    = NATS_OK;
     char        *str = *pStr;
 
+    if (*pStr == NULL)
+        return NATS_OK;
+
     if (strcmp(str, jsRetPolicyLimits) == 0)
         *policy = natsJS_LimitsPolicy;
     else if (strcmp(str, jsRetPolicyInterest) == 0)
@@ -407,6 +410,9 @@ _unmarshalDiscardPolicy(natsJSDiscardPolicy *policy, char **pStr)
     natsStatus  s    = NATS_OK;
     char        *str = *pStr;
 
+    if (*pStr == NULL)
+        return NATS_OK;
+
     if (strcmp(str, jsDiscardPolicyOld) == 0)
         *policy = natsJS_DiscardOld;
     else if (strcmp(str, jsDiscardPolicyNew) == 0)
@@ -442,6 +448,9 @@ _unmarshalStorageType(natsJSStorageType *storage, char **pStr)
 {
     natsStatus  s    = NATS_OK;
     char        *str = *pStr;
+
+    if (*pStr == NULL)
+        return NATS_OK;
 
     if (strcmp(str, jsStorageTypeFile) == 0)
         *storage = natsJS_FileStorage;
@@ -489,7 +498,7 @@ natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *jcfg)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(jcfg, "name", (char**) &(cfg->Name));
-    IFOK_INF(s, nats_JSONGetArrayStr(jcfg, "subjects", (char***) &(cfg->Subjects), &(cfg->SubjectsLen)));
+    IFOK(s, nats_JSONGetArrayStr(jcfg, "subjects", (char***) &(cfg->Subjects), &(cfg->SubjectsLen)));
     IFOK(s, nats_JSONGetStr(jcfg, "retention", &tmpStr));
     IFOK(s, _unmarshalRetentionPolicy(&(cfg->Retention), &tmpStr));
     IFOK(s, nats_JSONGetInt(jcfg, "max_consumers", &(cfg->MaxConsumers)));
@@ -497,26 +506,26 @@ natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *jcfg)
     IFOK(s, nats_JSONGetLong(jcfg, "max_bytes", &(cfg->MaxBytes)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_age", &(cfg->MaxAge)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_msgs_per_subject", &(cfg->MaxMsgsPerSubject)));
-    IFOK_INF(s, nats_JSONGetInt32(jcfg, "max_msg_size", &(cfg->MaxMsgSize)));
+    IFOK(s, nats_JSONGetInt32(jcfg, "max_msg_size", &(cfg->MaxMsgSize)));
     IFOK(s, nats_JSONGetStr(jcfg, "discard", &tmpStr));
     IFOK(s, _unmarshalDiscardPolicy(&(cfg->Discard), &tmpStr));
     IFOK(s, nats_JSONGetStr(jcfg, "storage", &tmpStr));
     IFOK(s, _unmarshalStorageType(&(cfg->Storage), &tmpStr));
     IFOK(s, nats_JSONGetInt(jcfg, "num_replicas", &(cfg->Replicas)));
-    IFOK_INF(s, nats_JSONGetBool(jcfg, "no_ack", &(cfg->NoAck)));
-    IFOK_INF(s, nats_JSONGetStr(jcfg, "template_owner", (char**) &(cfg->Template)));
-    IFOK_INF(s, nats_JSONGetLong(jcfg, "duplicate_window", &(cfg->Duplicates)));
+    IFOK(s, nats_JSONGetBool(jcfg, "no_ack", &(cfg->NoAck)));
+    IFOK(s, nats_JSONGetStr(jcfg, "template_owner", (char**) &(cfg->Template)));
+    IFOK(s, nats_JSONGetLong(jcfg, "duplicate_window", &(cfg->Duplicates)));
     // Get the placement object and unmarshal if present
-    IFOK_INF(s, nats_JSONGetObject(jcfg, "placement", &jpl));
-    if (jpl != NULL)
+    IFOK(s, nats_JSONGetObject(jcfg, "placement", &jpl));
+    if ((s == NATS_OK) && (jpl != NULL))
         s = _unmarshalPlacement(&(cfg->Placement), jpl);
     // Get the mirror object and unmarshal if present
-    IFOK_INF(s, nats_JSONGetObject(jcfg, "mirror", &jm));
-    if (jm != NULL)
+    IFOK(s, nats_JSONGetObject(jcfg, "mirror", &jm));
+    if ((s == NATS_OK) && (jm != NULL))
         s = _unmarshalStreamSource(&(cfg->Mirror), jm);
     // Get the sources and unmarshal if present
-    IFOK_INF(s, nats_JSONGetArrayObject(jcfg, "sources", &sources, &sourcesLen));
-    if (sources != NULL)
+    IFOK(s, nats_JSONGetArrayObject(jcfg, "sources", &sources, &sourcesLen));
+    if ((s == NATS_OK) && (sources != NULL))
     {
         int i;
 
@@ -660,7 +669,7 @@ _unmarshalLostStreamData(natsJSLostStreamData **new_lost, nats_JSON *json)
     if (lost == NULL)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
-    IFOK_INF(s, nats_JSONGetArrayULong(json, "msgs", &(lost->Msgs), &(lost->MsgsLen)));
+    IFOK(s, nats_JSONGetArrayULong(json, "msgs", &(lost->Msgs), &(lost->MsgsLen)));
     IFOK(s, nats_JSONGetULong(json, "bytes", &(lost->Bytes)));
 
     if (s == NATS_OK)
@@ -683,9 +692,9 @@ natsJS_unmarshalStreamState(natsJSStreamState *state, nats_JSON *json)
     IFOK(s, nats_JSONGetTime(json, "first_ts", &(state->FirstTime)));
     IFOK(s, nats_JSONGetULong(json, "last_seq", &(state->LastSeq)));
     IFOK(s, nats_JSONGetTime(json, "last_ts", &(state->LastTime)));
-    IFOK_INF(s, nats_JSONGetULong(json, "num_deleted", &(state->NumDeleted)));
-    IFOK_INF(s, nats_JSONGetArrayULong(json, "deleted", &(state->Deleted), &(state->DeletedLen)));
-    IFOK_INF(s, nats_JSONGetObject(json, "lost", &lost));
+    IFOK(s, nats_JSONGetULong(json, "num_deleted", &(state->NumDeleted)));
+    IFOK(s, nats_JSONGetArrayULong(json, "deleted", &(state->Deleted), &(state->DeletedLen)));
+    IFOK(s, nats_JSONGetObject(json, "lost", &lost));
     if ((s == NATS_OK) && (lost != NULL))
         s = _unmarshalLostStreamData(&(state->Lost), lost);
     IFOK(s, nats_JSONGetInt(json, "consumer_count", &(state->Consumers)));
@@ -705,9 +714,9 @@ _unmarshalPeerInfo(natsJSPeerInfo **new_pi, nats_JSON *json)
 
     s = nats_JSONGetStr(json, "name", &(pi->Name));
     IFOK(s, nats_JSONGetBool(json, "current", &(pi->Current)));
-    IFOK_INF(s, nats_JSONGetBool(json, "offline", &(pi->Offline)));
+    IFOK(s, nats_JSONGetBool(json, "offline", &(pi->Offline)));
     IFOK(s, nats_JSONGetLong(json, "active", &(pi->Active)));
-    IFOK_INF(s, nats_JSONGetULong(json, "lag", &(pi->Lag)));
+    IFOK(s, nats_JSONGetULong(json, "lag", &(pi->Lag)));
 
     if (s == NATS_OK)
         *new_pi = pi;
@@ -730,9 +739,9 @@ _unmarshalClusterInfo(natsJSClusterInfo **new_ci, nats_JSON *json)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(json, "name", &(ci->Name));
-    IFOK_INF(s, nats_JSONGetStr(json, "leader", &(ci->Leader)));
-    IFOK_INF(s, nats_JSONGetArrayObject(json, "replicas", &replicas, &replicasLen));
-    if (replicas != NULL)
+    IFOK(s, nats_JSONGetStr(json, "leader", &(ci->Leader)));
+    IFOK(s, nats_JSONGetArrayObject(json, "replicas", &replicas, &replicasLen));
+    if ((s == NATS_OK) && (replicas != NULL))
     {
         int i;
 
@@ -769,8 +778,8 @@ _unmarshalStreamSourceInfo(natsJSStreamSourceInfo **new_src, nats_JSON *json)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(json, "name", &(ssi->Name));
-    IFOK_INF(s, nats_JSONGetObject(json, "external", &jext));
-    if (jext != NULL)
+    IFOK(s, nats_JSONGetObject(json, "external", &jext));
+    if ((s == NATS_OK) && (jext != NULL))
         s = _unmarshalExternalStream(&(ssi->External), jext);
     IFOK(s, nats_JSONGetULong(json, "lag", &(ssi->Lag)));
     IFOK(s, nats_JSONGetLong(json, "active", &(ssi->Active)));
@@ -805,14 +814,14 @@ _unmarshalStreamInfo(natsJSStreamInfo **new_si, nats_JSON *json)
     IFOK(s, nats_JSONGetTime(json, "created", &(si->Created)));
     IFOK(s, nats_JSONGetObject(json, "state", &jstate));
     IFOK(s, natsJS_unmarshalStreamState(&(si->State), jstate));
-    IFOK_INF(s, nats_JSONGetObject(json, "cluster", &jcluster));
-    if (jcluster != NULL)
+    IFOK(s, nats_JSONGetObject(json, "cluster", &jcluster));
+    if ((s == NATS_OK) && (jcluster != NULL))
         s = _unmarshalClusterInfo(&(si->Cluster), jcluster);
-    IFOK_INF(s, nats_JSONGetObject(json, "mirror", &jmirror));
-    if (jmirror != NULL)
+    IFOK(s, nats_JSONGetObject(json, "mirror", &jmirror));
+    if ((s == NATS_OK) && (jmirror != NULL))
         s = _unmarshalStreamSourceInfo(&(si->Mirror), jmirror);
-    IFOK_INF(s, nats_JSONGetArrayObject(json, "sources", &sources, &sourcesLen));
-    if (sources != NULL)
+    IFOK(s, nats_JSONGetArrayObject(json, "sources", &sources, &sourcesLen));
+    if ((s == NATS_OK) && (sources != NULL))
     {
         int i;
 
@@ -1053,7 +1062,7 @@ _unmarshalStreamPurgeOrDelResp(streamPurgeOrDel *pdr, natsMsg *resp)
         return NATS_UPDATE_ERR_STACK(s);
 
     if (!natsJS_apiResponseIsErr(&(pdr->ar)))
-        IFOK_INF(s, nats_JSONGetBool(json, "success", &(pdr->Success)));
+        IFOK(s, nats_JSONGetBool(json, "success", &(pdr->Success)));
 
     nats_JSONDestroy(json);
     return NATS_UPDATE_ERR_STACK(s);
@@ -1211,15 +1220,23 @@ natsJS_unmarshalAccountInfo(natsJSAccountInfo **new_ai, nats_JSON *json)
     IFOK(s, nats_JSONGetULong(json, "storage", &(ai->Store)));
     IFOK(s, nats_JSONGetInt(json, "streams", &(ai->Streams)));
     IFOK(s, nats_JSONGetInt(json, "consumers", &(ai->Consumers)));
-    IFOK_INF(s, nats_JSONGetStr(json, "domain", &(ai->Domain)));
+    IFOK(s, nats_JSONGetStr(json, "domain", &(ai->Domain)));
     IFOK(s, nats_JSONGetObject(json, "api", &obj));
-    IFOK(s, nats_JSONGetULong(obj, "total", &(ai->API.Total)));
-    IFOK(s, nats_JSONGetULong(obj, "errors", &(ai->API.Errors)));
+    if ((s == NATS_OK) && (obj != NULL))
+    {
+        IFOK(s, nats_JSONGetULong(obj, "total", &(ai->API.Total)));
+        IFOK(s, nats_JSONGetULong(obj, "errors", &(ai->API.Errors)));
+        obj = NULL;
+    }
     IFOK(s, nats_JSONGetObject(json, "limits", &obj));
-    IFOK(s, nats_JSONGetLong(obj, "max_memory", &(ai->Limits.MaxMemory)));
-    IFOK(s, nats_JSONGetLong(obj, "max_storage", &(ai->Limits.MaxStore)));
-    IFOK(s, nats_JSONGetInt(obj, "max_streams", &(ai->Limits.MaxStreams)));
-    IFOK(s, nats_JSONGetInt(obj, "max_consumers", &(ai->Limits.MaxConsumers)));
+    if ((s == NATS_OK) && (obj != NULL))
+    {
+        IFOK(s, nats_JSONGetLong(obj, "max_memory", &(ai->Limits.MaxMemory)));
+        IFOK(s, nats_JSONGetLong(obj, "max_storage", &(ai->Limits.MaxStore)));
+        IFOK(s, nats_JSONGetInt(obj, "max_streams", &(ai->Limits.MaxStreams)));
+        IFOK(s, nats_JSONGetInt(obj, "max_consumers", &(ai->Limits.MaxConsumers)));
+        obj = NULL;
+    }
 
     if (s == NATS_OK)
         *new_ai = ai;
