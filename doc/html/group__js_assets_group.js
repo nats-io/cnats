@@ -9,6 +9,7 @@ var group__js_assets_group =
     [ "natsJSPurgeOptions_Init", "group__js_assets_group.html#gad571cd853b4ae663405bf59f73e7ed5c", null ],
     [ "natsJS_PurgeStream", "group__js_assets_group.html#ga86dca645b49130e76531e4ae2fa4cbde", null ],
     [ "natsJS_DeleteStream", "group__js_assets_group.html#gac817a8cba121886f3722419ebc04e89c", null ],
+    [ "natsJSStreamInfoOptions_Init", "group__js_assets_group.html#ga32ca27b3af0d930cac68362566768ba7", null ],
     [ "natsJS_GetStreamInfo", "group__js_assets_group.html#gad9a2f6223dbd417da06060cb4b26b464", null ],
     [ "natsJSStreamInfo_Destroy", "group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d", null ],
     [ "natsJS_GetAccountInfo", "group__js_assets_group.html#gac8c0e481351c2018e3318383a7150a1c", null ],

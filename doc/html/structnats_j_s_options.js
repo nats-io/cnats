@@ -7,5 +7,6 @@ var structnats_j_s_options =
     [ "PublishAsyncErrHandler", "structnats_j_s_options.html#a8d484c1b12b2c2ea2445c690536b89e8", null ],
     [ "PublishAsyncErrHandlerClosure", "structnats_j_s_options.html#a9cafe89994a2a1edf9de1feaecf43ca9", null ],
     [ "PublishAsyncStallWait", "structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c", null ],
-    [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ]
+    [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ],
+    [ "StreamInfo", "structnats_j_s_options.html#a35b873c5236188d2ec5af3a14b1271cc", null ]
 ];

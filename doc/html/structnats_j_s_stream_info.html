@@ -122,8 +122,8 @@ $(document).ready(function(){initNavTree('structnats_j_s_stream_info.html','');}
 Public Attributes</h2></td></tr>
 <tr class="memitem:a2f5e5f5287d1ee98180582f44316f1d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_stream_config.html">natsJSStreamConfig</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3">Config</a></td></tr>
 <tr class="separator:a2f5e5f5287d1ee98180582f44316f1d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19cffb21277e14b19b04a4503f54f184"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_info.html#a19cffb21277e14b19b04a4503f54f184">Created</a></td></tr>
-<tr class="separator:a19cffb21277e14b19b04a4503f54f184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedc6e5f4972c135178496790a60f9f19"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19">Created</a></td></tr>
+<tr class="separator:aedc6e5f4972c135178496790a60f9f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada691d28b73b9620f1546ef463efb493"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_stream_state.html">natsJSStreamState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_info.html#ada691d28b73b9620f1546ef463efb493">State</a></td></tr>
 <tr class="separator:ada691d28b73b9620f1546ef463efb493"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a292ff50f4d6f2f70808499ffe278f659"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_cluster_info.html">natsJSClusterInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_info.html#a292ff50f4d6f2f70808499ffe278f659">Cluster</a></td></tr>
@@ -136,7 +136,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a2109b6a46ebe9d73ab70e3941748e65d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Configuration and current state for this stream. </p>
+<div class="textblock"><p>Configuration and current state for this stream.</p>
+<dl class="section note"><dt>Note</dt><dd><code>Created</code> is the timestamp when the stream was created, expressed as the number of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970. </dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a2f5e5f5287d1ee98180582f44316f1d3"></a>
 <div class="memitem">
@@ -150,12 +151,12 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a19cffb21277e14b19b04a4503f54f184"></a>
+<a class="anchor" id="aedc6e5f4972c135178496790a60f9f19"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char* natsJSStreamInfo::Created</td>
+          <td class="memname">int64_t natsJSStreamInfo::Created</td>
         </tr>
       </table>
 </div><div class="memdoc">

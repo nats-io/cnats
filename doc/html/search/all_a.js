@@ -16,6 +16,7 @@ var searchData=
   ['msg',['Msg',['../structnats_j_s_pub_ack_err.html#a01c90acadb3f4fc98929eabee5871032',1,'natsJSPubAckErr']]],
   ['message',['Message',['../group__msg_group.html',1,'']]],
   ['msgid',['MsgId',['../structnats_j_s_pub_options.html#a1ce6804767ed569d59b564b0eecac2de',1,'natsJSPubOptions']]],
-  ['msgs',['Msgs',['../structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a',1,'natsJSStreamState']]],
+  ['msgs',['Msgs',['../structnats_j_s_lost_stream_data.html#aa6302b5e9583134140e0857ad22a9797',1,'natsJSLostStreamData::Msgs()'],['../structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a',1,'natsJSStreamState::Msgs()']]],
+  ['msgslen',['MsgsLen',['../structnats_j_s_lost_stream_data.html#ac1f758ab8a726402499f258b9a845721',1,'natsJSLostStreamData']]],
   ['management',['Management',['../group__stan_conn_mgt_group.html',1,'']]]
 ];

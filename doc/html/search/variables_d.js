@@ -7,6 +7,7 @@ var searchData=
   ['storage',['Storage',['../structnats_j_s_stream_config.html#ab42e6e55de0dc949c8c6fcc42c412917',1,'natsJSStreamConfig']]],
   ['store',['Store',['../structnats_j_s_account_info.html#a0ec74bc1dc7d950dfd1a5b979818d466',1,'natsJSAccountInfo']]],
   ['stream',['Stream',['../structnats_j_s_pub_ack.html#a33a7b7ef5346afce536c709ec40d68f7',1,'natsJSPubAck']]],
+  ['streaminfo',['StreamInfo',['../structnats_j_s_options.html#a35b873c5236188d2ec5af3a14b1271cc',1,'natsJSOptions']]],
   ['streams',['Streams',['../structnats_j_s_account_info.html#a52dcd1c1af9d06ae926d874f1f139038',1,'natsJSAccountInfo']]],
   ['subject',['Subject',['../structnats_j_s_purge_options.html#a894c47b6bd0c08222dc68a9e302596a4',1,'natsJSPurgeOptions']]],
   ['subjects',['Subjects',['../structnats_j_s_stream_config.html#aa26d790f7693940d185eac4e9f9768e7',1,'natsJSStreamConfig']]],

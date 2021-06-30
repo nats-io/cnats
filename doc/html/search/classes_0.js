@@ -5,6 +5,7 @@ var searchData=
   ['natsjsapistats',['natsJSAPIStats',['../structnats_j_s_a_p_i_stats.html',1,'']]],
   ['natsjsclusterinfo',['natsJSClusterInfo',['../structnats_j_s_cluster_info.html',1,'']]],
   ['natsjsexternalstream',['natsJSExternalStream',['../structnats_j_s_external_stream.html',1,'']]],
+  ['natsjsloststreamdata',['natsJSLostStreamData',['../structnats_j_s_lost_stream_data.html',1,'']]],
   ['natsjsoptions',['natsJSOptions',['../structnats_j_s_options.html',1,'']]],
   ['natsjspeerinfo',['natsJSPeerInfo',['../structnats_j_s_peer_info.html',1,'']]],
   ['natsjsplacement',['natsJSPlacement',['../structnats_j_s_placement.html',1,'']]],
@@ -14,6 +15,7 @@ var searchData=
   ['natsjspurgeoptions',['natsJSPurgeOptions',['../structnats_j_s_purge_options.html',1,'']]],
   ['natsjsstreamconfig',['natsJSStreamConfig',['../structnats_j_s_stream_config.html',1,'']]],
   ['natsjsstreaminfo',['natsJSStreamInfo',['../structnats_j_s_stream_info.html',1,'']]],
+  ['natsjsstreaminfooptions',['natsJSStreamInfoOptions',['../structnats_j_s_stream_info_options.html',1,'']]],
   ['natsjsstreamsource',['natsJSStreamSource',['../structnats_j_s_stream_source.html',1,'']]],
   ['natsjsstreamsourceinfo',['natsJSStreamSourceInfo',['../structnats_j_s_stream_source_info.html',1,'']]],
   ['natsjsstreamstate',['natsJSStreamState',['../structnats_j_s_stream_state.html',1,'']]]

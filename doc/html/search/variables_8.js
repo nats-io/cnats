@@ -14,5 +14,6 @@ var searchData=
   ['mirror',['Mirror',['../structnats_j_s_stream_config.html#a8ec7f1c5651e476b1549a611d0f80621',1,'natsJSStreamConfig::Mirror()'],['../structnats_j_s_stream_info.html#af08173c3a1cff4759f0e7bdeaf5e5222',1,'natsJSStreamInfo::Mirror()']]],
   ['msg',['Msg',['../structnats_j_s_pub_ack_err.html#a01c90acadb3f4fc98929eabee5871032',1,'natsJSPubAckErr']]],
   ['msgid',['MsgId',['../structnats_j_s_pub_options.html#a1ce6804767ed569d59b564b0eecac2de',1,'natsJSPubOptions']]],
-  ['msgs',['Msgs',['../structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a',1,'natsJSStreamState']]]
+  ['msgs',['Msgs',['../structnats_j_s_lost_stream_data.html#aa6302b5e9583134140e0857ad22a9797',1,'natsJSLostStreamData::Msgs()'],['../structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a',1,'natsJSStreamState::Msgs()']]],
+  ['msgslen',['MsgsLen',['../structnats_j_s_lost_stream_data.html#ac1f758ab8a726402499f258b9a845721',1,'natsJSLostStreamData']]]
 ];

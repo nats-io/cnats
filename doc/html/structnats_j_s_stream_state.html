@@ -126,13 +126,26 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab00fd826a7a8c59cdb120b04e060f349"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2ba1c423dabe50925e9e7d45c53a790"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#ac2ba1c423dabe50925e9e7d45c53a790">FirstSeq</a></td></tr>
 <tr class="separator:ac2ba1c423dabe50925e9e7d45c53a790"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a286d4402e6d6ee9fcea321b2fdf7ab10"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a286d4402e6d6ee9fcea321b2fdf7ab10">FirstTime</a></td></tr>
+<tr class="separator:a286d4402e6d6ee9fcea321b2fdf7ab10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a726d171f9d40e38084d51ab97f3c0898"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a726d171f9d40e38084d51ab97f3c0898">LastSeq</a></td></tr>
 <tr class="separator:a726d171f9d40e38084d51ab97f3c0898"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8a7daa2489cc98dd014d521bede82f1"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#ad8a7daa2489cc98dd014d521bede82f1">LastTime</a></td></tr>
+<tr class="separator:ad8a7daa2489cc98dd014d521bede82f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3628320a8a495827e9db076c248440f"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f">NumDeleted</a></td></tr>
+<tr class="separator:af3628320a8a495827e9db076c248440f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94651208e7ae42e1d1e62f7ee7e3ff6b"><td class="memItemLeft" align="right" valign="top">uint64_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a94651208e7ae42e1d1e62f7ee7e3ff6b">Deleted</a></td></tr>
+<tr class="separator:a94651208e7ae42e1d1e62f7ee7e3ff6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a725edd90020f2f958156fa2a2e0c19a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a725edd90020f2f958156fa2a2e0c19a0">DeletedLen</a></td></tr>
+<tr class="separator:a725edd90020f2f958156fa2a2e0c19a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11ec011c5b3bfbf1504a19a2834a6ffc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_lost_stream_data.html">natsJSLostStreamData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a11ec011c5b3bfbf1504a19a2834a6ffc">Lost</a></td></tr>
+<tr class="separator:a11ec011c5b3bfbf1504a19a2834a6ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76f71b2c364ff491a0de5d5af6ab2ecc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_state.html#a76f71b2c364ff491a0de5d5af6ab2ecc">Consumers</a></td></tr>
 <tr class="separator:a76f71b2c364ff491a0de5d5af6ab2ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Information about the given stream. </p>
+<div class="textblock"><p>Information about the given stream</p>
+<dl class="section note"><dt>Note</dt><dd><code>FirstTime</code> and <code>LastTime</code> are message timestamps expressed as the number of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970. </dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="abf8e53bfafe35bb70c28d5d8e55f391a"></a>
 <div class="memitem">
@@ -170,12 +183,84 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a286d4402e6d6ee9fcea321b2fdf7ab10"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t natsJSStreamState::FirstTime</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a726d171f9d40e38084d51ab97f3c0898"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">uint64_t natsJSStreamState::LastSeq</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad8a7daa2489cc98dd014d521bede82f1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t natsJSStreamState::LastTime</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="af3628320a8a495827e9db076c248440f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t natsJSStreamState::NumDeleted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a94651208e7ae42e1d1e62f7ee7e3ff6b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t* natsJSStreamState::Deleted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a725edd90020f2f958156fa2a2e0c19a0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int natsJSStreamState::DeletedLen</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a11ec011c5b3bfbf1504a19a2834a6ffc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structnats_j_s_lost_stream_data.html">natsJSLostStreamData</a>* natsJSStreamState::Lost</td>
         </tr>
       </table>
 </div><div class="memdoc">

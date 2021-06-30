@@ -145,6 +145,7 @@ var searchData=
   ['natsjserrcode',['natsJSErrCode',['../status_8h.html#a11455f12227b601c67e9bff2b2af703d',1,'status.h']]],
   ['natsjsexternalstream',['natsJSExternalStream',['../structnats_j_s_external_stream.html',1,'natsJSExternalStream'],['../group__types_group.html#gadcd7a6d29ea21751ba9922ab798de3d2',1,'natsJSExternalStream():&#160;nats.h']]],
   ['natsjsexternalstream_5finit',['natsJSExternalStream_Init',['../group__js_assets_group.html#ga86d70ec24a33afb45aecbdc877884501',1,'nats.h']]],
+  ['natsjsloststreamdata',['natsJSLostStreamData',['../structnats_j_s_lost_stream_data.html',1,'natsJSLostStreamData'],['../group__types_group.html#gaa58dbf2f844747984eff9111a8b02dee',1,'natsJSLostStreamData():&#160;nats.h']]],
   ['natsjsoptions',['natsJSOptions',['../structnats_j_s_options.html',1,'natsJSOptions'],['../group__types_group.html#gabd9eacdfaa4e1eb16554026eff4d170c',1,'natsJSOptions():&#160;nats.h']]],
   ['natsjsoptions_5finit',['natsJSOptions_Init',['../group__js_group.html#ga21316a5ddfec7f346de99de3441f8205',1,'nats.h']]],
   ['natsjspeerinfo',['natsJSPeerInfo',['../structnats_j_s_peer_info.html',1,'natsJSPeerInfo'],['../group__types_group.html#ga24a62e09e157b958a8fa3eab5a4bec73',1,'natsJSPeerInfo():&#160;nats.h']]],
@@ -164,6 +165,8 @@ var searchData=
   ['natsjsstreamconfig_5finit',['natsJSStreamConfig_Init',['../group__js_assets_group.html#ga6969b50b1ad8ee2442d5e6be604b27e3',1,'nats.h']]],
   ['natsjsstreaminfo',['natsJSStreamInfo',['../structnats_j_s_stream_info.html',1,'natsJSStreamInfo'],['../group__types_group.html#ga3e372350ef24216c98592f0491588448',1,'natsJSStreamInfo():&#160;nats.h']]],
   ['natsjsstreaminfo_5fdestroy',['natsJSStreamInfo_Destroy',['../group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d',1,'nats.h']]],
+  ['natsjsstreaminfooptions',['natsJSStreamInfoOptions',['../structnats_j_s_stream_info_options.html',1,'natsJSStreamInfoOptions'],['../group__types_group.html#ga1a925ef15b2d2b436f2bb893dc0ac9ec',1,'natsJSStreamInfoOptions():&#160;nats.h']]],
+  ['natsjsstreaminfooptions_5finit',['natsJSStreamInfoOptions_Init',['../group__js_assets_group.html#ga32ca27b3af0d930cac68362566768ba7',1,'nats.h']]],
   ['natsjsstreamsource',['natsJSStreamSource',['../structnats_j_s_stream_source.html',1,'natsJSStreamSource'],['../group__types_group.html#gad0ce5471d2fcbe0073d759dc19d43514',1,'natsJSStreamSource():&#160;nats.h']]],
   ['natsjsstreamsource_5finit',['natsJSStreamSource_Init',['../group__js_assets_group.html#ga3c274a9ec83b77a02fd4745d2c8e4739',1,'nats.h']]],
   ['natsjsstreamsourceinfo',['natsJSStreamSourceInfo',['../structnats_j_s_stream_source_info.html',1,'natsJSStreamSourceInfo'],['../group__types_group.html#gafa98854b7601f629a3cb4cccbfc4fa72',1,'natsJSStreamSourceInfo():&#160;nats.h']]],
@@ -278,5 +281,6 @@ var searchData=
   ['natssubscription_5fwaitfordraincompletion',['natsSubscription_WaitForDrainCompletion',['../group__sub_group.html#ga0408c9b6e4ad4078ac0267656ace222d',1,'nats.h']]],
   ['natstokenhandler',['natsTokenHandler',['../group__callbacks_group.html#ga7d93a74068ac6e5f4406d70b7c1f0094',1,'nats.h']]],
   ['natsuserjwthandler',['natsUserJWTHandler',['../group__callbacks_group.html#ga258b30458134be90f17315c037f34b7b',1,'nats.h']]],
-  ['noack',['NoAck',['../structnats_j_s_stream_config.html#a269a6ca65ee8bfc53733130c7c5eb519',1,'natsJSStreamConfig']]]
+  ['noack',['NoAck',['../structnats_j_s_stream_config.html#a269a6ca65ee8bfc53733130c7c5eb519',1,'natsJSStreamConfig']]],
+  ['numdeleted',['NumDeleted',['../structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f',1,'natsJSStreamState']]]
 ];

@@ -124,6 +124,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a725bacffe83b05a5922e3d03dd32f6e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75dbc3eeaaf2d8588de091dd2bd6ba6e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source.html#a75dbc3eeaaf2d8588de091dd2bd6ba6e">OptStartSeq</a></td></tr>
 <tr class="separator:a75dbc3eeaaf2d8588de091dd2bd6ba6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc2544caab935b7b8131c83e8a145550"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source.html#adc2544caab935b7b8131c83e8a145550">OptStartTime</a></td></tr>
+<tr class="separator:adc2544caab935b7b8131c83e8a145550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38ff1717c9296fd54e5a4f061d746a21"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21">FilterSubject</a></td></tr>
 <tr class="separator:a38ff1717c9296fd54e5a4f061d746a21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a488be992bfde87792ee53026c571a161"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_external_stream.html">natsJSExternalStream</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source.html#a488be992bfde87792ee53026c571a161">External</a></td></tr>
@@ -132,7 +134,9 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dictates how streams can source from other streams.</p>
 <p>Initialize the object with <a class="el" href="group__js_assets_group.html#ga3c274a9ec83b77a02fd4745d2c8e4739" title="Initializes a stream source configuration structure. ">natsJSStreamSource_Init</a>.</p>
-<dl class="section note"><dt>Note</dt><dd>The strings are applications owned and will not be freed by the library.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The strings are applications owned and will not be freed by the library.</dd>
+<dd>
+The <code>OptStartTime</code> needs to be expressed as the number of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970.</dd></dl>
 <p>See <a class="el" href="structnats_j_s_stream_config.html">natsJSStreamConfig</a> for information on how to configure a stream. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a725bacffe83b05a5922e3d03dd32f6e6"></a>
@@ -153,6 +157,18 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint64_t natsJSStreamSource::OptStartSeq</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="adc2544caab935b7b8131c83e8a145550"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t natsJSStreamSource::OptStartTime</td>
         </tr>
       </table>
 </div><div class="memdoc">

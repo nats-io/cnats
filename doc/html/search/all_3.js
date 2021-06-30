@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['deleted',['Deleted',['../structnats_j_s_stream_state.html#a94651208e7ae42e1d1e62f7ee7e3ff6b',1,'natsJSStreamState']]],
+  ['deleteddetails',['DeletedDetails',['../structnats_j_s_stream_info_options.html#a736823c512b5bbe1ec7a9038a4d9c084',1,'natsJSStreamInfoOptions']]],
+  ['deletedlen',['DeletedLen',['../structnats_j_s_stream_state.html#a725edd90020f2f958156fa2a2e0c19a0',1,'natsJSStreamState']]],
   ['deliverprefix',['DeliverPrefix',['../structnats_j_s_external_stream.html#aca01d6d56d4eb77fc50378afee6e82ca',1,'natsJSExternalStream']]],
   ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]],
   ['discard',['Discard',['../structnats_j_s_stream_config.html#ad2a00eae1f2ffd97c88e36ee3790f427',1,'natsJSStreamConfig']]],

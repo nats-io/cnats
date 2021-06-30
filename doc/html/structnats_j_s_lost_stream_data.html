@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>NATS C Client with JetStream and Streaming support: natsJSStreamSourceInfo Struct Reference</title>
+<title>NATS C Client with JetStream and Streaming support: natsJSLostStreamData Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -90,7 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('structnats_j_s_stream_source_info.html','');});
+$(document).ready(function(){initNavTree('structnats_j_s_lost_stream_data.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -110,9 +110,9 @@ $(document).ready(function(){initNavTree('structnats_j_s_stream_source_info.html
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structnats_j_s_stream_source_info-members.html">List of all members</a>  </div>
+<a href="structnats_j_s_lost_stream_data-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">natsJSStreamSourceInfo Struct Reference<div class="ingroups"><a class="el" href="group__types_group.html">Types</a></div></div>  </div>
+<div class="title">natsJSLostStreamData Struct Reference<div class="ingroups"><a class="el" href="group__types_group.html">Types</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -120,60 +120,46 @@ $(document).ready(function(){initNavTree('structnats_j_s_stream_source_info.html
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a6df0a068b6632c812ea362ae5a7a16f1"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source_info.html#a6df0a068b6632c812ea362ae5a7a16f1">Name</a></td></tr>
-<tr class="separator:a6df0a068b6632c812ea362ae5a7a16f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c3145db8427bc541d3ba28cd1f95186"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnats_j_s_external_stream.html">natsJSExternalStream</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source_info.html#a2c3145db8427bc541d3ba28cd1f95186">External</a></td></tr>
-<tr class="separator:a2c3145db8427bc541d3ba28cd1f95186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad14e4c07ffea298aa3b52b340abb463b"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source_info.html#ad14e4c07ffea298aa3b52b340abb463b">Lag</a></td></tr>
-<tr class="separator:ad14e4c07ffea298aa3b52b340abb463b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a243d9edd6a2d532f1d74b37390ee4a"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a">Active</a></td></tr>
-<tr class="separator:a5a243d9edd6a2d532f1d74b37390ee4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6302b5e9583134140e0857ad22a9797"><td class="memItemLeft" align="right" valign="top">uint64_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_lost_stream_data.html#aa6302b5e9583134140e0857ad22a9797">Msgs</a></td></tr>
+<tr class="separator:aa6302b5e9583134140e0857ad22a9797"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1f758ab8a726402499f258b9a845721"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_lost_stream_data.html#ac1f758ab8a726402499f258b9a845721">MsgsLen</a></td></tr>
+<tr class="separator:ac1f758ab8a726402499f258b9a845721"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d5b78b336463f9fa295d51f5ae0b799"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnats_j_s_lost_stream_data.html#a8d5b78b336463f9fa295d51f5ae0b799">Bytes</a></td></tr>
+<tr class="separator:a8d5b78b336463f9fa295d51f5ae0b799"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Information about an upstream stream source. </p>
+<div class="textblock"><p>Information about messages that have been lost </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a6df0a068b6632c812ea362ae5a7a16f1"></a>
+<a class="anchor" id="aa6302b5e9583134140e0857ad22a9797"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char* natsJSStreamSourceInfo::Name</td>
+          <td class="memname">uint64_t* natsJSLostStreamData::Msgs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a2c3145db8427bc541d3ba28cd1f95186"></a>
+<a class="anchor" id="ac1f758ab8a726402499f258b9a845721"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structnats_j_s_external_stream.html">natsJSExternalStream</a>* natsJSStreamSourceInfo::External</td>
+          <td class="memname">int natsJSLostStreamData::MsgsLen</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="ad14e4c07ffea298aa3b52b340abb463b"></a>
+<a class="anchor" id="a8d5b78b336463f9fa295d51f5ae0b799"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint64_t natsJSStreamSourceInfo::Lag</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a5a243d9edd6a2d532f1d74b37390ee4a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int64_t natsJSStreamSourceInfo::Active</td>
+          <td class="memname">uint64_t natsJSLostStreamData::Bytes</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -189,7 +175,7 @@ Public Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="structnats_j_s_stream_source_info.html">natsJSStreamSourceInfo</a></li>
+    <li class="navelem"><a class="el" href="structnats_j_s_lost_stream_data.html">natsJSLostStreamData</a></li>
     <li class="footer">NATS.IO Supported By Synadia Communications Inc.
     <a href="http://www.nats.io">
     </a></li>

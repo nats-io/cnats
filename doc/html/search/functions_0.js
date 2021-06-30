@@ -81,6 +81,7 @@ var searchData=
   ['natsjspurgeoptions_5finit',['natsJSPurgeOptions_Init',['../group__js_assets_group.html#gad571cd853b4ae663405bf59f73e7ed5c',1,'nats.h']]],
   ['natsjsstreamconfig_5finit',['natsJSStreamConfig_Init',['../group__js_assets_group.html#ga6969b50b1ad8ee2442d5e6be604b27e3',1,'nats.h']]],
   ['natsjsstreaminfo_5fdestroy',['natsJSStreamInfo_Destroy',['../group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d',1,'nats.h']]],
+  ['natsjsstreaminfooptions_5finit',['natsJSStreamInfoOptions_Init',['../group__js_assets_group.html#ga32ca27b3af0d930cac68362566768ba7',1,'nats.h']]],
   ['natsjsstreamsource_5finit',['natsJSStreamSource_Init',['../group__js_assets_group.html#ga3c274a9ec83b77a02fd4745d2c8e4739',1,'nats.h']]],
   ['natslibevent_5fattach',['natsLibevent_Attach',['../group__libevent_functions.html#ga30c00f21a5251ee9fde09c1f2b429cd2',1,'libevent.h']]],
   ['natslibevent_5fdetach',['natsLibevent_Detach',['../group__libevent_functions.html#gaac76f5937329a8650f69c6bd8af36cd5',1,'libevent.h']]],

@@ -19,6 +19,7 @@ var group__types_group =
     [ "natsJSStreamSource", "structnats_j_s_stream_source.html", [
       [ "Name", "structnats_j_s_stream_source.html#a725bacffe83b05a5922e3d03dd32f6e6", null ],
       [ "OptStartSeq", "structnats_j_s_stream_source.html#a75dbc3eeaaf2d8588de091dd2bd6ba6e", null ],
+      [ "OptStartTime", "structnats_j_s_stream_source.html#adc2544caab935b7b8131c83e8a145550", null ],
       [ "FilterSubject", "structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21", null ],
       [ "External", "structnats_j_s_stream_source.html#a488be992bfde87792ee53026c571a161", null ]
     ] ],
@@ -31,8 +32,8 @@ var group__types_group =
       [ "MaxMsgs", "structnats_j_s_stream_config.html#a0707c98e03ced635a398858d9bf47568", null ],
       [ "MaxBytes", "structnats_j_s_stream_config.html#a3537c5e3e34828bfb3839d1864c6be25", null ],
       [ "MaxAge", "structnats_j_s_stream_config.html#a8e2bf3f913a2ce6e16cff348c85c5564", null ],
-      [ "MaxMsgSize", "structnats_j_s_stream_config.html#adb3df323d95fdab8fc9db7a90a144dcc", null ],
       [ "MaxMsgsPerSubject", "structnats_j_s_stream_config.html#a1cabe12c2e054753ee25fc81ffa24816", null ],
+      [ "MaxMsgSize", "structnats_j_s_stream_config.html#adb3df323d95fdab8fc9db7a90a144dcc", null ],
       [ "Discard", "structnats_j_s_stream_config.html#ad2a00eae1f2ffd97c88e36ee3790f427", null ],
       [ "Storage", "structnats_j_s_stream_config.html#ab42e6e55de0dc949c8c6fcc42c412917", null ],
       [ "Replicas", "structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8", null ],
@@ -44,11 +45,22 @@ var group__types_group =
       [ "Sources", "structnats_j_s_stream_config.html#ae3ed8602dd726b55be7b906fbe29fddc", null ],
       [ "SourcesLen", "structnats_j_s_stream_config.html#ac5249580736136221b34f37397846264", null ]
     ] ],
+    [ "natsJSLostStreamData", "structnats_j_s_lost_stream_data.html", [
+      [ "Msgs", "structnats_j_s_lost_stream_data.html#aa6302b5e9583134140e0857ad22a9797", null ],
+      [ "MsgsLen", "structnats_j_s_lost_stream_data.html#ac1f758ab8a726402499f258b9a845721", null ],
+      [ "Bytes", "structnats_j_s_lost_stream_data.html#a8d5b78b336463f9fa295d51f5ae0b799", null ]
+    ] ],
     [ "natsJSStreamState", "structnats_j_s_stream_state.html", [
       [ "Msgs", "structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a", null ],
       [ "Bytes", "structnats_j_s_stream_state.html#ab00fd826a7a8c59cdb120b04e060f349", null ],
       [ "FirstSeq", "structnats_j_s_stream_state.html#ac2ba1c423dabe50925e9e7d45c53a790", null ],
+      [ "FirstTime", "structnats_j_s_stream_state.html#a286d4402e6d6ee9fcea321b2fdf7ab10", null ],
       [ "LastSeq", "structnats_j_s_stream_state.html#a726d171f9d40e38084d51ab97f3c0898", null ],
+      [ "LastTime", "structnats_j_s_stream_state.html#ad8a7daa2489cc98dd014d521bede82f1", null ],
+      [ "NumDeleted", "structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f", null ],
+      [ "Deleted", "structnats_j_s_stream_state.html#a94651208e7ae42e1d1e62f7ee7e3ff6b", null ],
+      [ "DeletedLen", "structnats_j_s_stream_state.html#a725edd90020f2f958156fa2a2e0c19a0", null ],
+      [ "Lost", "structnats_j_s_stream_state.html#a11ec011c5b3bfbf1504a19a2834a6ffc", null ],
       [ "Consumers", "structnats_j_s_stream_state.html#a76f71b2c364ff491a0de5d5af6ab2ecc", null ]
     ] ],
     [ "natsJSPeerInfo", "structnats_j_s_peer_info.html", [
@@ -66,13 +78,13 @@ var group__types_group =
     ] ],
     [ "natsJSStreamSourceInfo", "structnats_j_s_stream_source_info.html", [
       [ "Name", "structnats_j_s_stream_source_info.html#a6df0a068b6632c812ea362ae5a7a16f1", null ],
-      [ "Active", "structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a", null ],
+      [ "External", "structnats_j_s_stream_source_info.html#a2c3145db8427bc541d3ba28cd1f95186", null ],
       [ "Lag", "structnats_j_s_stream_source_info.html#ad14e4c07ffea298aa3b52b340abb463b", null ],
-      [ "External", "structnats_j_s_stream_source_info.html#a2c3145db8427bc541d3ba28cd1f95186", null ]
+      [ "Active", "structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a", null ]
     ] ],
     [ "natsJSStreamInfo", "structnats_j_s_stream_info.html", [
       [ "Config", "structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3", null ],
-      [ "Created", "structnats_j_s_stream_info.html#a19cffb21277e14b19b04a4503f54f184", null ],
+      [ "Created", "structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19", null ],
       [ "State", "structnats_j_s_stream_info.html#ada691d28b73b9620f1546ef463efb493", null ],
       [ "Cluster", "structnats_j_s_stream_info.html#a292ff50f4d6f2f70808499ffe278f659", null ],
       [ "Mirror", "structnats_j_s_stream_info.html#af08173c3a1cff4759f0e7bdeaf5e5222", null ],
@@ -114,6 +126,9 @@ var group__types_group =
       [ "Sequence", "structnats_j_s_purge_options.html#a9b2336ed218e1fb7189bb76c98a88a29", null ],
       [ "Keep", "structnats_j_s_purge_options.html#a08b34404c58eecb4fc1faa144ca5294d", null ]
     ] ],
+    [ "natsJSStreamInfoOptions", "structnats_j_s_stream_info_options.html", [
+      [ "DeletedDetails", "structnats_j_s_stream_info_options.html#a736823c512b5bbe1ec7a9038a4d9c084", null ]
+    ] ],
     [ "natsJSOptions", "structnats_j_s_options.html", [
       [ "Prefix", "structnats_j_s_options.html#af3dbdcf6326bf1cf3d0feb64b737b41b", null ],
       [ "Domain", "structnats_j_s_options.html#ab51a4042e1f0a840023a2ceeae2263d7", null ],
@@ -122,7 +137,8 @@ var group__types_group =
       [ "PublishAsyncErrHandler", "structnats_j_s_options.html#a8d484c1b12b2c2ea2445c690536b89e8", null ],
       [ "PublishAsyncErrHandlerClosure", "structnats_j_s_options.html#a9cafe89994a2a1edf9de1feaecf43ca9", null ],
       [ "PublishAsyncStallWait", "structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c", null ],
-      [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ]
+      [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ],
+      [ "StreamInfo", "structnats_j_s_options.html#a35b873c5236188d2ec5af3a14b1271cc", null ]
     ] ],
     [ "natsConnection", "group__types_group.html#gaf88dca0a18efb5c5e994d265a9f04aec", null ],
     [ "natsStatistics", "group__types_group.html#ga57a4b8c7109e2773878655722ce028aa", null ],
@@ -136,6 +152,7 @@ var group__types_group =
     [ "natsJSExternalStream", "group__types_group.html#gadcd7a6d29ea21751ba9922ab798de3d2", null ],
     [ "natsJSStreamSource", "group__types_group.html#gad0ce5471d2fcbe0073d759dc19d43514", null ],
     [ "natsJSStreamConfig", "group__types_group.html#gabb0b8c3e01b8d3c31871ca165afc9086", null ],
+    [ "natsJSLostStreamData", "group__types_group.html#gaa58dbf2f844747984eff9111a8b02dee", null ],
     [ "natsJSStreamState", "group__types_group.html#ga9134c9bac58b547924c10760496644d3", null ],
     [ "natsJSPeerInfo", "group__types_group.html#ga24a62e09e157b958a8fa3eab5a4bec73", null ],
     [ "natsJSClusterInfo", "group__types_group.html#ga8d90f93d145459940c62291b5a8e1ce7", null ],
@@ -147,6 +164,7 @@ var group__types_group =
     [ "natsJSPubAck", "group__types_group.html#ga8f102acafd680ec83c71d49cedd80203", null ],
     [ "natsJSPubAckErr", "group__types_group.html#gaa236f3abe77ed87fee9421509210cc8c", null ],
     [ "natsJSPurgeOptions", "group__types_group.html#ga5718ed2a2d49a7c311e10ef383635163", null ],
+    [ "natsJSStreamInfoOptions", "group__types_group.html#ga1a925ef15b2d2b436f2bb893dc0ac9ec", null ],
     [ "natsJSOptions", "group__types_group.html#gabd9eacdfaa4e1eb16554026eff4d170c", null ],
     [ "stanConnection", "group__types_group.html#ga9e826493769d23086cfccefe95cdf64c", null ],
     [ "stanSubscription", "group__types_group.html#gae4dae869fb614536f0f027c2e2660cc5", null ],
