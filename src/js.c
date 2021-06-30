@@ -43,13 +43,40 @@ const int        jsBase                  = 62;
 #define jsReplyPrefixLen    (NATS_INBOX_PRE_LEN + (jsReplyTokenSize) + 1)
 
 static void
+_destroyPurgeOptions(natsJSPurgeOptions *o)
+{
+    if (o == NULL)
+        return;
+
+    NATS_FREE((char*) o->Subject);
+    NATS_FREE(o);
+}
+
+static void
+_destroyStreamInfoOptions(natsJSStreamInfoOptions *o)
+{
+    if (o == NULL)
+        return;
+
+    NATS_FREE(o);
+}
+
+static void
+_destroyOptions(natsJSOptions *o)
+{
+    NATS_FREE((char*) o->Prefix);
+    _destroyPurgeOptions(o->Purge);
+    _destroyStreamInfoOptions(o->StreamInfo);
+}
+
+static void
 _freeContext(natsJS *js)
 {
     natsConnection *nc = NULL;
 
     natsStrHash_Destroy(js->pm);
     natsSubscription_Destroy(js->rsub);
-    NATS_FREE((char*) js->opts.Prefix);
+    _destroyOptions(&(js->opts));
     NATS_FREE(js->rpre);
     natsCondition_Destroy(js->cond);
     natsMutex_Destroy(js->mu);
@@ -169,6 +196,48 @@ natsJS_freeApiRespContent(natsJSApiResponse *ar)
     NATS_FREE(ar->Error.Description);
 }
 
+static natsStatus
+_copyPurgeOptions(natsJS *js, natsJSPurgeOptions *o)
+{
+    natsStatus          s   = NATS_OK;
+    natsJSPurgeOptions  *po = NULL;
+
+    po = (natsJSPurgeOptions*) NATS_CALLOC(1, sizeof(natsJSPurgeOptions));
+    if (po == NULL)
+        return nats_setDefaultError(NATS_NO_MEMORY);
+
+    po->Sequence = o->Sequence;
+    po->Keep     = o->Keep;
+
+    if (!nats_IsStringEmpty(o->Subject))
+    {
+        po->Subject = NATS_STRDUP(o->Subject);
+        if (po->Subject == NULL)
+            s = nats_setDefaultError(NATS_NO_MEMORY);
+    }
+    if (s == NATS_OK)
+        js->opts.Purge = po;
+    else
+        _destroyPurgeOptions(po);
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+static natsStatus
+_copyStreamInfoOptions(natsJS *js, natsJSStreamInfoOptions *o)
+{
+    natsJSStreamInfoOptions *so = NULL;
+
+    so = (natsJSStreamInfoOptions*) NATS_CALLOC(1, sizeof(natsJSStreamInfoOptions));
+    if (so == NULL)
+        return nats_setDefaultError(NATS_NO_MEMORY);
+
+    so->DeletedDetails = o->DeletedDetails;
+    js->opts.StreamInfo = so;
+
+    return NATS_OK;
+}
+
 natsStatus
 natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
 {
@@ -233,6 +302,10 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
         js->opts.Wait = jsDefaultRequestWait;
     if (js->opts.PublishAsyncStallWait == 0)
         js->opts.PublishAsyncStallWait = jsDefaultStallWait;
+    if ((s == NATS_OK) && (opts != NULL) && (opts->Purge != NULL))
+        s = _copyPurgeOptions(js, opts->Purge);
+    if ((s == NATS_OK) && (opts != NULL) && (opts->StreamInfo != NULL))
+        s = _copyStreamInfoOptions(js, opts->StreamInfo);
 
     if (s == NATS_OK)
         *new_js = js;
@@ -282,6 +355,8 @@ natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *op
             resOpts->Prefix = (opts == NULL || nats_IsStringEmpty(opts->Prefix)) ? js->opts.Prefix : opts->Prefix;
         // Take provided one or default to context's.
         resOpts->Wait = (opts == NULL || opts->Wait <= 0) ? js->opts.Wait : opts->Wait;
+        resOpts->Purge = (opts == NULL || opts->Purge == NULL) ? js->opts.Purge : opts->Purge;
+        resOpts->StreamInfo = (opts == NULL || opts->StreamInfo == NULL) ? js->opts.StreamInfo : opts->StreamInfo;
         *nc = js->nc;
         natsJS_unlock(js);
     }

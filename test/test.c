@@ -3671,6 +3671,186 @@ test_natsJSON(void)
                 && (strstr(nats_GetLastError(NULL), " nested objects of 10") != NULL));
     nats_clearLastError();
     jsonMaxNested = JSON_MAX_NEXTED;
+
+    // Negative tests
+    {
+        const char *badTimes[] = {
+            "{\"time\":\"too small\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456789-08:00X\"}",
+            "{\"time\":\"2021-06-23T18:22:00X\"}",
+            "{\"time\":\"2021-06-23T18:22:00-0800\"}",
+            "{\"time\":\"2021-06-23T18:22:00-08.00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.abcZ\"}",
+            "{\"time\":\"2021-06-23T18:22:00.abc-08:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234567890-08:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234567890Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123-0800\"}",
+        };
+        const char *errorsTxt[] = {
+            "too small",
+            "too long",
+            "invalid UTC offset",
+            "invalid UTC offset",
+            "invalid UTC offset",
+            "is invalid",
+            "is invalid",
+            "is invalid",
+            "too long",
+            "second fraction",
+            "invalid UTC offset",
+        };
+        for (i=0; i<(int)(sizeof(errorsTxt)/sizeof(char*)); i++)
+        {
+            longVal = 0;
+            snprintf(buf, sizeof(buf), "Bad time '%s': ", badTimes[i]);
+            test(buf);
+            s = nats_JSONParse(&json, badTimes[i], -1);
+            IFOK(s, nats_JSONGetTime(json, "time", &longVal));
+            testCond((s != NATS_OK)
+                        && (json != NULL)
+                        && (longVal == 0)
+                        && (strstr(nats_GetLastError(NULL), errorsTxt[i]) != NULL));
+            nats_clearLastError();
+            nats_JSONDestroy(json);
+            json = NULL;
+        }
+    }
+
+    // Positive tests
+    {
+        const char *goodTimes[] = {
+            "{\"time\":\"0001-01-01T00:00:00Z\"}",
+            "{\"time\":\"1970-01-01T01:00:00+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234567Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345678Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456789Z\"}",
+            "{\"time\":\"2021-06-23T18:22:00-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234567-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345678-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456789-07:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.1234567+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.12345678+01:00\"}",
+            "{\"time\":\"2021-06-23T18:22:00.123456789+01:00\"}",
+        };
+        int64_t results[] = {
+            0,
+            0,
+            1624472520000000000,
+            1624472520100000000,
+            1624472520120000000,
+            1624472520123000000,
+            1624472520123400000,
+            1624472520123450000,
+            1624472520123456000,
+            1624472520123456700,
+            1624472520123456780,
+            1624472520123456789,
+            1624497720000000000,
+            1624497720100000000,
+            1624497720120000000,
+            1624497720123000000,
+            1624497720123400000,
+            1624497720123450000,
+            1624497720123456000,
+            1624497720123456700,
+            1624497720123456780,
+            1624497720123456789,
+            1624468920000000000,
+            1624468920100000000,
+            1624468920120000000,
+            1624468920123000000,
+            1624468920123400000,
+            1624468920123450000,
+            1624468920123456000,
+            1624468920123456700,
+            1624468920123456780,
+            1624468920123456789,
+        };
+        for (i=0; i<(int)(sizeof(results)/sizeof(int64_t)); i++)
+        {
+            longVal = 0;
+            snprintf(buf, sizeof(buf), "Time '%s' -> %" PRId64 ": ", goodTimes[i], results[i]);
+            test(buf);
+            s = nats_JSONParse(&json, goodTimes[i], -1);
+            IFOK(s, nats_JSONGetTime(json, "time", &longVal));
+            testCond((s == NATS_OK)
+                        && (json != NULL)
+                        && (longVal == results[i]));
+            nats_JSONDestroy(json);
+            json = NULL;
+        }
+    }
+}
+
+static void
+test_natsEncodeTimeUTC(void)
+{
+    natsStatus  s;
+    char        buf[36] = {'\0'};
+    int         i;
+    int64_t     times[] = {
+        0,
+        1624472520000000000,
+        1624472520100000000,
+        1624472520120000000,
+        1624472520123000000,
+        1624472520123400000,
+        1624472520123450000,
+        1624472520123456000,
+        1624472520123456700,
+        1624472520123456780,
+        1624472520123456789,
+    };
+    const char  *results[] = {
+        "0001-01-01T00:00:00Z",
+        "2021-06-23T18:22:00Z",
+        "2021-06-23T18:22:00.1Z",
+        "2021-06-23T18:22:00.12Z",
+        "2021-06-23T18:22:00.123Z",
+        "2021-06-23T18:22:00.1234Z",
+        "2021-06-23T18:22:00.12345Z",
+        "2021-06-23T18:22:00.123456Z",
+        "2021-06-23T18:22:00.1234567Z",
+        "2021-06-23T18:22:00.12345678Z",
+        "2021-06-23T18:22:00.123456789Z",
+    };
+
+    test("Buffer too small: ");
+    s = nats_EncodeTimeUTC(buf, 10, 0);
+    testCond((s == NATS_INVALID_ARG)
+                && (strstr(nats_GetLastError(NULL), "too small") != NULL));
+    nats_clearLastError();
+
+    for (i=0; i<(int)(sizeof(times)/sizeof(int64_t)); i++)
+    {
+        char txt[100];
+
+        snprintf(txt, sizeof(txt), "Time %" PRId64 " -> '%s': ", times[i], results[i]);
+        test(txt);
+        s = nats_EncodeTimeUTC(buf, sizeof(buf), times[i]);
+        testCond((s == NATS_OK) && (strcmp(buf, results[i]) == 0));
+    }
 }
 
 static void
@@ -19992,6 +20172,52 @@ test_JetStreamUnmarshalAccountInfo(void)
 }
 
 static void
+test_JetStreamUnmarshalStreamState(void)
+{
+    natsStatus          s;
+    nats_JSON           *json = NULL;
+    natsJSStreamState   state;
+
+    test("Unmarshal: ");
+    s = nats_JSONParse(&json, "{\"messages\":1,\"bytes\":2,"\
+        "\"first_seq\":3,\"first_ts\":\"2021-06-23T18:22:00.123Z\","\
+        "\"last_seq\":4,\"last_ts\":\"2021-06-23T18:22:00.123456789Z\","\
+        "\"num_deleted\":5,\"deleted\":[6,7,8,9,10],"\
+        "\"lost\":{\"msgs\":[11,12,13],\"bytes\":14},"\
+        "\"consumer_count\":15}", -1);
+    IFOK(s, natsJS_unmarshalStreamState(&state, json));
+    testCond((s == NATS_OK) && (json != NULL)
+                && (state.Msgs == 1)
+                && (state.Bytes == 2)
+                && (state.FirstSeq == 3)
+                && (state.FirstTime == 1624472520123000000)
+                && (state.LastSeq == 4)
+                && (state.LastTime == 1624472520123456789)
+                && (state.NumDeleted == 5)
+                && (state.Deleted != NULL)
+                && (state.DeletedLen == 5)
+                && (state.Deleted[0] == 6)
+                && (state.Deleted[1] == 7)
+                && (state.Deleted[2] == 8)
+                && (state.Deleted[3] == 9)
+                && (state.Deleted[4] == 10)
+                && (state.Lost != NULL)
+                && (state.Lost->MsgsLen == 3)
+                && (state.Lost->Msgs != NULL)
+                && (state.Lost->Msgs[0] == 11)
+                && (state.Lost->Msgs[1] == 12)
+                && (state.Lost->Msgs[2] == 13)
+                && (state.Lost->Bytes == 14)
+                && (state.Consumers == 15));
+
+    test("Cleanup: ");
+    natsJS_cleanStreamState(&state);
+    testCond(true);
+
+    nats_JSONDestroy(json);
+}
+
+static void
 test_JetStreamUnmarshalStreamConfig(void)
 {
     natsStatus          s;
@@ -20108,6 +20334,7 @@ test_JetStreamMarshalStreamConfig(void)
     natsBuffer           *buf           = NULL;
     nats_JSON            *json          = NULL;
     natsJSStreamConfig   *rsc           = NULL;
+    int64_t              optStartTime   = 1624583232123456000;
 
     natsJSStreamConfig_Init(&sc);
     sc.Name = "MyStream";
@@ -20136,6 +20363,7 @@ test_JetStreamMarshalStreamConfig(void)
     natsJSStreamSource_Init(&m);
     m.Name = "AStream";
     m.OptStartSeq = 100;
+    m.OptStartTime = optStartTime;
     m.FilterSubject = "foo";
     natsJSExternalStream_Init(&esm);
     esm.APIPrefix = "mirror.prefix";
@@ -20199,6 +20427,7 @@ test_JetStreamMarshalStreamConfig(void)
                 && (rsc->Mirror != NULL)
                 && (strcmp(rsc->Mirror->Name, "AStream") == 0)
                 && (rsc->Mirror->OptStartSeq == 100)
+                && (rsc->Mirror->OptStartTime == optStartTime)
                 && (strcmp(rsc->Mirror->FilterSubject, "foo") == 0)
                 && (rsc->Mirror->External != NULL)
                 && (strcmp(rsc->Mirror->External->APIPrefix, "mirror.prefix") == 0)
@@ -20496,6 +20725,7 @@ test_JetStreamMgtStreams(void)
     char                cmdLine[1024] = {'\0'};
     natsJSOptions       o;
     natsJSPurgeOptions  po;
+    natsJSStreamInfoOptions so;
 
     _makeUniqueDir(datastore, sizeof(datastore), "datastore_");
 
@@ -20735,6 +20965,36 @@ test_JetStreamMgtStreams(void)
                 && (si == NULL)
                 && (nats_GetLastError(NULL) == NULL)
                 && ((jerr == 0) || (jerr == JSStreamNotFoundErr)));
+
+    test("Stream info options init (bad args): ");
+    s = natsJSStreamInfoOptions_Init(NULL);
+    testCond(s == NATS_INVALID_ARG);
+    nats_clearLastError();
+
+    natsSubscription_Destroy(sub);
+    sub = NULL;
+    test("Create sub to check stream info req: ");
+    s = natsConnection_SubscribeSync(&sub, nc, "$JS.API.STREAM.INFO.TEST3");
+    testCond(s == NATS_OK);
+
+    test("StreamInfo with detailed delete: ");
+    s = natsJSStreamInfoOptions_Init(&so);
+    if (s == NATS_OK)
+    {
+        so.DeletedDetails = true;
+        o.StreamInfo = &so;
+    }
+    IFOK(s, natsJS_GetStreamInfo(&si, js, "TEST3", &o, &jerr));
+    IFOK(s, natsSubscription_NextMsg(&resp, sub, 1000));
+    testCond((s == NATS_OK)
+                && (resp != NULL)
+                && (natsMsg_GetDataLength(resp) > 0)
+                && (strncmp("{\"deleted_details\":true}",
+                            natsMsg_GetData(resp),
+                            natsMsg_GetDataLength(resp)) == 0));
+    natsJSStreamInfo_Destroy(si);
+    natsMsg_Destroy(resp);
+    resp = NULL;
 
     natsJS_DestroyContext(js);
     natsSubscription_Destroy(sub);
@@ -23499,6 +23759,7 @@ static testInfo allTests[] =
     {"natsSock_IPOrder",                test_natsSock_IPOrder},
     {"natsSock_ReadLine",               test_natsSock_ReadLine},
     {"natsJSON",                        test_natsJSON},
+    {"natsEncodeTimeUTC",               test_natsEncodeTimeUTC},
     {"natsErrWithLongText",             test_natsErrWithLongText},
     {"natsErrStackMoreThanMaxFrames",   test_natsErrStackMoreThanMaxFrames},
     {"natsMsg",                         test_natsMsg},
@@ -23688,6 +23949,7 @@ static testInfo allTests[] =
     {"LameDuckMode",                    test_LameDuckMode},
 
     {"JetStreamUnmarshalAccInfo",       test_JetStreamUnmarshalAccountInfo},
+    {"JetStreamUnmarshalStreamState",   test_JetStreamUnmarshalStreamState},
     {"JetStreamUnmarshalStreamCfg",     test_JetStreamUnmarshalStreamConfig},
     {"JetStreamMarshalStreamCfg",       test_JetStreamMarshalStreamConfig},
     {"JetStreamContext",                test_JetStreamContext},

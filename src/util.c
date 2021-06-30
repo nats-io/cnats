@@ -1184,6 +1184,145 @@ nats_JSONGetObject(nats_JSON *json, const char *fieldName, nats_JSON **value)
 }
 
 natsStatus
+nats_JSONGetTime(nats_JSON *json, const char *fieldName, int64_t *timeUTC)
+{
+    natsStatus  s           = NATS_OK;
+    char        *str        = NULL;
+    char        *dotPos     = NULL;
+    char        utcOff[7]   = {'\0'};
+    int64_t     nanosecs    = 0;
+    char        *p          = NULL;
+    char        orgStr[35]  = {'\0'};
+    char        timeStr[35] = {'\0'};
+    char        offSign     = '+';
+    int         offHours    = 0;
+    int         offMin      = 0;
+    int         i, l;
+    struct tm   tp;
+
+    s = nats_JSONGetStr(json, fieldName, &str);
+    if (s == NATS_NOT_FOUND)
+        return s;
+    else if (s != NATS_OK)
+        return NATS_UPDATE_ERR_STACK(s);
+
+    // Check for "0"
+    if (strcmp(str, "0001-01-01T00:00:00Z") == 0)
+    {
+        *timeUTC = 0;
+        goto END;
+    }
+
+    l = (int) strlen(str);
+    // The smallest date/time should be: "YYYY:MM:DDTHH:MM:SSZ", which is 20
+    // while the longest should be: "YYYY:MM:DDTHH:MM:SS.123456789-12:34" which is 35
+    if ((l < 20) || (l > (int) sizeof(timeStr)))
+    {
+        if (l < 20)
+            s = nats_setError(NATS_INVALID_ARG, "time '%s' too small", str);
+        else
+            s = nats_setError(NATS_INVALID_ARG, "time '%s' too long", str);
+        goto END;
+    }
+
+    snprintf(orgStr, sizeof(orgStr), "%s", str);
+    memset(&tp, 0, sizeof(struct tm));
+
+    // If ends with 'Z', the time is already UTC
+    if ((str[l-1] == 'Z') || (str[l-1] == 'z'))
+    {
+        // Set the timezone to "+00:00"
+        snprintf(utcOff, sizeof(utcOff), "%s", "+00:00");
+        str[l-1] = '\0';
+    }
+    else
+    {
+        // Make sure the UTC offset comes as "+12:34" (or "-12:34").
+        p = str+l-6;
+        if ((strlen(p) != 6) || ((*p != '+') && (*p != '-')) || (*(p+3) != ':'))
+        {
+            s = nats_setError(NATS_INVALID_ARG, "time '%s' has invalid UTC offset", orgStr);
+            goto END;
+        }
+        snprintf(utcOff, sizeof(utcOff), "%s", p);
+        // Set end of 'str' to beginning of the offset.
+        *p = '\0';
+    }
+
+    // Check if there is below seconds precision
+    dotPos = strstr(str, ".");
+    if (dotPos != NULL)
+    {
+        int64_t val = 0;
+
+        p = (char*) (dotPos+1);
+        // Need to recompute the length, since it has changed.
+        l = (int) strlen(p);
+
+        val = nats_ParseInt64((const char*) p, l);
+        if (val == -1)
+        {
+            s = nats_setError(NATS_INVALID_ARG, "time '%s' is invalid", orgStr);
+            goto END;
+        }
+
+        for (i=0; i<9-l; i++)
+            val *= 10;
+
+        if (val > 999999999)
+        {
+            s = nats_setError(NATS_INVALID_ARG, "time '%s' second fraction too big", orgStr);
+            goto END;
+        }
+
+        nanosecs = val;
+        // Set end of string at the place of the '.'
+        *dotPos = '\0';
+    }
+
+    snprintf(timeStr, sizeof(timeStr), "%s%s", str, utcOff);
+    if (sscanf(timeStr, "%4d-%2d-%2dT%2d:%2d:%2d%c%2d:%2d",
+               &tp.tm_year, &tp.tm_mon, &tp.tm_mday, &tp.tm_hour, &tp.tm_min, &tp.tm_sec,
+               &offSign, &offHours, &offMin) == 9)
+    {
+        int64_t res = 0;
+        int64_t off = 0;
+
+        tp.tm_year -= 1900;
+        tp.tm_mon--;
+        tp.tm_isdst = 0;
+#ifdef _WIN32
+        res = (int64_t) _mkgmtime64(&tp);
+#else
+        res = (int64_t) timegm(&tp);
+#endif
+        if (res == -1)
+        {
+            s = nats_setError(NATS_ERR, "error parsing time '%s'", orgStr);
+            goto END;
+        }
+        // Compute the offset
+        off = (int64_t) ((offHours * 60 * 60) + (offMin * 60));
+        // If UTC offset is positive, then we need to remove to get down to UTC time,
+        // where as if negative, we need to add the offset to get up to UTC time.
+        if (offSign == '+')
+            off *= (int64_t) -1;
+
+        res *= (int64_t) 1E9;
+        res += (off * (int64_t) 1E9);
+        res += nanosecs;
+        *timeUTC = res;
+    }
+    else
+    {
+        s = nats_setError(NATS_ERR, "error parsing time '%s'", orgStr);
+    }
+END:
+    NATS_FREE(str);
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+natsStatus
 nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, nats_JSONField **retField)
 {
     nats_JSONField  *field   = NULL;
@@ -1350,6 +1489,55 @@ nats_JSONDestroy(nats_JSON *json)
     natsStrHash_Destroy(json->fields);
     NATS_FREE(json->str);
     NATS_FREE(json);
+}
+
+natsStatus
+nats_EncodeTimeUTC(char *buf, size_t bufLen, int64_t timeUTC)
+{
+    int64_t     t  = timeUTC / (int64_t) 1E9;
+    int64_t     ns = timeUTC - ((int64_t) t * (int64_t) 1E9);
+    struct tm   tp;
+    int         n;
+
+    // We will encode at most: "YYYY:MM:DDTHH:MM:SS.123456789+12:34"
+    // so we need at least 35+1 characters.
+    if (bufLen < 36)
+        return nats_setError(NATS_INVALID_ARG,
+                             "buffer to encode UTC time is too small (%d), needs 36",
+                             (int) bufLen);
+
+    if (timeUTC == 0)
+    {
+        snprintf(buf, bufLen, "%s", "0001-01-01T00:00:00Z");
+        return NATS_OK;
+    }
+
+    memset(&tp, 0, sizeof(struct tm));
+#ifdef _WIN32
+    _gmtime64_s(&tp, (const __time64_t*) &t);
+#else
+    gmtime_r((const time_t*) &t, &tp);
+#endif
+    n = (int) strftime(buf, bufLen, "%FT%T", &tp);
+    if (n == 0)
+        return nats_setDefaultError(NATS_ERR);
+
+    if (ns > 0)
+    {
+        char nsBuf[15];
+        int i, nd;
+
+        nd = snprintf(nsBuf, sizeof(nsBuf), ".%" PRId64, ns);
+        for (; (nd > 0) && (nsBuf[nd-1] == '0'); )
+            nd--;
+
+        for (i=0; i<nd; i++)
+            *(buf+n++) = nsBuf[i];
+    }
+    *(buf+n) = 'Z';
+    *(buf+n+1) = '\0';
+
+    return NATS_OK;
 }
 
 void

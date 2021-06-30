@@ -126,6 +126,9 @@ natsStatus
 nats_JSONGetObject(nats_JSON *json, const char *fieldName, nats_JSON **value);
 
 natsStatus
+nats_JSONGetTime(nats_JSON *json, const char *fieldName, int64_t *timeUTC);
+
+natsStatus
 nats_JSONGetArrayField(nats_JSON *json, const char *fieldName, int fieldType, nats_JSONField **retField);
 
 natsStatus
@@ -178,6 +181,9 @@ nats_JSONGetArrayArray(nats_JSON *json, const char *fieldName, nats_JSONArray **
 
 void
 nats_JSONDestroy(nats_JSON *json);
+
+natsStatus
+nats_EncodeTimeUTC(char *buf, size_t bufLen, int64_t timeUTC);
 
 void
 nats_Base32_Init(void);

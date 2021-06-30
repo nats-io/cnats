@@ -245,12 +245,16 @@ typedef struct natsJSExternalStream
  *
  * \note The strings are applications owned and will not be freed by the library.
  *
+ * \note The `OptStartTime` needs to be expressed as the number of nanoseconds
+ * passed since 00:00:00 UTC Thursday, 1 January 1970.
+ *
  * See #natsJSStreamConfig for information on how to configure a stream.
  */
 typedef struct natsJSStreamSource
 {
         const char              *Name;          //`json:"name"`
         uint64_t                OptStartSeq;    //`json:"opt_start_seq,omitempty"`
+        int64_t                 OptStartTime;   //`json:"opt_start_time,omitempty"`
         const char              *FilterSubject; //`json:"filter_subject,omitempty"`
         natsJSExternalStream    *External;      //`json:"external,omitempty"`
 
@@ -331,8 +335,8 @@ typedef struct natsJSStreamConfig {
         int64_t                 MaxMsgs;            //`json:"max_msgs"`
         int64_t                 MaxBytes;           //`json:"max_bytes"`
         int64_t                 MaxAge;             //`json:"max_age"`
-        int32_t                 MaxMsgSize;         //`json:"max_msg_size,omitempty"`
         int64_t                 MaxMsgsPerSubject;  //`json:"max_msgs_per_subject"`
+        int32_t                 MaxMsgSize;         //`json:"max_msg_size,omitempty"`
         natsJSDiscardPolicy     Discard;            //`json:"discard"`
         natsJSStorageType       Storage;            //`json:"storage"`
         int                     Replicas;           //`json:"num_replicas"`
@@ -347,15 +351,35 @@ typedef struct natsJSStreamConfig {
 } natsJSStreamConfig;
 
 /**
- * Information about the given stream.
+ * Information about messages that have been lost
+ */
+typedef struct natsJSLostStreamData
+{
+        uint64_t                *Msgs;          //`json:"msgs"`
+        int                     MsgsLen;
+        uint64_t                Bytes;          //`json:"bytes"`
+
+} natsJSLostStreamData;
+
+/**
+ * Information about the given stream
+ *
+ * \note `FirstTime` and `LastTime` are message timestamps expressed as the number
+ * of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970.
  */
 typedef struct natsJSStreamState
 {
-        uint64_t    Msgs;       //`json:"messages"`
-        uint64_t    Bytes;      //`json:"bytes"`
-        uint64_t    FirstSeq;   //`json:"first_seq"`
-        uint64_t    LastSeq;    //`json:"last_seq"`
-        int         Consumers;  //`json:"consumer_count"`
+        uint64_t                Msgs;           //`json:"messages"`
+        uint64_t                Bytes;          //`json:"bytes"`
+        uint64_t                FirstSeq;       //`json:"first_seq"`
+        int64_t                 FirstTime;      //`json:"first_ts"`
+        uint64_t                LastSeq;        //`json:"last_seq"`
+        int64_t                 LastTime;       //`json:"last_ts"`
+        uint64_t                NumDeleted;     //`json:"num_deleted,omitempty"`
+        uint64_t                *Deleted;       //`json:"deleted,omitempty"`
+        int                     DeletedLen;
+        natsJSLostStreamData    *Lost;          //`json:"lost,omitempty"`
+        int                     Consumers;      //`json:"consumer_count"`
 
 } natsJSStreamState;
 
@@ -392,19 +416,22 @@ typedef struct natsJSClusterInfo
 typedef struct natsJSStreamSourceInfo
 {
         char                    *Name;          //`json:"name"`
-        int64_t                 Active;         //`json:"active"`
-        uint64_t                Lag;            //`json:"lag"`
         natsJSExternalStream    *External;      //`json:"external,omitempty"`
+        uint64_t                Lag;            //`json:"lag"`
+        int64_t                 Active;         //`json:"active"`
 
 } natsJSStreamSourceInfo;
 
 /**
  * Configuration and current state for this stream.
+ *
+ * \note `Created` is the timestamp when the stream was created, expressed as
+ * the number of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970.
  */
 typedef struct natsJSStreamInfo
 {
         natsJSStreamConfig      *Config;    //`json:"config"`
-        char                    *Created;   //`json:"created"`
+        int64_t                 Created;    //`json:"created"`
         natsJSStreamState       State;      //`json:"state"`
         natsJSClusterInfo       *Cluster;   //`json:"cluster,omitempty"`
         natsJSStreamSourceInfo  *Mirror;    //`json:"mirror,omitempty"`
@@ -501,6 +528,21 @@ typedef struct natsJSPurgeOptions
 } natsJSPurgeOptions;
 
 /**
+ * Advanced stream info options
+ *
+ * #natsJSStreamInfoOptions is an optional request information to the stream information API.
+ *
+ * * `DeletedDetails` will cause the server to include the list of deleted message sequences in the #natsJSStreamInfo's `State` structure.
+ *
+ * @see natsJSSreamInfoOptions_Init
+ */
+typedef struct natsJSStreamInfoOptions
+{
+        bool                    DeletedDetails;                 ///< Get the list of deleted message sequences.
+
+} natsJSStreamInfoOptions;
+
+/**
  * JetStream context options.
  *
  * Initialize the object with #natsJSOptions_Init.
@@ -515,6 +557,7 @@ typedef struct natsJSOptions
         void                    *PublishAsyncErrHandlerClosure; ///< Closure (or user data) passed to #natsJSPubAckErrHandler callback.
         int64_t                 PublishAsyncStallWait;          ///< Amount of time (in milliseconds) to wait in a PublishAsync call when there is MaxPending inflight messages, default is 200 ms.
         natsJSPurgeOptions      *Purge;                         ///< Optional stream purge options.
+        natsJSStreamInfoOptions *StreamInfo;                    ///< Optional stream info options.
 
 } natsJSOptions;
 
@@ -4636,6 +4679,27 @@ natsJS_PurgeStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSEr
  */
 NATS_EXTERN natsStatus
 natsJS_DeleteStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Initializes a streaming information options structure.
+ *
+ * Use this before setting stream information options.
+ *
+ * \code{.unparsed}
+ * natsJSOptions                o;
+ * natsJSStreamInfoOptions      so;
+ *
+ * natsJSStreamInfoOptions_Init(&so);
+ * so.DeletedDetails = true;
+ * natsJSOptions_Init(&o);
+ * o.StreamInfo = &so;
+ *
+ * natsJS_GetStreamInfo(&si, js, "MY_STREAM", &o, &jerr);
+ * \endcode
+ *
+ * @param opts the pointer to the #natsJSStreamInfoOptions to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSStreamInfoOptions_Init(natsJSStreamInfoOptions *opts);
 
 /** \brief Retreives information from a stream.
  *

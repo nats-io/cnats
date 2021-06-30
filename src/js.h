@@ -158,3 +158,9 @@ natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *json);
 
 void
 natsJS_destroyStreamConfig(natsJSStreamConfig *cfg);
+
+natsStatus
+natsJS_unmarshalStreamState(natsJSStreamState *state, nats_JSON *json);
+
+void
+natsJS_cleanStreamState(natsJSStreamState *state);

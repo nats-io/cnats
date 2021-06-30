@@ -24,6 +24,7 @@ natsSock_ConnectTcp
 natsSock_IPOrder
 natsSock_ReadLine
 natsJSON
+natsEncodeTimeUTC
 natsErrWithLongText
 natsErrStackMoreThanMaxFrames
 natsMsg
@@ -201,6 +202,7 @@ ReconnectJitter
 CustomReconnectDelay
 LameDuckMode
 JetStreamUnmarshalAccInfo
+JetStreamUnmarshalStreamState
 JetStreamUnmarshalStreamCfg
 JetStreamMarshalStreamCfg
 JetStreamContext

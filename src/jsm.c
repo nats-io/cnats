@@ -151,6 +151,26 @@ _destroyStreamSourceInfo(natsJSStreamSourceInfo *info)
     NATS_FREE(info);
 }
 
+static void
+_destroyLostStreamData(natsJSLostStreamData *lost)
+{
+    if (lost == NULL)
+        return;
+
+    NATS_FREE(lost->Msgs);
+    NATS_FREE(lost);
+}
+
+void
+natsJS_cleanStreamState(natsJSStreamState *state)
+{
+    if (state == NULL)
+        return;
+
+    NATS_FREE(state->Deleted);
+    _destroyLostStreamData(state->Lost);
+}
+
 void
 natsJSStreamInfo_Destroy(natsJSStreamInfo *si)
 {
@@ -160,8 +180,8 @@ natsJSStreamInfo_Destroy(natsJSStreamInfo *si)
         return;
 
     natsJS_destroyStreamConfig(si->Config);
-    NATS_FREE(si->Created);
     _destroyClusterInfo(si->Cluster);
+    natsJS_cleanStreamState(&(si->State));
     _destroyStreamSourceInfo(si->Mirror);
     for (i=0; i<si->SourcesLen; i++)
         _destroyStreamSourceInfo(si->Sources[i]);
@@ -218,6 +238,7 @@ _unmarshalStreamSource(natsJSStreamSource **new_source, nats_JSON *obj)
 
     s = nats_JSONGetStr(obj, "name", (char**) &(source->Name));
     IFOK_INF(s, nats_JSONGetULong(obj, "opt_start_seq", &(source->OptStartSeq)));
+    IFOK_INF(s, nats_JSONGetTime(obj, "opt_start_time", &(source->OptStartTime)));
     IFOK_INF(s, nats_JSONGetStr(obj, "filter_subject", (char**) &(source->FilterSubject)));
     IFOK_INF(s, nats_JSONGetObject(obj, "external", &jext));
     if (jext != NULL)
@@ -227,6 +248,30 @@ _unmarshalStreamSource(natsJSStreamSource **new_source, nats_JSON *obj)
         *new_source = source;
     else
         _destroyStreamSource(source);
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+static natsStatus
+_marshalTimeUTC(natsBuffer *buf, const char *fieldName, int64_t timeUTC)
+{
+    natsStatus  s  = NATS_OK;
+    char        dbuf[36] = {'\0'};
+
+    s = nats_EncodeTimeUTC(dbuf, sizeof(dbuf), timeUTC);
+    if (s != NATS_OK)
+    {
+        if (s == NATS_INVALID_ARG)
+            return NATS_UPDATE_ERR_STACK(s);
+
+        return nats_setError(NATS_ERR, "unable to encode data for field '%s' value %" PRId64, fieldName, timeUTC);
+    }
+
+    s = natsBuf_AppendByte(buf, '"');
+    IFOK(s, natsBuf_Append(buf, fieldName, -1));
+    IFOK(s, natsBuf_Append(buf, "\":\"", -1));
+    IFOK(s, natsBuf_Append(buf, dbuf, -1));
+    IFOK(s, natsBuf_AppendByte(buf, '\"'));
 
     return NATS_UPDATE_ERR_STACK(s);
 }
@@ -251,6 +296,11 @@ _marshalStreamSource(natsJSStreamSource *source, const char *fieldName, natsBuff
         IFOK(s, natsBuf_Append(buf, ",\"opt_start_seq\":", -1));
         snprintf(temp, sizeof(temp), "%" PRIu64, source->OptStartSeq);
         IFOK(s, natsBuf_Append(buf, temp, -1));
+    }
+    if (source->OptStartTime != 0)
+    {
+        IFOK(s, natsBuf_AppendByte(buf, ','));
+        IFOK(s, _marshalTimeUTC(buf, "opt_start_time", source->OptStartTime));
     }
     if (source->FilterSubject != NULL)
     {
@@ -446,8 +496,8 @@ natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *jcfg)
     IFOK(s, nats_JSONGetLong(jcfg, "max_msgs", &(cfg->MaxMsgs)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_bytes", &(cfg->MaxBytes)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_age", &(cfg->MaxAge)));
-    IFOK_INF(s, nats_JSONGetInt32(jcfg, "max_msg_size", &(cfg->MaxMsgSize)));
     IFOK(s, nats_JSONGetLong(jcfg, "max_msgs_per_subject", &(cfg->MaxMsgsPerSubject)));
+    IFOK_INF(s, nats_JSONGetInt32(jcfg, "max_msg_size", &(cfg->MaxMsgSize)));
     IFOK(s, nats_JSONGetStr(jcfg, "discard", &tmpStr));
     IFOK(s, _unmarshalDiscardPolicy(&(cfg->Discard), &tmpStr));
     IFOK(s, nats_JSONGetStr(jcfg, "storage", &tmpStr));
@@ -601,14 +651,43 @@ natsJS_marshalStreamConfig(natsBuffer **new_buf, natsJSStreamConfig *cfg)
 }
 
 static natsStatus
-_unmarshalStreamState(natsJSStreamState *state, nats_JSON *json)
+_unmarshalLostStreamData(natsJSLostStreamData **new_lost, nats_JSON *json)
+{
+    natsStatus              s       = NATS_OK;
+    natsJSLostStreamData    *lost   = NULL;
+
+    lost = (natsJSLostStreamData*) NATS_CALLOC(1, sizeof(natsJSLostStreamData));
+    if (lost == NULL)
+        return nats_setDefaultError(NATS_NO_MEMORY);
+
+    IFOK_INF(s, nats_JSONGetArrayULong(json, "msgs", &(lost->Msgs), &(lost->MsgsLen)));
+    IFOK(s, nats_JSONGetULong(json, "bytes", &(lost->Bytes)));
+
+    if (s == NATS_OK)
+        *new_lost = lost;
+    else
+        _destroyLostStreamData(lost);
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+natsStatus
+natsJS_unmarshalStreamState(natsJSStreamState *state, nats_JSON *json)
 {
     natsStatus s;
+    nats_JSON  *lost = NULL;
 
     s = nats_JSONGetULong(json, "messages", &(state->Msgs));
     IFOK(s, nats_JSONGetULong(json, "bytes", &(state->Bytes)));
     IFOK(s, nats_JSONGetULong(json, "first_seq", &(state->FirstSeq)));
+    IFOK(s, nats_JSONGetTime(json, "first_ts", &(state->FirstTime)));
     IFOK(s, nats_JSONGetULong(json, "last_seq", &(state->LastSeq)));
+    IFOK(s, nats_JSONGetTime(json, "last_ts", &(state->LastTime)));
+    IFOK_INF(s, nats_JSONGetULong(json, "num_deleted", &(state->NumDeleted)));
+    IFOK_INF(s, nats_JSONGetArrayULong(json, "deleted", &(state->Deleted), &(state->DeletedLen)));
+    IFOK_INF(s, nats_JSONGetObject(json, "lost", &lost));
+    if ((s == NATS_OK) && (lost != NULL))
+        s = _unmarshalLostStreamData(&(state->Lost), lost);
     IFOK(s, nats_JSONGetInt(json, "consumer_count", &(state->Consumers)));
 
     return NATS_UPDATE_ERR_STACK(s);
@@ -690,11 +769,11 @@ _unmarshalStreamSourceInfo(natsJSStreamSourceInfo **new_src, nats_JSON *json)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
     s = nats_JSONGetStr(json, "name", &(ssi->Name));
-    IFOK(s, nats_JSONGetLong(json, "active", &(ssi->Active)));
-    IFOK(s, nats_JSONGetULong(json, "lag", &(ssi->Lag)));
     IFOK_INF(s, nats_JSONGetObject(json, "external", &jext));
     if (jext != NULL)
         s = _unmarshalExternalStream(&(ssi->External), jext);
+    IFOK(s, nats_JSONGetULong(json, "lag", &(ssi->Lag)));
+    IFOK(s, nats_JSONGetLong(json, "active", &(ssi->Active)));
 
     if (s == NATS_OK)
         *new_src = ssi;
@@ -723,9 +802,9 @@ _unmarshalStreamInfo(natsJSStreamInfo **new_si, nats_JSON *json)
     // Get the config object
     s = nats_JSONGetObject(json, "config", &jcfg);
     IFOK(s, natsJS_unmarshalStreamConfig(&(si->Config), jcfg));
-    IFOK(s, nats_JSONGetStr(json, "created", &(si->Created)));
+    IFOK(s, nats_JSONGetTime(json, "created", &(si->Created)));
     IFOK(s, nats_JSONGetObject(json, "state", &jstate));
-    IFOK(s, _unmarshalStreamState(&(si->State), jstate));
+    IFOK(s, natsJS_unmarshalStreamState(&(si->State), jstate));
     IFOK_INF(s, nats_JSONGetObject(json, "cluster", &jcluster));
     if (jcluster != NULL)
         s = _unmarshalClusterInfo(&(si->Cluster), jcluster);
@@ -817,6 +896,23 @@ natsJSStreamConfig_Init(natsJSStreamConfig *cfg)
 }
 
 static natsStatus
+_marshalStreamInfoReq(natsBuffer **new_buf, natsJSStreamInfoOptions *o)
+{
+    natsBuffer  *buf = NULL;
+    natsStatus  s;
+
+    s = natsBuf_Create(&buf, 30);
+    IFOK(s, natsBuf_Append(buf, "{\"deleted_details\":true}", -1));
+
+    if (s == NATS_OK)
+        *new_buf = buf;
+    else
+        natsBuf_Destroy(buf);
+
+    return NATS_UPDATE_ERR_STACK(s);
+}
+
+static natsStatus
 _addUpdateOrGet(natsJSStreamInfo **new_si, jsStreamAction action, natsJS *js, natsJSStreamConfig *cfg, natsJSOptions *opts, natsJSErrCode *errCode)
 {
     natsStatus          s       = NATS_OK;
@@ -862,11 +958,16 @@ _addUpdateOrGet(natsJSStreamInfo **new_si, jsStreamAction action, natsJS *js, na
     {
         // Marshal the stream create/update request
         IFOK(s, natsJS_marshalStreamConfig(&buf, cfg));
-        if (s == NATS_OK)
-        {
-            req = natsBuf_Data(buf);
-            reqLen = natsBuf_Len(buf);
-        }
+    } else if ((o.StreamInfo != NULL) && o.StreamInfo->DeletedDetails)
+    {
+        // For GetStreamInfo, if there is an option to get deleted details,
+        // we need to request it.
+        IFOK(s, _marshalStreamInfoReq(&buf, o.StreamInfo));
+    }
+    if ((s == NATS_OK) && (buf != NULL))
+    {
+        req = natsBuf_Data(buf);
+        reqLen = natsBuf_Len(buf);
     }
 
     // Send the request
@@ -1044,9 +1145,9 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
         if (freePfx)
             NATS_FREE((char*) o.Prefix);
     }
-    if ((s == NATS_OK) && purge && (opts != NULL) && (opts->Purge != NULL))
+    if ((s == NATS_OK) && purge && (o.Purge != NULL))
     {
-        s = _marshalPurgeRequest(&buf, opts->Purge);
+        s = _marshalPurgeRequest(&buf, o.Purge);
         if ((s == NATS_OK) && (buf != NULL))
         {
             data = (const void*) natsBuf_Data(buf);
@@ -1256,5 +1357,15 @@ natsJSPurgeOptions_Init(natsJSPurgeOptions *po)
         return nats_setDefaultError(NATS_INVALID_ARG);
 
     memset(po, 0, sizeof(natsJSPurgeOptions));
+    return NATS_OK;
+}
+
+natsStatus
+natsJSStreamInfoOptions_Init(natsJSStreamInfoOptions *so)
+{
+    if (so == NULL)
+        return nats_setDefaultError(NATS_INVALID_ARG);
+
+    memset(so, 0, sizeof(natsJSStreamInfoOptions));
     return NATS_OK;
 }
