@@ -2113,7 +2113,42 @@ test_natsHash(void)
 
     test("Destroy: ");
     natsHash_Destroy(hash);
+    hash = NULL;
     testCond(1);
+
+    test("Create new: ");
+    s = natsHash_Create(&hash, 4);
+    testCond(s == NATS_OK);
+
+    test("Populate: ");
+    s = natsHash_Set(hash, 1, (void*) 1, NULL);
+    IFOK(s, natsHash_Set(hash, 2, (void*) 2, NULL));
+    IFOK(s, natsHash_Set(hash, 3, (void*) 3, NULL));
+    testCond(s == NATS_OK);
+
+    test("Remove one: ");
+    s = (natsHash_Remove(hash, 2) == (void*) 2) ? NATS_OK : NATS_ERR;
+    testCond(s == NATS_OK);
+
+    test("RemoveSingle fails if more than one: ");
+    s = natsHash_RemoveSingle(hash, &key, NULL);
+    testCond(s == NATS_ERR);
+    nats_clearLastError();
+
+    test("Remove second: ");
+    s = (natsHash_Remove(hash, 1) == (void*) 1) ? NATS_OK : NATS_ERR;
+    testCond(s == NATS_OK);
+
+    test("Remove single: ");
+    key = 0;
+    oldval = NULL;
+    s = natsHash_RemoveSingle(hash, &key, &oldval);
+    testCond((s == NATS_OK)
+                && (hash->used == 0)
+                && (key == 3)
+                && (oldval == (void*) 3));
+
+    natsHash_Destroy(hash);
 }
 
 static void
@@ -2348,7 +2383,56 @@ test_natsStrHash(void)
 
     test("Destroy: ");
     natsStrHash_Destroy(hash);
+    hash = NULL;
     testCond(1);
+
+    test("Create new: ");
+    s = natsStrHash_Create(&hash, 4);
+    testCond(s == NATS_OK);
+
+    test("Populate: ");
+    s = natsStrHash_Set(hash, (char*) "1", true, (void*) 1, NULL);
+    IFOK(s, natsStrHash_Set(hash, (char*) "2", true, (void*) 2, NULL));
+    IFOK(s, natsStrHash_Set(hash, (char*) "3", true, (void*) 3, NULL));
+    testCond(s == NATS_OK);
+
+    test("Remove one: ");
+    s = (natsStrHash_Remove(hash, (char*) "2") == (void*) 2) ? NATS_OK : NATS_ERR;
+    testCond(s == NATS_OK);
+
+    test("RemoveSingle fails if more than one: ");
+    s = natsStrHash_RemoveSingle(hash, &key, NULL);
+    testCond(s == NATS_ERR);
+    nats_clearLastError();
+
+    test("Remove second: ");
+    s = (natsStrHash_Remove(hash, (char*) "1") == (void*) 1) ? NATS_OK : NATS_ERR;
+    testCond(s == NATS_OK);
+
+    test("Remove single (copy of key): ");
+    key = NULL;
+    oldval = NULL;
+    s = natsStrHash_RemoveSingle(hash, &key, &oldval);
+    testCond((s == NATS_OK)
+                && (hash->used == 0)
+                && (strcmp(key, "3") == 0)
+                && (oldval == (void*) 3));
+    free(key);
+    key = NULL;
+    oldval = NULL;
+
+    test("Add key without copy: ");
+    s = natsStrHash_Set(hash, (char*) "4", false, (void*) 4, NULL);
+    testCond(s == NATS_OK);
+
+    test("Remove single (no copy of key): ");
+    s = natsStrHash_RemoveSingle(hash, &key, &oldval);
+    testCond((s == NATS_OK)
+                && (hash->used == 0)
+                && (strcmp(key, "4") == 0)
+                && (oldval == (void*) 4));
+
+    natsStrHash_Destroy(hash);
 }
 
 static const char*
@@ -5426,6 +5510,7 @@ _recvTestString(natsConnection *nc, natsSubscription *sub, natsMsg *msg,
             }
             break;
         }
+        case 11:
         case 4:
         {
             arg->status = natsConnection_PublishString(nc,
@@ -5433,6 +5518,8 @@ _recvTestString(natsConnection *nc, natsSubscription *sub, natsMsg *msg,
                                                        arg->string);
             if (arg->status == NATS_OK)
                 arg->status = natsConnection_Flush(nc);
+            if (arg->control == 11)
+                arg->sum++;
             break;
         }
         case 5:
@@ -11213,6 +11300,7 @@ test_Request(void)
     natsMsg             *req      = NULL;
     natsPid             serverPid = NATS_INVALID_PID;
     struct threadArg    arg;
+    int                 i;
 
     s = _createDefaultThreadArgsForCbTests(&arg);
     if ( s != NATS_OK)
@@ -11268,7 +11356,46 @@ test_Request(void)
                          natsMsg_GetDataLength(msg)) == 0));
 
     natsMsg_Destroy(msg);
+    msg = NULL;
     natsMsg_Destroy(req);
+    req = NULL;
+
+    natsMutex_Lock(arg.m);
+    arg.control = 11;
+    natsMutex_Unlock(arg.m);
+
+    test("Race on timeout: ");
+    for (i=0; (s == NATS_OK) && (i<100); i++)
+    {
+        s = natsConnection_Request(&msg, nc, "foo", "help!", 5, 1);
+        // Make sure that we get either OK with msg != NULL
+        // or TIMEOUT but with msg == NULL
+        if (s == NATS_OK)
+        {
+            if (msg == NULL)
+                s = NATS_ERR;
+            else
+            {
+                natsMsg_Destroy(msg);
+                msg = NULL;
+            }
+        }
+        else if ((s == NATS_TIMEOUT) && (msg == NULL))
+        {
+            s = NATS_OK;
+            nats_clearLastError();
+        }
+        // else if timeout and msg != NULL, that is a bug!
+    }
+    testCond(s == NATS_OK);
+
+    // Ensure the last callback returns to avoid accessing data that has been freed.
+    natsMutex_Lock(arg.m);
+    s = NATS_OK;
+    while ((s != NATS_TIMEOUT) && (arg.sum != 100))
+        natsCondition_TimedWait(arg.c, arg.m, 2000);
+    natsMutex_Unlock(arg.m);
+
     natsSubscription_Destroy(sub);
     natsConnection_Destroy(nc);
 
@@ -13543,7 +13670,7 @@ test_ServersOption(void)
 
     s = natsOptions_Create(&opts);
     IFOK(s, natsOptions_SetNoRandomize(opts, true));
-#ifdef _WIN32
+#if _WIN32
     IFOK(s, natsOptions_SetTimeout(opts, 250));
 #endif
 
@@ -23713,9 +23840,6 @@ test_StanSubTimeout(void)
             pb__subscription_request__free_unpacked(r, NULL);
 
         natsMsg_Destroy(resp);
-
-        if (valgrind)
-            nats_Sleep(900);
     }
 
     natsSubscription_Destroy(ncSub);

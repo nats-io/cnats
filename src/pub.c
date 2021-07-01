@@ -367,25 +367,22 @@ _respHandler(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void *clos
         return;
     }
     subj = natsMsg_GetSubject(msg);
-    // The subject could have been rewritten, so first make sure that the
-    // subscription's subject (without the lat '*') matches the beginning
-    // of the message subject.
+    // We look for the reply token by first checking that the message subject
+    // prefix matches the subscription's subject (without the last '*').
+    // It is possible that it does not due to subject rewrite (JetStream).
     if ((strlen(subj) > NATS_REQ_ID_OFFSET)
         && (memcmp((const void*) sub->subject, (const void*) subj, strlen(sub->subject) - 1) == 0))
     {
         rt = (char*) (natsMsg_GetSubject(msg) + NATS_REQ_ID_OFFSET);
         resp = (respInfo*) natsStrHash_Remove(nc->respMap, rt);
     }
-    // If the server has rewritten the subject, the response token (rt)
-    // will not match (could be the case with JetStream). If that is the
-    // case and there is a single entry, use that.
-    if ((resp == NULL) && (natsStrHash_Count(nc->respMap) == 1))
+    else if (natsStrHash_Count(nc->respMap) == 1)
     {
-        natsStrHashIter iter;
-        void            *value = NULL;
-
-        natsStrHashIter_Init(&iter, nc->respMap);
-        natsStrHashIter_Next(&iter, NULL, &value);
+        // Only if the subject is completely different, we assume that it
+        // could be the server that has rewritten the subject and so if there
+        // is a single entry, use that.
+        void *value = NULL;
+        natsStrHash_RemoveSingle(nc->respMap, NULL, &value);
         resp = (respInfo*) value;
     }
     if (resp != NULL)
@@ -466,6 +463,10 @@ natsConnection_RequestMsg(natsMsg **replyMsg, natsConnection *nc,
             // If we have a message, deliver it.
             if (resp->msg != NULL)
             {
+                // In case of race where s != NATS_OK but we got the message,
+                // we need to override status and set it to OK.
+                s = NATS_OK;
+
                 // For servers that support it, we may receive an empty message
                 // with a 503 status header. If that is the case, return NULL
                 // message and NATS_NO_RESPONDERS error.

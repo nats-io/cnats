@@ -1,4 +1,4 @@
-// Copyright 2015-2020 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -93,6 +93,9 @@ natsHash_Get(natsHash *hash, int64_t key);
 void*
 natsHash_Remove(natsHash *hash, int64_t key);
 
+natsStatus
+natsHash_RemoveSingle(natsHash *hash, int64_t *key, void **data);
+
 void
 natsHash_Destroy(natsHash *hash);
 
@@ -131,6 +134,9 @@ natsStrHash_Get(natsStrHash *hash, char *key);
 
 void*
 natsStrHash_Remove(natsStrHash *hash, char *key);
+
+natsStatus
+natsStrHash_RemoveSingle(natsStrHash *hash, char **key, void **data);
 
 void
 natsStrHash_Destroy(natsStrHash *hash);

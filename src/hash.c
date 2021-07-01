@@ -1,4 +1,4 @@
-// Copyright 2015-2020 The NATS Authors
+// Copyright 2015-2021 The NATS Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -202,6 +202,17 @@ natsHash_Get(natsHash *hash, int64_t key)
     return NULL;
 }
 
+static void
+_maybeShrink(natsHash *hash)
+{
+    if (hash->canResize
+        && (hash->numBkts > _BSZ)
+        && (hash->used < hash->numBkts / 4))
+    {
+        _shrink(hash);
+    }
+}
+
 void*
 natsHash_Remove(natsHash *hash, int64_t key)
 {
@@ -224,12 +235,7 @@ natsHash_Remove(natsHash *hash, int64_t key)
             hash->used--;
 
             // Check for resizing
-            if (hash->canResize
-                && (hash->numBkts > _BSZ)
-                && (hash->used < hash->numBkts / 4))
-            {
-                _shrink(hash);
-            }
+            _maybeShrink(hash);
 
             break;
         }
@@ -238,6 +244,38 @@ natsHash_Remove(natsHash *hash, int64_t key)
     }
 
     return dataRemoved;
+}
+
+natsStatus
+natsHash_RemoveSingle(natsHash *hash, int64_t *key, void **data)
+{
+    natsHashEntry   *e = NULL;
+    int             i;
+
+    if (hash->used != 1)
+        return nats_setDefaultError(NATS_ERR);
+
+    for (i=0; i<hash->numBkts; i++)
+    {
+        e = hash->bkts[i];
+        if (e != NULL)
+        {
+            if (key != NULL)
+                *key = e->key;
+            if (data != NULL)
+                *data = e->data;
+            _freeEntry(e);
+
+            hash->used--;
+            hash->bkts[i] = NULL;
+
+            // Check for resizing
+            _maybeShrink(hash);
+
+            break;
+        }
+    }
+    return NATS_OK;
 }
 
 void
@@ -610,6 +648,17 @@ _freeStrEntry(natsStrHashEntry *e)
     NATS_FREE(e);
 }
 
+static void
+_maybeShrinkStr(natsStrHash *hash)
+{
+    if (hash->canResize
+        && (hash->numBkts > _BSZ)
+        && (hash->used < hash->numBkts / 4))
+    {
+        _shrinkStr(hash);
+    }
+}
+
 void*
 natsStrHash_Remove(natsStrHash *hash, char *key)
 {
@@ -636,12 +685,7 @@ natsStrHash_Remove(natsStrHash *hash, char *key)
             hash->used--;
 
             // Check for resizing
-            if (hash->canResize
-                && (hash->numBkts > _BSZ)
-                && (hash->used < hash->numBkts / 4))
-            {
-                _shrinkStr(hash);
-            }
+            _maybeShrinkStr(hash);
 
             break;
         }
@@ -650,6 +694,48 @@ natsStrHash_Remove(natsStrHash *hash, char *key)
     }
 
     return dataRemoved;
+}
+
+natsStatus
+natsStrHash_RemoveSingle(natsStrHash *hash, char **key, void **data)
+{
+    natsStrHashEntry    *e = NULL;
+    int                 i;
+
+    if (hash->used != 1)
+        return nats_setDefaultError(NATS_ERR);
+
+    for (i=0; i<hash->numBkts; i++)
+    {
+        e = hash->bkts[i];
+        if (e != NULL)
+        {
+            if (key != NULL)
+            {
+                char *retKey = e->key;
+
+                if (e->freeKey)
+                {
+                    retKey = NATS_STRDUP(e->key);
+                    if (retKey == NULL)
+                        return nats_setDefaultError(NATS_NO_MEMORY);
+                }
+                *key = retKey;
+            }
+            if (data != NULL)
+                *data = e->data;
+            _freeStrEntry(e);
+
+            hash->used--;
+            hash->bkts[i] = NULL;
+
+            // Check for resizing
+            _maybeShrinkStr(hash);
+
+            break;
+        }
+    }
+    return NATS_OK;
 }
 
 void

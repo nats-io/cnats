@@ -1191,6 +1191,13 @@ natsConn_disposeRespInfo(natsConnection *nc, respInfo *resp, bool needsLock)
     if (resp == NULL)
         return;
 
+    // Destroy the message if present in the respInfo object. If it has
+    // been returned to the RequestX() calls, resp->msg will be NULL here.
+    if (resp->msg != NULL)
+    {
+        natsMsg_Destroy(resp->msg);
+        resp->msg = NULL;
+    }
     if (!resp->pooled)
     {
         natsCondition_Destroy(resp->cond);
@@ -1205,8 +1212,6 @@ natsConn_disposeRespInfo(natsConnection *nc, respInfo *resp, bool needsLock)
         resp->closed = false;
         resp->closedSts = NATS_OK;
         resp->removed = false;
-        resp->msg = NULL;
-
         nc->respPool[nc->respPoolIdx++] = resp;
 
         if (needsLock)
@@ -1252,13 +1257,10 @@ natsConn_addRespInfo(respInfo **newResp, natsConnection *nc, char *respInbox, in
             s = natsMutex_Create(&(resp->mu));
         if (s == NATS_OK)
             s = natsCondition_Create(&(resp->cond));
-        if (s == NATS_OK)
+        if ((s == NATS_OK) && (nc->respPoolSize < RESP_INFO_POOL_MAX_SIZE))
         {
-            if (nc->respPoolSize < RESP_INFO_POOL_MAX_SIZE)
-            {
-                resp->pooled = true;
-                nc->respPoolSize++;
-            }
+            resp->pooled = true;
+            nc->respPoolSize++;
         }
     }
 
