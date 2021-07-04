@@ -208,6 +208,7 @@ JetStreamMarshalStreamCfg
 JetStreamContext
 JetStreamDomain
 JetStreamMgtStreams
+JetStreamMgtConsumers
 JetStreamPublish
 JetStreamPublishAsync
 StanPBufAllocator

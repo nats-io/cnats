@@ -151,15 +151,15 @@ natsJSOptions_Init(natsJSOptions *opts)
 }
 
 // Parse the JSON represented by the NATS message's payload and returns the JSON object.
-// Unmarshal the API response. The natsJSApiResponse object will be in the stack of
-// the caller and assumed to be memset prior to this call (since the caller will have
-// it embedded in other type of response object which itself will be memset).
+// Unmarshal the API response.
 natsStatus
 natsJS_unmarshalResponse(natsJSApiResponse *ar, nats_JSON **new_json, natsMsg *resp)
 {
     nats_JSON   *json = NULL;
     nats_JSON   *err  = NULL;
     natsStatus  s;
+
+    memset(ar, 0, sizeof(natsJSApiResponse));
 
     s = nats_JSONParse(&json, natsMsg_GetData(resp), natsMsg_GetDataLength(resp));
     if (s != NATS_OK)
@@ -430,6 +430,9 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
     natsMsg             *resp   = NULL;
     natsJSApiResponse   ar;
 
+    if (errCode != NULL)
+        *errCode = 0;
+
     if ((js == NULL) || (msg == NULL) || nats_IsStringEmpty(msg->subject))
         return nats_setDefaultError(NATS_INVALID_ARG);
 
@@ -453,10 +456,7 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
 
     IFOK_JSR(s, natsConnection_RequestMsg(&resp, js->nc, msg, ttl));
     if (s == NATS_OK)
-    {
-        memset(&ar, 0, sizeof(natsJSApiResponse));
         s = natsJS_unmarshalResponse(&ar, &json, resp);
-    }
     if (s == NATS_OK)
     {
         if (natsJS_apiResponseIsErr(&ar))
@@ -558,7 +558,6 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 
             // Now unmarshal the API response and check if there was an error.
 
-            memset(&ar, 0, sizeof(natsJSApiResponse));
             s = natsJS_unmarshalResponse(&ar, &json, msg);
             if ((s == NATS_OK) && natsJS_apiResponseIsErr(&ar))
             {
@@ -792,7 +791,6 @@ natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts)
     natsStatus      s   = NATS_OK;
     natsConnection  *nc = NULL;
     char            *id = NULL;
-
 
     if ((js == NULL) || (msg == NULL) || (*msg == NULL))
         return nats_setDefaultError(NATS_INVALID_ARG);

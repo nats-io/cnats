@@ -205,6 +205,7 @@ typedef enum {
     JSStreamReplicasNotSupportedErr = 10074,            ///< Replicas > 1 not supported in non-clustered mode
     JSPeerRemapErr = 10075,                             ///< Peer remap failed
     JSNotEnabledErr = 10076,                            ///< JetStream not enabled
+	JSStreamStoreFailedErr = 10077                      ///< Generic error when storing a message failed
 
 } natsJSErrCode;
 

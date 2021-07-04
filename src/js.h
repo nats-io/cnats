@@ -37,6 +37,9 @@ extern const int64_t    jsDefaultRequestWait;
 #define jsExpectedLastSeqHdr   "Nats-Expected-Last-Sequence"
 #define jsExpectedLastMsgIdHdr "Nats-Expected-Last-Msg-Id"
 
+#define jsErrStreamNameRequired     "stream name is required"
+#define jsErrConsumerNameRequired   "consumer name is required"
+
 // jsApiAccountInfo is for obtaining general information about JetStream.
 #define jsApiAccountInfo "%.*s.INFO"
 
@@ -55,21 +58,22 @@ extern const int64_t    jsDefaultRequestWait;
 // jsApiStreamInfoT is the endpoint to get information on a stream.
 #define jsApiStreamInfoT "%.*s.STREAM.INFO.%s"
 
+// jsApiConsumerCreateT is used to create consumers.
+#define jsApiConsumerCreateT "%.*s.CONSUMER.CREATE.%s"
+
+// jsApiDurableCreateT is used to create durable consumers.
+#define jsApiDurableCreateT "%.*s.CONSUMER.DURABLE.CREATE.%s.%s"
+
+// jsApiConsumerInfoT is used to get information about consumers.
+#define jsApiConsumerInfoT "%.*s.CONSUMER.INFO.%s.%s"
+
+// jsApiDeleteConsumerT is used to delete consumers.
+#define jsApiConsumerDeleteT "%.*s.CONSUMER.DELETE.%s.%s"
+
+
 /*
-    // apiConsumerCreateT is used to create consumers.
-    apiConsumerCreateT = "CONSUMER.CREATE.%s"
-
-    // apiDurableCreateT is used to create durable consumers.
-    apiDurableCreateT = "CONSUMER.DURABLE.CREATE.%s.%s"
-
-    // apiConsumerInfoT is used to create consumers.
-    apiConsumerInfoT = "CONSUMER.INFO.%s.%s"
-
     // apiRequestNextT is the prefix for the request next message(s) for a consumer in worker/pull mode.
     apiRequestNextT = "CONSUMER.MSG.NEXT.%s.%s"
-
-    // apiDeleteConsumerT is used to delete consumers.
-    apiConsumerDeleteT = "CONSUMER.DELETE.%s.%s"
 
     // apiConsumerListT is used to return all detailed consumer information
     apiConsumerListT = "CONSUMER.LIST.%s"
@@ -148,19 +152,19 @@ void
 natsJS_freeApiRespContent(natsJSApiResponse *ar);
 
 natsStatus
-natsJS_unmarshalAccountInfo(natsJSAccountInfo **new_ai, nats_JSON *json);
+natsJS_unmarshalAccountInfo(nats_JSON *json, natsJSAccountInfo **new_ai);
 
 natsStatus
 natsJS_marshalStreamConfig(natsBuffer **new_buf, natsJSStreamConfig *cfg);
 
 natsStatus
-natsJS_unmarshalStreamConfig(natsJSStreamConfig **new_cfg, nats_JSON *json);
+natsJS_unmarshalStreamConfig(nats_JSON *json, const char *fieldName, natsJSStreamConfig **new_cfg);
 
 void
 natsJS_destroyStreamConfig(natsJSStreamConfig *cfg);
 
 natsStatus
-natsJS_unmarshalStreamState(natsJSStreamState *state, nats_JSON *json);
+natsJS_unmarshalStreamState(nats_JSON *pjson, const char *fieldName, natsJSStreamState *state);
 
 void
 natsJS_cleanStreamState(natsJSStreamState *state);

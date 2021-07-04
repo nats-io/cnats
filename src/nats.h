@@ -204,6 +204,41 @@ typedef enum
 } natsJSStorageType;
 
 /**
+ * Determines how the consumer should select the first message to deliver.
+ */
+typedef enum
+{
+        natsJS_DeliverAll = 0,          ///< Starts from the very beginning of a stream. This is the default.
+        natsJS_DeliverLast,             ///< Starts with the last sequence received.
+	natsJS_DeliverNew,              ///< Starts with messages sent after the consumer is created.
+        natsJS_DeliverByStartSequence,  ///< Starts from a given sequence.
+	natsJS_DeliverByStartTime,      ///< Starts from a given UTC time (number of nanoseconds since epoch)
+
+} natsJSDeliverPolicy;
+
+/**
+ * Determines how the consumer should acknowledge delivered messages.
+ */
+typedef enum
+{
+        natsJS_AckNone = 0,             ///< Requires no acks for delivered messages.
+        natsJS_AckAll,                  ///< When acking a sequence number, this implicitly acks all sequences below this one as well.
+        natsJS_AckExplicit,             ///< Requires ack or nack for all messages.
+
+} natsJSAckPolicy;
+
+/**
+ * Determines how the consumer should replay messages it already has queued in the stream.
+ */
+typedef enum
+{
+        natsJS_ReplayInstant = 0,       ///< Replays messages as fast as possible.
+        natsJS_ReplayOriginal,          ///< Maintains the same timing as the messages were received.
+
+} natsJSReplayPolicy;
+
+
+/**
  * Used to guide placement of streams in clustered JetStream.
  *
  * Initialize the object with #natsJSPlacement_Init.
@@ -261,7 +296,8 @@ typedef struct natsJSStreamSource
 } natsJSStreamSource;
 
 /**
- * Determine the properties for a stream.
+ * Configuration of a JetStream stream.
+ *
  * There are sensible defaults for most. If no subjects are
  * given the name will be used as the only subject.
  *
@@ -271,6 +307,8 @@ typedef struct natsJSStreamSource
  * #natsJS_AddStream or #natsJS_UpdateStream.
  *
  * \note The strings are applications owned and will not be freed by the library.
+ *
+ * @see natsJSStreamConfig_Init
  *
  * \code{.unparsed}
  * natsJSStreamConfig   sc;
@@ -439,6 +477,91 @@ typedef struct natsJSStreamInfo
         int                     SourcesLen;
 
 } natsJSStreamInfo;
+
+/**
+ * Configuration of a JetStream consumer.
+ *
+ * In order to add a consumer, a configuration needs to be set.
+ * The typical usage would be to initialize all required objects on the stack
+ * and configure them, then pass the pointer to the configuration to
+ * #natsJS_AddConsumer.
+ *
+ * \note `OptStartTime` needs to be expressed as the number of nanoseconds
+ * passed since 00:00:00 UTC Thursday, 1 January 1970.
+ *
+ * \note The strings are applications owned and will not be freed by the library.
+ *
+ * \note `SampleFrequency` is a sampling value, represented as a string such as "50"
+ * for 50%, that causes the server to produce advisories for consumer ack metrics.
+ * If the percent sign is in the string, and since `%` is an escape character, it
+ * needs to be doubled, such as `cfg.SampleFrequency = "50%%";`.
+ *
+ * @see natsJSConsumerConfig_Init
+ *
+ * \code{.unparsed}
+ * natsJSConsumerInfo   *ci = NULL;
+ * natsJSConsumerConfig cc;
+ *
+ * natsJSConsumerConfig_Init(&cc);
+ * cc.Durable = "MY_DURABLE";
+ * cc.DeliverSubject = "foo";
+ * cc.DeliverPolicy = natsJS_DeliverNew;
+ *
+ * s = natsJS_AddConsumer(&ci, js, &cc, NULL, &jerr);
+ * \endcode
+ */
+typedef struct natsJSConsumerConfig
+{
+        const char              *Durable;               //`json:"durable_name,omitempty"`
+        const char              *DeliverSubject;        //`json:"deliver_subject,omitempty"`
+        natsJSDeliverPolicy     DeliverPolicy;          //`json:"deliver_policy"`
+        uint64_t                OptStartSeq;            //`json:"opt_start_seq,omitempty"`
+        int64_t                 OptStartTime;           //`json:"opt_start_time,omitempty"`
+        natsJSAckPolicy         AckPolicy;              //`json:"ack_policy"`
+        int64_t                 AckWait;                //`json:"ack_wait,omitempty"`
+        int                     MaxDeliver;             //`json:"max_deliver,omitempty"`
+        const char              *FilterSubject;         //`json:"filter_subject,omitempty"`
+        natsJSReplayPolicy      ReplayPolicy;           //`json:"replay_policy"`
+        uint64_t                RateLimit;              //`json:"rate_limit_bps,omitempty"` // Bits per sec
+        const char              *SampleFrequency;       //`json:"sample_freq,omitempty"`
+        int                     MaxWaiting;             //`json:"max_waiting,omitempty"`
+        int                     MaxAckPending;          //`json:"max_ack_pending,omitempty"`
+        bool                    FlowControl;            //`json:"flow_control,omitempty"`
+        int64_t                 Heartbeat;              //`json:"idle_heartbeat,omitempty"`
+
+} natsJSConsumerConfig;
+
+/**
+ * Includes the consumer and stream sequence info from a JetStream consumer.
+ */
+typedef struct natsJSSequencePair
+{
+        uint64_t        Consumer;                       //`json:"consumer_seq"`
+        uint64_t        Stream;                         //`json:"stream_seq"`
+
+} natsJSSequencePair;
+
+/**
+ * Configuration and current state for this consumer.
+ *
+ * \note `Created` is the timestamp when the consumer was created, expressed as the number
+ * of nanoseconds passed since 00:00:00 UTC Thursday, 1 January 1970.
+ */
+typedef struct natsJSConsumerInfo
+{
+        char                    *Stream;                //`json:"stream_name"`
+        char                    *Name;                  //`json:"name"`
+        int64_t                 Created;                //`json:"created"`
+        natsJSConsumerConfig    *Config;                //`json:"config"`
+        natsJSSequencePair      Delivered;              //`json:"delivered"`
+        natsJSSequencePair      AckFloor;               //`json:"ack_floor"`
+        int                     NumAckPending;          //`json:"num_ack_pending"`
+        int                     NumRedelivered;         //`json:"num_redelivered"`
+        int                     NumWaiting;             //`json:"num_waiting"`
+        uint64_t                NumPending;             //`json:"num_pending"`
+        natsJSClusterInfo       *Cluster;               //`json:"cluster,omitempty"`
+
+} natsJSConsumerInfo;
 
 /**
  * Reports on API calls to JetStream for this account.
@@ -4728,6 +4851,83 @@ natsJS_GetStreamInfo(natsJSStreamInfo **si, natsJS *js, const char *stream, nats
  */
 NATS_EXTERN void
 natsJSStreamInfo_Destroy(natsJSStreamInfo *si);
+
+/** \brief Initializes a consumer configuration structure.
+ *
+ * Use this before adding a consumer.
+ *
+ * @see #natsJSConsumerConfig
+ *
+ * @param cc the pointer to the #natsJSConsumerConfig to initialize.
+ */
+NATS_EXTERN natsStatus
+natsJSConsumerConfig_Init(natsJSConsumerConfig *cc);
+
+/** \brief Adds a JetStream consumer.
+ *
+ * Adds a consumer based on the provided configuration (that cannot be `NULL`).
+ *
+ * \note If you do not need a #natsJSConsumerInfo to be returned, you can pass `NULL`,
+ * otherwise, on success you are responsible for freeing this object.
+ *
+ * @see natsJSConsumerConfig_Init
+ * @see natsJSConsumerInfo_Destroy
+ *
+ * @param ci the location where to store the pointer to the new #natsJSConsumerInfo object in
+ * response to the creation request, or `NULL` if the consumer information is not needed.
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream.
+ * @param cfg the pointer to the #natsJSConsumerConfig.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_AddConsumer(natsJSConsumerInfo **ci, natsJS *js,
+                   const char *stream, natsJSConsumerConfig *cfg,
+                   natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Retrieves information about a consumer.
+ *
+ * \note The returned object should be destroyed using #natsJSConsumerInfo_Destroy in order
+ * to free allocated memory.
+ *
+ * @param ci the location where to store the pointer to the new #natsJSConsumerInfo object.
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream.
+ * @param consumer the name of the consumer.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_GetConsumerInfo(natsJSConsumerInfo **ci, natsJS *js,
+                       const char *stream, const char *consumer,
+                       natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Deletes a consumer.
+ *
+ * Deletes the consumer named <c>consumer</c> from stream named <c>stream</c>.
+ *
+ * @param js the pointer to the #natsJS context.
+ * @param stream the name of the stream.
+ * @param consumer the name of the consumer.
+ * @param opts the pointer to the #natsJSOptions object, possibly `NULL`.
+ * @param errCode the location where to store the JetStream specific error code, or `NULL`
+ * if not needed.
+ */
+NATS_EXTERN natsStatus
+natsJS_DeleteConsumer(natsJS *js, const char *stream, const char *consumer,
+                      natsJSOptions *opts, natsJSErrCode *errCode);
+
+/** \brief Destroys the consumer information object.
+ *
+ * Releases memory allocated for this consumer information object.
+ *
+ * @param ci the pointer to the #natsJSConsumerInfo object.
+ */
+NATS_EXTERN void
+natsJSConsumerInfo_Destroy(natsJSConsumerInfo *ci);
 
 /** \brief Retrieves information about the JetStream usage from an account.
  *
