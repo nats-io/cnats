@@ -121,6 +121,7 @@ var status_8h =
       [ "JSTemplateNameNotMatchSubjectErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703dab9e493c8837af5f62c6110493c6a70ac", null ],
       [ "JSStreamReplicasNotSupportedErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703da8f7f888318e9107bb361d4946197c4c1", null ],
       [ "JSPeerRemapErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703da4d68fa855750f16fdf38c9ed93acacda", null ],
-      [ "JSNotEnabledErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703dafe9c20cdb1e88744d9a5f52977e95d1c", null ]
+      [ "JSNotEnabledErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703dafe9c20cdb1e88744d9a5f52977e95d1c", null ],
+      [ "JSStreamStoreFailedErr", "status_8h.html#a11455f12227b601c67e9bff2b2af703dab7df189a360a1d483f9eca4869abdca8", null ]
     ] ]
 ];

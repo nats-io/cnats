@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['replicas',['Replicas',['../structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8',1,'natsJSStreamConfig::Replicas()'],['../structnats_j_s_cluster_info.html#a3d14ecc4d806fe0daad3f12746bbc8c0',1,'natsJSClusterInfo::Replicas()']]],
-  ['replicaslen',['ReplicasLen',['../structnats_j_s_cluster_info.html#a35816e4ac3ef23e515eddf122b0a454e',1,'natsJSClusterInfo']]],
-  ['retention',['Retention',['../structnats_j_s_stream_config.html#a52239b20f176c39e0a7243131a1668e7',1,'natsJSStreamConfig']]]
+  ['placement',['Placement',['../structnats_j_s_stream_config.html#a8def0cc3d131c44f75fe9d9a74af98ff',1,'natsJSStreamConfig']]],
+  ['prefix',['Prefix',['../structnats_j_s_options.html#af3dbdcf6326bf1cf3d0feb64b737b41b',1,'natsJSOptions']]],
+  ['publishasyncerrhandler',['PublishAsyncErrHandler',['../structnats_j_s_options.html#a8d484c1b12b2c2ea2445c690536b89e8',1,'natsJSOptions']]],
+  ['publishasyncerrhandlerclosure',['PublishAsyncErrHandlerClosure',['../structnats_j_s_options.html#a9cafe89994a2a1edf9de1feaecf43ca9',1,'natsJSOptions']]],
+  ['publishasyncmaxpending',['PublishAsyncMaxPending',['../structnats_j_s_options.html#ade56d397700121cad8f3b18333b96392',1,'natsJSOptions']]],
+  ['publishasyncstallwait',['PublishAsyncStallWait',['../structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c',1,'natsJSOptions']]],
+  ['purge',['Purge',['../structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3',1,'natsJSOptions']]]
 ];

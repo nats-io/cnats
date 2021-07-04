@@ -66,6 +66,7 @@ var searchData=
   ['jsstreamrestoreerr',['JSStreamRestoreErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703dab5213fbb08e833e1c69b8c93c8114506',1,'status.h']]],
   ['jsstreamsequencenotmatcherr',['JSStreamSequenceNotMatchErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703da64dbcba923d50e6f258db59b85eb8b17',1,'status.h']]],
   ['jsstreamsnapshoterr',['JSStreamSnapshotErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703dac3d700ce84bc5df96c383079b093cc45',1,'status.h']]],
+  ['jsstreamstorefailederr',['JSStreamStoreFailedErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703dab7df189a360a1d483f9eca4869abdca8',1,'status.h']]],
   ['jsstreamsubjectoverlaperr',['JSStreamSubjectOverlapErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703da3e55a221685d96d96c514d6d5c652570',1,'status.h']]],
   ['jsstreamtemplatecreateerr',['JSStreamTemplateCreateErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703da1efc26df606f855cfb9993cbe95c0f46',1,'status.h']]],
   ['jsstreamtemplatedeleteerr',['JSStreamTemplateDeleteErr',['../status_8h.html#a11455f12227b601c67e9bff2b2af703da514184778ad2fa5cf2deaffc0c406272',1,'status.h']]],

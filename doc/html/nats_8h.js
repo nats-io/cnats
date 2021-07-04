@@ -21,6 +21,9 @@ var nats_8h =
     [ "natsJSClusterInfo", "group__types_group.html#ga8d90f93d145459940c62291b5a8e1ce7", null ],
     [ "natsJSStreamSourceInfo", "group__types_group.html#gafa98854b7601f629a3cb4cccbfc4fa72", null ],
     [ "natsJSStreamInfo", "group__types_group.html#ga3e372350ef24216c98592f0491588448", null ],
+    [ "natsJSConsumerConfig", "group__types_group.html#ga1a487451d6e7d7788a3d9ca6dde7e65d", null ],
+    [ "natsJSSequencePair", "group__types_group.html#gaee8ec7612db4fd7854e61ddb768ee0b0", null ],
+    [ "natsJSConsumerInfo", "group__types_group.html#ga17d108bd92d64d234886b54ed8a1c443", null ],
     [ "natsJSAPIStats", "group__types_group.html#gab1e0f41c33f44ad7f1cb043e4fdf918d", null ],
     [ "natsJSAccountLimits", "group__types_group.html#gae05fbff7b337a7603c333ab5a343d14a", null ],
     [ "natsJSAccountInfo", "group__types_group.html#ga2016a7fc3460b079134c31098435ef67", null ],
@@ -62,6 +65,22 @@ var nats_8h =
     [ "natsJSStorageType", "group__types_group.html#gaa2b78a6cf7a6fb0436bd57ee6a6aca26", [
       [ "natsJS_FileStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26ab79c322c46a1281a54dd4ddcce48366d", null ],
       [ "natsJS_MemoryStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26a34b9c5ebbc445daa289f894710cf26a3", null ]
+    ] ],
+    [ "natsJSDeliverPolicy", "group__types_group.html#ga83eb9e05d76d9de7f470499b91cec5bc", [
+      [ "natsJS_DeliverAll", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca446b8a87d39941af8ef081f768f02c02", null ],
+      [ "natsJS_DeliverLast", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4aab200a346cf4c0bd23b4a4fcfbc4d0", null ],
+      [ "natsJS_DeliverNew", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca7b6ca063e3910517f1aace6061081ca5", null ],
+      [ "natsJS_DeliverByStartSequence", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4dd7b7a226787fd8e3384415d2ded838", null ],
+      [ "natsJS_DeliverByStartTime", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bcafd5409d98329298f1beda6b323285f2b", null ]
+    ] ],
+    [ "natsJSAckPolicy", "group__types_group.html#ga1595328891eb8f3625cbc52be8c683be", [
+      [ "natsJS_AckNone", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683beaa904698b838200be07d21d872a2eedab", null ],
+      [ "natsJS_AckAll", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea8eb6f9b8582defb2fea4790f577eafbb", null ],
+      [ "natsJS_AckExplicit", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea15b26512da1679c0b39f4200c13ffb60", null ]
+    ] ],
+    [ "natsJSReplayPolicy", "group__types_group.html#gadf5ec9a558bc736aab4689a46dfb11e6", [
+      [ "natsJS_ReplayInstant", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a6ee33e8281d94ade885af40a1fa7523c", null ],
+      [ "natsJS_ReplayOriginal", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a90a99b93092260245774254ae5fa2c27", null ]
     ] ],
     [ "nats_Open", "group__library_group.html#ga4a26d4caecb23348f6eee862c95fee7d", null ],
     [ "nats_GetVersion", "group__library_group.html#gafc09930d38dcf3dcee144e8d3ffc225d", null ],
@@ -266,6 +285,11 @@ var nats_8h =
     [ "natsJSStreamInfoOptions_Init", "group__js_assets_group.html#ga32ca27b3af0d930cac68362566768ba7", null ],
     [ "natsJS_GetStreamInfo", "group__js_assets_group.html#gad9a2f6223dbd417da06060cb4b26b464", null ],
     [ "natsJSStreamInfo_Destroy", "group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d", null ],
+    [ "natsJSConsumerConfig_Init", "group__js_assets_group.html#gaac22cf709ac9d48c4c1793baae7c0674", null ],
+    [ "natsJS_AddConsumer", "group__js_assets_group.html#gac1f97de57821b3506fadbbb1391637d1", null ],
+    [ "natsJS_GetConsumerInfo", "group__js_assets_group.html#gab2fb428c9366300ce9274ba629259d07", null ],
+    [ "natsJS_DeleteConsumer", "group__js_assets_group.html#gae36fa8a3b8153e23ab7c892e12da3e89", null ],
+    [ "natsJSConsumerInfo_Destroy", "group__js_assets_group.html#gac407d6b27f58813c8e0f2390d152d0ef", null ],
     [ "natsJS_GetAccountInfo", "group__js_assets_group.html#gac8c0e481351c2018e3318383a7150a1c", null ],
     [ "natsJSAccountInfo_Destroy", "group__js_assets_group.html#gab23fc978527bbfba46dfe4e3d17b082d", null ],
     [ "natsJSPubOptions_Init", "group__js_pub_group.html#ga4e908d09e096e28ef5f40499cd56b02a", null ],

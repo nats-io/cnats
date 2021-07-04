@@ -146,6 +146,21 @@ Functions</h2></td></tr>
 <tr class="memitem:ga3568218f6ae3d9a0665ad5a0bd01582d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#ga3568218f6ae3d9a0665ad5a0bd01582d">natsJSStreamInfo_Destroy</a> (<a class="el" href="structnats_j_s_stream_info.html">natsJSStreamInfo</a> *si)</td></tr>
 <tr class="memdesc:ga3568218f6ae3d9a0665ad5a0bd01582d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the stream information object.  <a href="#ga3568218f6ae3d9a0665ad5a0bd01582d">More...</a><br /></td></tr>
 <tr class="separator:ga3568218f6ae3d9a0665ad5a0bd01582d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaac22cf709ac9d48c4c1793baae7c0674"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gaac22cf709ac9d48c4c1793baae7c0674">natsJSConsumerConfig_Init</a> (<a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a> *cc)</td></tr>
+<tr class="memdesc:gaac22cf709ac9d48c4c1793baae7c0674"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a consumer configuration structure.  <a href="#gaac22cf709ac9d48c4c1793baae7c0674">More...</a><br /></td></tr>
+<tr class="separator:gaac22cf709ac9d48c4c1793baae7c0674"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac1f97de57821b3506fadbbb1391637d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gac1f97de57821b3506fadbbb1391637d1">natsJS_AddConsumer</a> (<a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> **ci, <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *js, const char *stream, <a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a> *cfg, <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *opts, <a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *errCode)</td></tr>
+<tr class="memdesc:gac1f97de57821b3506fadbbb1391637d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a JetStream consumer.  <a href="#gac1f97de57821b3506fadbbb1391637d1">More...</a><br /></td></tr>
+<tr class="separator:gac1f97de57821b3506fadbbb1391637d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab2fb428c9366300ce9274ba629259d07"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gab2fb428c9366300ce9274ba629259d07">natsJS_GetConsumerInfo</a> (<a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> **ci, <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *js, const char *stream, const char *consumer, <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *opts, <a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *errCode)</td></tr>
+<tr class="memdesc:gab2fb428c9366300ce9274ba629259d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves information about a consumer.  <a href="#gab2fb428c9366300ce9274ba629259d07">More...</a><br /></td></tr>
+<tr class="separator:gab2fb428c9366300ce9274ba629259d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae36fa8a3b8153e23ab7c892e12da3e89"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gae36fa8a3b8153e23ab7c892e12da3e89">natsJS_DeleteConsumer</a> (<a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *js, const char *stream, const char *consumer, <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *opts, <a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *errCode)</td></tr>
+<tr class="memdesc:gae36fa8a3b8153e23ab7c892e12da3e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes a consumer.  <a href="#gae36fa8a3b8153e23ab7c892e12da3e89">More...</a><br /></td></tr>
+<tr class="separator:gae36fa8a3b8153e23ab7c892e12da3e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac407d6b27f58813c8e0f2390d152d0ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gac407d6b27f58813c8e0f2390d152d0ef">natsJSConsumerInfo_Destroy</a> (<a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> *ci)</td></tr>
+<tr class="memdesc:gac407d6b27f58813c8e0f2390d152d0ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the consumer information object.  <a href="#gac407d6b27f58813c8e0f2390d152d0ef">More...</a><br /></td></tr>
+<tr class="separator:gac407d6b27f58813c8e0f2390d152d0ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac8c0e481351c2018e3318383a7150a1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__js_assets_group.html#gac8c0e481351c2018e3318383a7150a1c">natsJS_GetAccountInfo</a> (<a class="el" href="structnats_j_s_account_info.html">natsJSAccountInfo</a> **ai, <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *js, <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *opts, <a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *errCode)</td></tr>
 <tr class="memdesc:gac8c0e481351c2018e3318383a7150a1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves information about the JetStream usage from an account.  <a href="#gac8c0e481351c2018e3318383a7150a1c">More...</a><br /></td></tr>
 <tr class="separator:gac8c0e481351c2018e3318383a7150a1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -583,6 +598,236 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">si</td><td>the pointer to the <a class="el" href="structnats_j_s_stream_info.html">natsJSStreamInfo</a> object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="gaac22cf709ac9d48c4c1793baae7c0674"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a> natsJSConsumerConfig_Init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a> *&#160;</td>
+          <td class="paramname"><em>cc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Use this before adding a consumer.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cc</td><td>the pointer to the <a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a> to initialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="gac1f97de57821b3506fadbbb1391637d1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a> natsJS_AddConsumer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> **&#160;</td>
+          <td class="paramname"><em>ci</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *&#160;</td>
+          <td class="paramname"><em>js</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a> *&#160;</td>
+          <td class="paramname"><em>cfg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *&#160;</td>
+          <td class="paramname"><em>opts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *&#160;</td>
+          <td class="paramname"><em>errCode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Adds a consumer based on the provided configuration (that cannot be <code>NULL</code>).</p>
+<dl class="section note"><dt>Note</dt><dd>If you do not need a <a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> to be returned, you can pass <code>NULL</code>, otherwise, on success you are responsible for freeing this object.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__js_assets_group.html#gaac22cf709ac9d48c4c1793baae7c0674" title="Initializes a consumer configuration structure. ">natsJSConsumerConfig_Init</a> </dd>
+<dd>
+<a class="el" href="group__js_assets_group.html#gac407d6b27f58813c8e0f2390d152d0ef" title="Destroys the consumer information object. ">natsJSConsumerInfo_Destroy</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ci</td><td>the location where to store the pointer to the new <a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> object in response to the creation request, or <code>NULL</code> if the consumer information is not needed. </td></tr>
+    <tr><td class="paramname">js</td><td>the pointer to the <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>the name of the stream. </td></tr>
+    <tr><td class="paramname">cfg</td><td>the pointer to the <a class="el" href="structnats_j_s_consumer_config.html">natsJSConsumerConfig</a>. </td></tr>
+    <tr><td class="paramname">opts</td><td>the pointer to the <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> object, possibly <code>NULL</code>. </td></tr>
+    <tr><td class="paramname">errCode</td><td>the location where to store the JetStream specific error code, or <code>NULL</code> if not needed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="gab2fb428c9366300ce9274ba629259d07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a> natsJS_GetConsumerInfo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> **&#160;</td>
+          <td class="paramname"><em>ci</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *&#160;</td>
+          <td class="paramname"><em>js</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>consumer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *&#160;</td>
+          <td class="paramname"><em>opts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *&#160;</td>
+          <td class="paramname"><em>errCode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section note"><dt>Note</dt><dd>The returned object should be destroyed using <a class="el" href="group__js_assets_group.html#gac407d6b27f58813c8e0f2390d152d0ef" title="Destroys the consumer information object. ">natsJSConsumerInfo_Destroy</a> in order to free allocated memory.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ci</td><td>the location where to store the pointer to the new <a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> object. </td></tr>
+    <tr><td class="paramname">js</td><td>the pointer to the <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>the name of the stream. </td></tr>
+    <tr><td class="paramname">consumer</td><td>the name of the consumer. </td></tr>
+    <tr><td class="paramname">opts</td><td>the pointer to the <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> object, possibly <code>NULL</code>. </td></tr>
+    <tr><td class="paramname">errCode</td><td>the location where to store the JetStream specific error code, or <code>NULL</code> if not needed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="gae36fa8a3b8153e23ab7c892e12da3e89"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> <a class="el" href="status_8h.html#a36c934157b663b7b5fb5d6609c897c80">natsStatus</a> natsJS_DeleteConsumer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> *&#160;</td>
+          <td class="paramname"><em>js</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>consumer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_options.html">natsJSOptions</a> *&#160;</td>
+          <td class="paramname"><em>opts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="status_8h.html#a11455f12227b601c67e9bff2b2af703d">natsJSErrCode</a> *&#160;</td>
+          <td class="paramname"><em>errCode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Deletes the consumer named <code>consumer</code> from stream named <code>stream</code>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">js</td><td>the pointer to the <a class="el" href="group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f">natsJS</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>the name of the stream. </td></tr>
+    <tr><td class="paramname">consumer</td><td>the name of the consumer. </td></tr>
+    <tr><td class="paramname">opts</td><td>the pointer to the <a class="el" href="structnats_j_s_options.html">natsJSOptions</a> object, possibly <code>NULL</code>. </td></tr>
+    <tr><td class="paramname">errCode</td><td>the location where to store the JetStream specific error code, or <code>NULL</code> if not needed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="gac407d6b27f58813c8e0f2390d152d0ef"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="nats_8h.html#a3bc1b3fe7f64083e60c7c3b93f205bad">NATS_EXTERN</a> void natsJSConsumerInfo_Destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> *&#160;</td>
+          <td class="paramname"><em>ci</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Releases memory allocated for this consumer information object.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ci</td><td>the pointer to the <a class="el" href="structnats_j_s_consumer_info.html">natsJSConsumerInfo</a> object. </td></tr>
   </table>
   </dd>
 </dl>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keep',['Keep',['../structnats_j_s_purge_options.html#a08b34404c58eecb4fc1faa144ca5294d',1,'natsJSPurgeOptions']]]
+  ['heartbeat',['Heartbeat',['../structnats_j_s_consumer_config.html#ab472e11c8bc4012fb715df4cf898b934',1,'natsJSConsumerConfig']]]
 ];

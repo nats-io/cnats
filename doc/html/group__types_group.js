@@ -91,6 +91,41 @@ var group__types_group =
       [ "Sources", "structnats_j_s_stream_info.html#ab9d4148610b1948a2a029e36459f37bc", null ],
       [ "SourcesLen", "structnats_j_s_stream_info.html#a2109b6a46ebe9d73ab70e3941748e65d", null ]
     ] ],
+    [ "natsJSConsumerConfig", "structnats_j_s_consumer_config.html", [
+      [ "Durable", "structnats_j_s_consumer_config.html#abf47ae99f6ad388d4c4a996a5efabf21", null ],
+      [ "DeliverSubject", "structnats_j_s_consumer_config.html#a8d1f9b0e2994d86ea2595c0b250bc1db", null ],
+      [ "DeliverPolicy", "structnats_j_s_consumer_config.html#ac18e2cb6dc2441f90f0e5b2d566690fc", null ],
+      [ "OptStartSeq", "structnats_j_s_consumer_config.html#a97c83ac7c7f3ac6dfb2628b75811ad31", null ],
+      [ "OptStartTime", "structnats_j_s_consumer_config.html#ae4be34f2efd792969f4bf0f89ebd308a", null ],
+      [ "AckPolicy", "structnats_j_s_consumer_config.html#a4bae0bc70c0b35de184aa6bf0270ae58", null ],
+      [ "AckWait", "structnats_j_s_consumer_config.html#a6b01c46d7a76cdd9445d8cac19bb0e25", null ],
+      [ "MaxDeliver", "structnats_j_s_consumer_config.html#aab6e0a8d8c9116f90698e67bb5448473", null ],
+      [ "FilterSubject", "structnats_j_s_consumer_config.html#a9257111b6c7ffdfda216b283465e76e7", null ],
+      [ "ReplayPolicy", "structnats_j_s_consumer_config.html#aca30ed1b2b91c4a72a512187bf14380d", null ],
+      [ "RateLimit", "structnats_j_s_consumer_config.html#adeb3eaaa3f5736111fed84723bf73670", null ],
+      [ "SampleFrequency", "structnats_j_s_consumer_config.html#a0f71f05855cf9940b0de19e6783d34f2", null ],
+      [ "MaxWaiting", "structnats_j_s_consumer_config.html#aca533d718aa53b7ea1b17a323c87724c", null ],
+      [ "MaxAckPending", "structnats_j_s_consumer_config.html#a79afef2d09c2c5901a70bf909b7379bb", null ],
+      [ "FlowControl", "structnats_j_s_consumer_config.html#aeca148b8421692e957a2bddc86d21444", null ],
+      [ "Heartbeat", "structnats_j_s_consumer_config.html#ab472e11c8bc4012fb715df4cf898b934", null ]
+    ] ],
+    [ "natsJSSequencePair", "structnats_j_s_sequence_pair.html", [
+      [ "Consumer", "structnats_j_s_sequence_pair.html#a6bee81ed66880afcd11ff64a6b6d2c24", null ],
+      [ "Stream", "structnats_j_s_sequence_pair.html#a3571b38f2a0f476ed4e7366bf9e8f987", null ]
+    ] ],
+    [ "natsJSConsumerInfo", "structnats_j_s_consumer_info.html", [
+      [ "Stream", "structnats_j_s_consumer_info.html#a897e52dc1e2a150a2e1cc1078ef27dd4", null ],
+      [ "Name", "structnats_j_s_consumer_info.html#a07ea772616d53a4c53749fde9ff4d721", null ],
+      [ "Created", "structnats_j_s_consumer_info.html#a601df7f1f77df58087d14e336d4d313a", null ],
+      [ "Config", "structnats_j_s_consumer_info.html#a582675cea06c9e352f981e8211a9cd3e", null ],
+      [ "Delivered", "structnats_j_s_consumer_info.html#a37a17fdf55eca04950095758b68724ef", null ],
+      [ "AckFloor", "structnats_j_s_consumer_info.html#a552b8e7200d867809ece53105410355b", null ],
+      [ "NumAckPending", "structnats_j_s_consumer_info.html#ae5cccf4842432a8c0de5409a5776bf22", null ],
+      [ "NumRedelivered", "structnats_j_s_consumer_info.html#aaef4686115cc7c6050e2872048ed446e", null ],
+      [ "NumWaiting", "structnats_j_s_consumer_info.html#a5659b4d49925799a44dec478f989f880", null ],
+      [ "NumPending", "structnats_j_s_consumer_info.html#ad5e84f5a66a21807a8ed5e3f34a8770a", null ],
+      [ "Cluster", "structnats_j_s_consumer_info.html#ace52d3d0fbdf5ac6bce795d5c31edf7e", null ]
+    ] ],
     [ "natsJSAPIStats", "structnats_j_s_a_p_i_stats.html", [
       [ "Total", "structnats_j_s_a_p_i_stats.html#a31fc0a5f1bba1ae3c760a0e53a79f634", null ],
       [ "Errors", "structnats_j_s_a_p_i_stats.html#a866db13139a5302746971d2280eb214f", null ]
@@ -158,6 +193,9 @@ var group__types_group =
     [ "natsJSClusterInfo", "group__types_group.html#ga8d90f93d145459940c62291b5a8e1ce7", null ],
     [ "natsJSStreamSourceInfo", "group__types_group.html#gafa98854b7601f629a3cb4cccbfc4fa72", null ],
     [ "natsJSStreamInfo", "group__types_group.html#ga3e372350ef24216c98592f0491588448", null ],
+    [ "natsJSConsumerConfig", "group__types_group.html#ga1a487451d6e7d7788a3d9ca6dde7e65d", null ],
+    [ "natsJSSequencePair", "group__types_group.html#gaee8ec7612db4fd7854e61ddb768ee0b0", null ],
+    [ "natsJSConsumerInfo", "group__types_group.html#ga17d108bd92d64d234886b54ed8a1c443", null ],
     [ "natsJSAPIStats", "group__types_group.html#gab1e0f41c33f44ad7f1cb043e4fdf918d", null ],
     [ "natsJSAccountLimits", "group__types_group.html#gae05fbff7b337a7603c333ab5a343d14a", null ],
     [ "natsJSAccountInfo", "group__types_group.html#ga2016a7fc3460b079134c31098435ef67", null ],
@@ -183,5 +221,21 @@ var group__types_group =
     [ "natsJSStorageType", "group__types_group.html#gaa2b78a6cf7a6fb0436bd57ee6a6aca26", [
       [ "natsJS_FileStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26ab79c322c46a1281a54dd4ddcce48366d", null ],
       [ "natsJS_MemoryStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26a34b9c5ebbc445daa289f894710cf26a3", null ]
+    ] ],
+    [ "natsJSDeliverPolicy", "group__types_group.html#ga83eb9e05d76d9de7f470499b91cec5bc", [
+      [ "natsJS_DeliverAll", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca446b8a87d39941af8ef081f768f02c02", null ],
+      [ "natsJS_DeliverLast", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4aab200a346cf4c0bd23b4a4fcfbc4d0", null ],
+      [ "natsJS_DeliverNew", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca7b6ca063e3910517f1aace6061081ca5", null ],
+      [ "natsJS_DeliverByStartSequence", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4dd7b7a226787fd8e3384415d2ded838", null ],
+      [ "natsJS_DeliverByStartTime", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bcafd5409d98329298f1beda6b323285f2b", null ]
+    ] ],
+    [ "natsJSAckPolicy", "group__types_group.html#ga1595328891eb8f3625cbc52be8c683be", [
+      [ "natsJS_AckNone", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683beaa904698b838200be07d21d872a2eedab", null ],
+      [ "natsJS_AckAll", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea8eb6f9b8582defb2fea4790f577eafbb", null ],
+      [ "natsJS_AckExplicit", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea15b26512da1679c0b39f4200c13ffb60", null ]
+    ] ],
+    [ "natsJSReplayPolicy", "group__types_group.html#gadf5ec9a558bc736aab4689a46dfb11e6", [
+      [ "natsJS_ReplayInstant", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a6ee33e8281d94ade885af40a1fa7523c", null ],
+      [ "natsJS_ReplayOriginal", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a90a99b93092260245774254ae5fa2c27", null ]
     ] ]
 ];

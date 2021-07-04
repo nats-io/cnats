@@ -92,6 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_d"><span>d</span></a></li>
       <li><a href="#index_e"><span>e</span></a></li>
       <li><a href="#index_f"><span>f</span></a></li>
+      <li><a href="#index_h"><span>h</span></a></li>
       <li><a href="#index_k"><span>k</span></a></li>
       <li><a href="#index_l"><span>l</span></a></li>
       <li><a href="#index_m"><span>m</span></a></li>
@@ -137,6 +138,15 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <div class="textblock">Here is a list of all class members with links to the classes they belong to:</div>
 
 <h3><a class="anchor" id="index_a"></a>- a -</h3><ul>
+<li>AckFloor
+: <a class="el" href="structnats_j_s_consumer_info.html#a552b8e7200d867809ece53105410355b">natsJSConsumerInfo</a>
+</li>
+<li>AckPolicy
+: <a class="el" href="structnats_j_s_consumer_config.html#a4bae0bc70c0b35de184aa6bf0270ae58">natsJSConsumerConfig</a>
+</li>
+<li>AckWait
+: <a class="el" href="structnats_j_s_consumer_config.html#a6b01c46d7a76cdd9445d8cac19bb0e25">natsJSConsumerConfig</a>
+</li>
 <li>Active
 : <a class="el" href="structnats_j_s_peer_info.html#ae3980afc7206e8e264348ebb3ec34ede">natsJSPeerInfo</a>
 , <a class="el" href="structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a">natsJSStreamSourceInfo</a>
@@ -160,18 +170,24 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
 <li>Cluster
-: <a class="el" href="structnats_j_s_placement.html#a7381363eeac70c61d1d2c54e98c3afb0">natsJSPlacement</a>
+: <a class="el" href="structnats_j_s_consumer_info.html#ace52d3d0fbdf5ac6bce795d5c31edf7e">natsJSConsumerInfo</a>
+, <a class="el" href="structnats_j_s_placement.html#a7381363eeac70c61d1d2c54e98c3afb0">natsJSPlacement</a>
 , <a class="el" href="structnats_j_s_stream_info.html#a292ff50f4d6f2f70808499ffe278f659">natsJSStreamInfo</a>
 </li>
 <li>Config
-: <a class="el" href="structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3">natsJSStreamInfo</a>
+: <a class="el" href="structnats_j_s_consumer_info.html#a582675cea06c9e352f981e8211a9cd3e">natsJSConsumerInfo</a>
+, <a class="el" href="structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3">natsJSStreamInfo</a>
+</li>
+<li>Consumer
+: <a class="el" href="structnats_j_s_sequence_pair.html#a6bee81ed66880afcd11ff64a6b6d2c24">natsJSSequencePair</a>
 </li>
 <li>Consumers
 : <a class="el" href="structnats_j_s_account_info.html#ab85d6601508d0f8893cb9da1f7c35847">natsJSAccountInfo</a>
 , <a class="el" href="structnats_j_s_stream_state.html#a76f71b2c364ff491a0de5d5af6ab2ecc">natsJSStreamState</a>
 </li>
 <li>Created
-: <a class="el" href="structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19">natsJSStreamInfo</a>
+: <a class="el" href="structnats_j_s_consumer_info.html#a601df7f1f77df58087d14e336d4d313a">natsJSConsumerInfo</a>
+, <a class="el" href="structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19">natsJSStreamInfo</a>
 </li>
 <li>Current
 : <a class="el" href="structnats_j_s_peer_info.html#af58233d9dd3b81f276afb6c35971d17f">natsJSPeerInfo</a>
@@ -189,8 +205,17 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>DeletedLen
 : <a class="el" href="structnats_j_s_stream_state.html#a725edd90020f2f958156fa2a2e0c19a0">natsJSStreamState</a>
 </li>
+<li>Delivered
+: <a class="el" href="structnats_j_s_consumer_info.html#a37a17fdf55eca04950095758b68724ef">natsJSConsumerInfo</a>
+</li>
+<li>DeliverPolicy
+: <a class="el" href="structnats_j_s_consumer_config.html#ac18e2cb6dc2441f90f0e5b2d566690fc">natsJSConsumerConfig</a>
+</li>
 <li>DeliverPrefix
 : <a class="el" href="structnats_j_s_external_stream.html#aca01d6d56d4eb77fc50378afee6e82ca">natsJSExternalStream</a>
+</li>
+<li>DeliverSubject
+: <a class="el" href="structnats_j_s_consumer_config.html#a8d1f9b0e2994d86ea2595c0b250bc1db">natsJSConsumerConfig</a>
 </li>
 <li>Discard
 : <a class="el" href="structnats_j_s_stream_config.html#ad2a00eae1f2ffd97c88e36ee3790f427">natsJSStreamConfig</a>
@@ -204,6 +229,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 </li>
 <li>Duplicates
 : <a class="el" href="structnats_j_s_stream_config.html#a0a0342e04aa98ac0c4f7e5b93d4ce3c0">natsJSStreamConfig</a>
+</li>
+<li>Durable
+: <a class="el" href="structnats_j_s_consumer_config.html#abf47ae99f6ad388d4c4a996a5efabf21">natsJSConsumerConfig</a>
 </li>
 </ul>
 
@@ -239,13 +267,24 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 <h3><a class="anchor" id="index_f"></a>- f -</h3><ul>
 <li>FilterSubject
-: <a class="el" href="structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21">natsJSStreamSource</a>
+: <a class="el" href="structnats_j_s_consumer_config.html#a9257111b6c7ffdfda216b283465e76e7">natsJSConsumerConfig</a>
+, <a class="el" href="structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21">natsJSStreamSource</a>
 </li>
 <li>FirstSeq
 : <a class="el" href="structnats_j_s_stream_state.html#ac2ba1c423dabe50925e9e7d45c53a790">natsJSStreamState</a>
 </li>
 <li>FirstTime
 : <a class="el" href="structnats_j_s_stream_state.html#a286d4402e6d6ee9fcea321b2fdf7ab10">natsJSStreamState</a>
+</li>
+<li>FlowControl
+: <a class="el" href="structnats_j_s_consumer_config.html#aeca148b8421692e957a2bddc86d21444">natsJSConsumerConfig</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_h"></a>- h -</h3><ul>
+<li>Heartbeat
+: <a class="el" href="structnats_j_s_consumer_config.html#ab472e11c8bc4012fb715df4cf898b934">natsJSConsumerConfig</a>
 </li>
 </ul>
 
@@ -281,6 +320,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 
 <h3><a class="anchor" id="index_m"></a>- m -</h3><ul>
+<li>MaxAckPending
+: <a class="el" href="structnats_j_s_consumer_config.html#a79afef2d09c2c5901a70bf909b7379bb">natsJSConsumerConfig</a>
+</li>
 <li>MaxAge
 : <a class="el" href="structnats_j_s_stream_config.html#a8e2bf3f913a2ce6e16cff348c85c5564">natsJSStreamConfig</a>
 </li>
@@ -290,6 +332,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>MaxConsumers
 : <a class="el" href="structnats_j_s_account_limits.html#a7526b96c7cae57b2cf754bef05862d59">natsJSAccountLimits</a>
 , <a class="el" href="structnats_j_s_stream_config.html#a47704a97637916565000f2ec1cc1a913">natsJSStreamConfig</a>
+</li>
+<li>MaxDeliver
+: <a class="el" href="structnats_j_s_consumer_config.html#aab6e0a8d8c9116f90698e67bb5448473">natsJSConsumerConfig</a>
 </li>
 <li>MaxMemory
 : <a class="el" href="structnats_j_s_account_limits.html#add443db27c99178878b79a89624a762a">natsJSAccountLimits</a>
@@ -311,6 +356,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 </li>
 <li>MaxWait
 : <a class="el" href="structnats_j_s_pub_options.html#a6b152f86c87c68034486eb3b292ce1b5">natsJSPubOptions</a>
+</li>
+<li>MaxWaiting
+: <a class="el" href="structnats_j_s_consumer_config.html#aca533d718aa53b7ea1b17a323c87724c">natsJSConsumerConfig</a>
 </li>
 <li>Memory
 : <a class="el" href="structnats_j_s_account_info.html#aefc7a8df0e6071e3fc89213b8be444c0">natsJSAccountInfo</a>
@@ -338,6 +386,7 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
 <li>Name
 : <a class="el" href="structnats_j_s_cluster_info.html#aae444c08565098e7019043505c29cb82">natsJSClusterInfo</a>
+, <a class="el" href="structnats_j_s_consumer_info.html#a07ea772616d53a4c53749fde9ff4d721">natsJSConsumerInfo</a>
 , <a class="el" href="structnats_j_s_peer_info.html#ada4b99aab3c548ae5b89cd56ca4cd816">natsJSPeerInfo</a>
 , <a class="el" href="structnats_j_s_stream_config.html#aa16902c94f1ad460f084c22718442dc5">natsJSStreamConfig</a>
 , <a class="el" href="structnats_j_s_stream_source.html#a725bacffe83b05a5922e3d03dd32f6e6">natsJSStreamSource</a>
@@ -346,8 +395,20 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>NoAck
 : <a class="el" href="structnats_j_s_stream_config.html#a269a6ca65ee8bfc53733130c7c5eb519">natsJSStreamConfig</a>
 </li>
+<li>NumAckPending
+: <a class="el" href="structnats_j_s_consumer_info.html#ae5cccf4842432a8c0de5409a5776bf22">natsJSConsumerInfo</a>
+</li>
 <li>NumDeleted
 : <a class="el" href="structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f">natsJSStreamState</a>
+</li>
+<li>NumPending
+: <a class="el" href="structnats_j_s_consumer_info.html#ad5e84f5a66a21807a8ed5e3f34a8770a">natsJSConsumerInfo</a>
+</li>
+<li>NumRedelivered
+: <a class="el" href="structnats_j_s_consumer_info.html#aaef4686115cc7c6050e2872048ed446e">natsJSConsumerInfo</a>
+</li>
+<li>NumWaiting
+: <a class="el" href="structnats_j_s_consumer_info.html#a5659b4d49925799a44dec478f989f880">natsJSConsumerInfo</a>
 </li>
 </ul>
 
@@ -357,10 +418,12 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="structnats_j_s_peer_info.html#a70d160dec0a5908388f050f3971f2cf3">natsJSPeerInfo</a>
 </li>
 <li>OptStartSeq
-: <a class="el" href="structnats_j_s_stream_source.html#a75dbc3eeaaf2d8588de091dd2bd6ba6e">natsJSStreamSource</a>
+: <a class="el" href="structnats_j_s_consumer_config.html#a97c83ac7c7f3ac6dfb2628b75811ad31">natsJSConsumerConfig</a>
+, <a class="el" href="structnats_j_s_stream_source.html#a75dbc3eeaaf2d8588de091dd2bd6ba6e">natsJSStreamSource</a>
 </li>
 <li>OptStartTime
-: <a class="el" href="structnats_j_s_stream_source.html#adc2544caab935b7b8131c83e8a145550">natsJSStreamSource</a>
+: <a class="el" href="structnats_j_s_consumer_config.html#ae4be34f2efd792969f4bf0f89ebd308a">natsJSConsumerConfig</a>
+, <a class="el" href="structnats_j_s_stream_source.html#adc2544caab935b7b8131c83e8a145550">natsJSStreamSource</a>
 </li>
 </ul>
 
@@ -391,6 +454,12 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 
 <h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
+<li>RateLimit
+: <a class="el" href="structnats_j_s_consumer_config.html#adeb3eaaa3f5736111fed84723bf73670">natsJSConsumerConfig</a>
+</li>
+<li>ReplayPolicy
+: <a class="el" href="structnats_j_s_consumer_config.html#aca30ed1b2b91c4a72a512187bf14380d">natsJSConsumerConfig</a>
+</li>
 <li>Replicas
 : <a class="el" href="structnats_j_s_cluster_info.html#a3d14ecc4d806fe0daad3f12746bbc8c0">natsJSClusterInfo</a>
 , <a class="el" href="structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8">natsJSStreamConfig</a>
@@ -405,6 +474,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
+<li>SampleFrequency
+: <a class="el" href="structnats_j_s_consumer_config.html#a0f71f05855cf9940b0de19e6783d34f2">natsJSConsumerConfig</a>
+</li>
 <li>Sequence
 : <a class="el" href="structnats_j_s_pub_ack.html#ae0d1c697cdcb2b7ba68b964e2fdd8932">natsJSPubAck</a>
 , <a class="el" href="structnats_j_s_purge_options.html#a9b2336ed218e1fb7189bb76c98a88a29">natsJSPurgeOptions</a>
@@ -427,7 +499,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="structnats_j_s_account_info.html#a0ec74bc1dc7d950dfd1a5b979818d466">natsJSAccountInfo</a>
 </li>
 <li>Stream
-: <a class="el" href="structnats_j_s_pub_ack.html#a33a7b7ef5346afce536c709ec40d68f7">natsJSPubAck</a>
+: <a class="el" href="structnats_j_s_consumer_info.html#a897e52dc1e2a150a2e1cc1078ef27dd4">natsJSConsumerInfo</a>
+, <a class="el" href="structnats_j_s_pub_ack.html#a33a7b7ef5346afce536c709ec40d68f7">natsJSPubAck</a>
+, <a class="el" href="structnats_j_s_sequence_pair.html#a3571b38f2a0f476ed4e7366bf9e8f987">natsJSSequencePair</a>
 </li>
 <li>StreamInfo
 : <a class="el" href="structnats_j_s_options.html#a35b873c5236188d2ec5af3a14b1271cc">natsJSOptions</a>
