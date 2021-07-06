@@ -205,7 +205,36 @@ typedef enum {
     JSStreamReplicasNotSupportedErr = 10074,            ///< Replicas > 1 not supported in non-clustered mode
     JSPeerRemapErr = 10075,                             ///< Peer remap failed
     JSNotEnabledErr = 10076,                            ///< JetStream not enabled
-	JSStreamStoreFailedErr = 10077                      ///< Generic error when storing a message failed
+    JSStreamStoreFailedErr = 10077,                     ///< Generic error when storing a message failed
+    JSConsumerConfigRequiredErr = 10078,                ///< Consumer config required
+    JSConsumerDeliverToWildcardsErr = 10079,            ///< Consumer deliver subject has wildcards
+    JSConsumerPushMaxWaitingErr = 10080,                ///< Consumer in push mode can not set max waiting
+    JSConsumerDeliverCycleErr = 10081,                  ///< Consumer deliver subject forms a cycle
+    JSConsumerMaxPendingAckPolicyRequiredErr = 10082,   ///< Consumer requires ack policy for max ack pending
+    JSConsumerSmallHeartbeatErr = 10083,                ///< Consumer idle heartbeat needs to be >= 100ms
+    JSConsumerPullRequiresAckErr = 10084,               ///< Consumer in pull mode requires explicit ack policy
+    JSConsumerPullNotDurableErr = 10085,                ///< Consumer in pull mode requires a durable name
+    JSConsumerPullWithRateLimitErr = 10086,             ///< Consumer in pull mode can not have rate limit set
+    JSConsumerMaxWaitingNegativeErr = 10087,            ///< Consumer max waiting needs to be positive
+    JSConsumerHBRequiresPushErr = 10088,                ///< Consumer idle heartbeat requires a push based consumer
+    JSConsumerFCRequiresPushErr = 10089,                ///< Consumer flow control requires a push based consumer
+    JSConsumerDirectRequiresPushErr = 10090,            ///< Consumer direct requires a push based consumer
+    JSConsumerDirectRequiresEphemeralErr = 10091,       ///< Consumer direct requires an ephemeral consumer
+    JSConsumerOnMappedErr = 10092,                      ///< Consumer direct on a mapped consumer
+    JSConsumerFilterNotSubsetErr = 10093,               ///< Consumer filter subject is not a valid subset of the interest subjects
+    JSConsumerInvalidPolicyErr = 10094,                 ///< Generic delivery policy error
+    JSConsumerInvalidSamplingErr = 10095,               ///< Failed to parse consumer sampling configuration
+    JSStreamInvalidErr = 10096,                         ///< Stream not valid
+    JSStreamMaximumConsumersReachedErr = 10097,         ///< Maximum consumers limit reached
+    JSConsumerWQRequiresExplicitAckErr = 10098,         ///< Workqueue stream requires explicit ack
+    JSConsumerWQMultipleUnfilteredErr = 10099,          ///< Multiple non-filtered consumers not allowed on workqueue stream
+    JSConsumerWQConsumerNotUniqueErr = 10100,           ///< Filtered consumer not unique on workqueue stream
+    JSConsumerWQConsumerNotDeliverAllErr = 10101,       ///< Consumer must be deliver all on workqueue stream
+    JSConsumerNameTooLongErr = 10102,                   ///< Consumer name is too long
+    JSConsumerBadDurableNameErr = 10103,                ///< Durable name can not contain '.', '*', '>'
+    JSConsumerStoreFailedErr = 10104,                   ///< Error creating store for consumer
+    JSConsumerExistingActiveErr = 10105,                ///< Consumer already exists and is still active
+    JSConsumerReplacementWithDifferentNameErr = 10106,  ///< Consumer replacement durable config not the same
 
 } natsJSErrCode;
 

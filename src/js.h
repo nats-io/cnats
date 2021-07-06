@@ -32,10 +32,11 @@ void natsJS_unlock(natsJS *js);
 extern const char*      jsDefaultAPIPrefix;
 extern const int64_t    jsDefaultRequestWait;
 
-#define jsMsgIdHdr             "Nats-Msg-Id"
-#define jsExpectedStreamHdr    "Nats-Expected-Stream"
-#define jsExpectedLastSeqHdr   "Nats-Expected-Last-Sequence"
-#define jsExpectedLastMsgIdHdr "Nats-Expected-Last-Msg-Id"
+#define jsMsgIdHdr                  "Nats-Msg-Id"
+#define jsExpectedStreamHdr         "Nats-Expected-Stream"
+#define jsExpectedLastSeqHdr        "Nats-Expected-Last-Sequence"
+#define jsExpectedLastSubjSeqHdr    "Nats-Expected-Last-Subject-Sequence"
+#define jsExpectedLastMsgIdHdr      "Nats-Expected-Last-Msg-Id"
 
 #define jsErrStreamNameRequired     "stream name is required"
 #define jsErrConsumerNameRequired   "consumer name is required"

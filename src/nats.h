@@ -169,6 +169,7 @@ typedef struct natsJSPubOptions
         const char      *ExpectStream;          ///< Expected stream to respond from the publish call.
         const char      *ExpectLastMsgId;       ///< Expected last message ID in the stream.
         uint64_t        ExpectLastSeq;          ///< Expected last message sequence in the stream.
+        uint64_t        ExpectLastSubjectSeq;   ///< Expected last message sequence for the subject in the stream.
 
 } natsJSPubOptions;
 

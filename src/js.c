@@ -386,7 +386,8 @@ natsJS_Publish(natsJSPubAck **new_puback, natsJS *js, const char *subj, const vo
 static natsStatus
 _setHeadersFromOptions(natsMsg *msg, natsJSPubOptions *opts)
 {
-    natsStatus s = NATS_OK;
+    natsStatus  s        = NATS_OK;
+    char        temp[64] = {'\0'};
 
     if (!nats_IsStringEmpty(opts->MsgId))
         s = natsMsgHeader_Set(msg, jsMsgIdHdr, opts->MsgId);
@@ -399,10 +400,14 @@ _setHeadersFromOptions(natsMsg *msg, natsJSPubOptions *opts)
 
     if ((s == NATS_OK) && (opts->ExpectLastSeq > 0))
     {
-        char temp[64] = {'\0'};
-
         snprintf(temp, sizeof(temp), "%" PRIu64, opts->ExpectLastSeq);
         s = natsMsgHeader_Set(msg, jsExpectedLastSeqHdr, temp);
+    }
+
+    if ((s == NATS_OK) && (opts->ExpectLastSubjectSeq > 0))
+    {
+        snprintf(temp, sizeof(temp), "%" PRIu64, opts->ExpectLastSubjectSeq);
+        s = natsMsgHeader_Set(msg, jsExpectedLastSubjSeqHdr, temp);
     }
 
     return NATS_UPDATE_ERR_STACK(s);

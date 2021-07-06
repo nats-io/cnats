@@ -21416,7 +21416,7 @@ test_JetStreamPublish(void)
     natsMsg             *msg = NULL;
     char                datastore[256] = {'\0'};
     char                cmdLine[1024] = {'\0'};
-    const char          *subjects[] = {"foo"};
+    const char          *subjects[] = {"foo", "bar"};
 
     _makeUniqueDir(datastore, sizeof(datastore), "datastore_");
 
@@ -21441,7 +21441,7 @@ test_JetStreamPublish(void)
     test("Add stream: ");
     cfg.Name = "TEST";
     cfg.Subjects = subjects;
-    cfg.SubjectsLen = 1;
+    cfg.SubjectsLen = 2;
     s = natsJS_AddStream(NULL, js, &cfg, NULL, NULL);
     testCond(s == NATS_OK);
 
@@ -21476,6 +21476,7 @@ test_JetStreamPublish(void)
     testCond((s == NATS_OK) && (jerr == 0));
 
     test("Publish data with pubAck: ");
+    natsJSPubOptions_Init(&opts);
     opts.MsgId = "msg2";
     s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
     testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
@@ -21492,28 +21493,57 @@ test_JetStreamPublish(void)
     pa = NULL;
 
     test("Publish with wrong expected stream: ");
-    opts.MsgId = NULL;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectStream = "WRONG";
     s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamNotMatchErr)) && (pa == NULL));
     jerr = 0;
 
     test("Publish with wrong expected sequence: ");
-    opts.MsgId = NULL;
-    opts.ExpectStream = NULL;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectLastSeq = 4;
     s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastSequenceErr)) && (pa == NULL));
     jerr = 0;
 
     test("Publish with wrong expected message ID: ");
-    opts.MsgId = NULL;
-    opts.ExpectStream = NULL;
-    opts.ExpectLastSeq = 0;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectLastMsgId = "WRONG";
     s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastMsgIDErr)) && (pa == NULL));
     jerr = 0;
+
+    test("Publish 1 msg on bar: ");
+    natsJSPubOptions_Init(&opts);
+    s = natsJS_Publish(&pa, js, "bar", "hello", 5, &opts, &jerr);
+    testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
+                && (strcmp(pa->Stream, "TEST") == 0)
+                && (pa->Sequence == 3)
+                && !pa->Duplicate);
+    natsJSPubAck_Destroy(pa);
+    pa = NULL;
+
+    test("Publish with wrong expected subj sequence: ");
+    natsJSPubOptions_Init(&opts);
+    // There should be 3 messages now, with "foo, 1", "foo, 2" and "bar, 3"
+    // We are going to send on "foo" and say that last expected msg seq on "foo"
+    // is 3, which is wrong, so should fail.
+    opts.ExpectLastSubjectSeq = 3;
+    s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
+    testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastSequenceErr)) && (pa == NULL));
+    jerr = 0;
+    nats_clearLastError();
+
+    test("Publish with correct expected subj sequence: ");
+    // Now set last expected for subject to 2, and it should be ok, and the sequence will be 4.
+    opts.ExpectLastSubjectSeq = 2;
+    s = natsJS_Publish(&pa, js, "foo", "hello", 5, &opts, &jerr);
+    testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
+                && (strcmp(pa->Stream, "TEST") == 0)
+                && (pa->Sequence == 4)
+                && !pa->Duplicate);
+    natsJSPubAck_Destroy(pa);
+    pa = NULL;
 
     // ---- Same than above but with PublishMsg variant
     test("Recreate stream: ");
@@ -21551,6 +21581,7 @@ test_JetStreamPublish(void)
     testCond((s == NATS_OK) && (jerr == 0));
 
     test("Publish data with pubAck: ");
+    natsJSPubOptions_Init(&opts);
     opts.MsgId = "msg2";
     s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
     testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
@@ -21573,7 +21604,7 @@ test_JetStreamPublish(void)
     natsMsg_Create(&msg, "foo", NULL, "hello", 5);
 
     test("Publish with wrong expected stream: ");
-    opts.MsgId = NULL;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectStream = "WRONG";
     s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamNotMatchErr)) && (pa == NULL));
@@ -21583,8 +21614,7 @@ test_JetStreamPublish(void)
     natsMsg_Create(&msg, "foo", NULL, "hello", 5);
 
     test("Publish with wrong expected sequence: ");
-    opts.MsgId = NULL;
-    opts.ExpectStream = NULL;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectLastSeq = 4;
     s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastSequenceErr)) && (pa == NULL));
@@ -21594,13 +21624,51 @@ test_JetStreamPublish(void)
     natsMsg_Create(&msg, "foo", NULL, "hello", 5);
 
     test("Publish with wrong expected message ID: ");
-    opts.MsgId = NULL;
-    opts.ExpectStream = NULL;
-    opts.ExpectLastSeq = 0;
+    natsJSPubOptions_Init(&opts);
     opts.ExpectLastMsgId = "WRONG";
     s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
     testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastMsgIDErr)) && (pa == NULL));
     jerr = 0;
+    natsMsg_Destroy(msg);
+    msg = NULL;
+
+    test("Publish 1 msg on bar: ");
+    natsJSPubOptions_Init(&opts);
+    natsMsg_Create(&msg, "bar", NULL, "hello", 5);
+    s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
+    testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
+                && (strcmp(pa->Stream, "TEST") == 0)
+                && (pa->Sequence == 3)
+                && !pa->Duplicate);
+    natsJSPubAck_Destroy(pa);
+    pa = NULL;
+    natsMsg_Destroy(msg);
+    msg = NULL;
+
+    test("Publish with wrong expected subj sequence: ");
+    natsJSPubOptions_Init(&opts);
+    natsMsg_Create(&msg, "foo", NULL, "hello", 5);
+    // There should be 3 messages now, with "foo, 1", "foo, 2" and "bar, 3"
+    // We are going to send on "foo" and say that last expected msg seq on "foo"
+    // is 3, which is wrong, so should fail.
+    opts.ExpectLastSubjectSeq = 3;
+    s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
+    testCond((s == NATS_ERR) && ((jerr == 0) || (jerr == JSStreamWrongLastSequenceErr)) && (pa == NULL));
+    jerr = 0;
+    natsMsg_Destroy(msg);
+    msg = NULL;
+
+    test("Publish with correct expected subj sequence: ");
+    natsMsg_Create(&msg, "foo", NULL, "hello", 5);
+    // Now set last expected for subject to 2, and it should be ok, and the sequence will be 4.
+    opts.ExpectLastSubjectSeq = 2;
+    s = natsJS_PublishMsg(&pa, js, msg, &opts, &jerr);
+    testCond((s == NATS_OK) && (jerr == 0) && (pa != NULL)
+                && (strcmp(pa->Stream, "TEST") == 0)
+                && (pa->Sequence == 4)
+                && !pa->Duplicate);
+    natsJSPubAck_Destroy(pa);
+    pa = NULL;
     natsMsg_Destroy(msg);
     msg = NULL;
 
