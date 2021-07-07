@@ -1,10 +1,23 @@
 var searchData=
 [
-  ['name',['Name',['../structnats_j_s_stream_source.html#a725bacffe83b05a5922e3d03dd32f6e6',1,'natsJSStreamSource::Name()'],['../structnats_j_s_stream_config.html#aa16902c94f1ad460f084c22718442dc5',1,'natsJSStreamConfig::Name()'],['../structnats_j_s_peer_info.html#ada4b99aab3c548ae5b89cd56ca4cd816',1,'natsJSPeerInfo::Name()'],['../structnats_j_s_cluster_info.html#aae444c08565098e7019043505c29cb82',1,'natsJSClusterInfo::Name()'],['../structnats_j_s_stream_source_info.html#a6df0a068b6632c812ea362ae5a7a16f1',1,'natsJSStreamSourceInfo::Name()'],['../structnats_j_s_consumer_info.html#a07ea772616d53a4c53749fde9ff4d721',1,'natsJSConsumerInfo::Name()']]],
-  ['noack',['NoAck',['../structnats_j_s_stream_config.html#a269a6ca65ee8bfc53733130c7c5eb519',1,'natsJSStreamConfig']]],
-  ['numackpending',['NumAckPending',['../structnats_j_s_consumer_info.html#ae5cccf4842432a8c0de5409a5776bf22',1,'natsJSConsumerInfo']]],
-  ['numdeleted',['NumDeleted',['../structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f',1,'natsJSStreamState']]],
-  ['numpending',['NumPending',['../structnats_j_s_consumer_info.html#ad5e84f5a66a21807a8ed5e3f34a8770a',1,'natsJSConsumerInfo']]],
-  ['numredelivered',['NumRedelivered',['../structnats_j_s_consumer_info.html#aaef4686115cc7c6050e2872048ed446e',1,'natsJSConsumerInfo']]],
-  ['numwaiting',['NumWaiting',['../structnats_j_s_consumer_info.html#a5659b4d49925799a44dec478f989f880',1,'natsJSConsumerInfo']]]
+  ['maxackpending',['MaxAckPending',['../structjs_consumer_config.html#a42ecc6163bd68dffe46900d350ad9f70',1,'jsConsumerConfig']]],
+  ['maxage',['MaxAge',['../structjs_stream_config.html#aa538765ad97d343d60212ebd9894661e',1,'jsStreamConfig']]],
+  ['maxbytes',['MaxBytes',['../structjs_stream_config.html#ad75e47d4293441bd5ddbc5eaf01e0451',1,'jsStreamConfig']]],
+  ['maxconsumers',['MaxConsumers',['../structjs_stream_config.html#a007d89dcbded3c18bf45e674e8a936ba',1,'jsStreamConfig::MaxConsumers()'],['../structjs_account_limits.html#a594ca4f4aa85550dd475afeeb06c036f',1,'jsAccountLimits::MaxConsumers()']]],
+  ['maxdeliver',['MaxDeliver',['../structjs_consumer_config.html#a6d19960bff2221af374cc8d63b4ffe90',1,'jsConsumerConfig']]],
+  ['maxmemory',['MaxMemory',['../structjs_account_limits.html#a7bfc63e6f49ce724663ee534c5efdfa4',1,'jsAccountLimits']]],
+  ['maxmsgs',['MaxMsgs',['../structjs_stream_config.html#a60a5184d1d97b056dbb31ac6a5b3d82d',1,'jsStreamConfig']]],
+  ['maxmsgsize',['MaxMsgSize',['../structjs_stream_config.html#a93a2336a57b6bfb792d530fd13a90641',1,'jsStreamConfig']]],
+  ['maxmsgspersubject',['MaxMsgsPerSubject',['../structjs_stream_config.html#aa167c7547d13bf2a01510a375ad38340',1,'jsStreamConfig']]],
+  ['maxpending',['MaxPending',['../structjs_options_1_1js_options_publish_async.html#a2f732ec474afc7aef316f47be1aaf0e1',1,'jsOptions::jsOptionsPublishAsync']]],
+  ['maxstore',['MaxStore',['../structjs_account_limits.html#a6fff014c46739410ecf298b0cf643b30',1,'jsAccountLimits']]],
+  ['maxstreams',['MaxStreams',['../structjs_account_limits.html#a6d6199ac64efbeafc6118b2a658d43bf',1,'jsAccountLimits']]],
+  ['maxwait',['MaxWait',['../structjs_pub_options.html#a1b242c9311b904a2e5337417b5c6d143',1,'jsPubOptions']]],
+  ['maxwaiting',['MaxWaiting',['../structjs_consumer_config.html#ac00ca43a30cbae483895ceeb4dd1ec29',1,'jsConsumerConfig']]],
+  ['memory',['Memory',['../structjs_account_info.html#a448578d621e878267ad5f1792002a665',1,'jsAccountInfo']]],
+  ['mirror',['Mirror',['../structjs_stream_config.html#acdba5b22e4e60fd81a54769a7d09bc51',1,'jsStreamConfig::Mirror()'],['../structjs_stream_info.html#ab71aae7e4f6c62e2a09a3a52c9e4fa2a',1,'jsStreamInfo::Mirror()']]],
+  ['msg',['Msg',['../structjs_pub_ack_err.html#a156ca2f779d132ffa8c519124cf9739b',1,'jsPubAckErr']]],
+  ['msgid',['MsgId',['../structjs_pub_options.html#ac8708487360b784f7dd5d7a21e5617c0',1,'jsPubOptions']]],
+  ['msgs',['Msgs',['../structjs_lost_stream_data.html#a5d2e87697526033c842a7f955776dfda',1,'jsLostStreamData::Msgs()'],['../structjs_stream_state.html#a495269fe83c6bbf2023cca94add0a888',1,'jsStreamState::Msgs()']]],
+  ['msgslen',['MsgsLen',['../structjs_lost_stream_data.html#abdc373ed7fc9b7cf161c13da1913fc9a',1,'jsLostStreamData']]]
 ];

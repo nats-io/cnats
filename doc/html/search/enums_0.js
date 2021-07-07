@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['natsconnstatus',['natsConnStatus',['../status_8h.html#a6d667c1f8dd289a7e0f39bf10e800b51',1,'status.h']]],
-  ['natsjsackpolicy',['natsJSAckPolicy',['../group__types_group.html#ga1595328891eb8f3625cbc52be8c683be',1,'nats.h']]],
-  ['natsjsdeliverpolicy',['natsJSDeliverPolicy',['../group__types_group.html#ga83eb9e05d76d9de7f470499b91cec5bc',1,'nats.h']]],
-  ['natsjsdiscardpolicy',['natsJSDiscardPolicy',['../group__types_group.html#ga002c6e7fa56cbe525bc673b4ffa96678',1,'nats.h']]],
-  ['natsjserrcode',['natsJSErrCode',['../status_8h.html#a11455f12227b601c67e9bff2b2af703d',1,'status.h']]],
-  ['natsjsreplaypolicy',['natsJSReplayPolicy',['../group__types_group.html#gadf5ec9a558bc736aab4689a46dfb11e6',1,'nats.h']]],
-  ['natsjsretentionpolicy',['natsJSRetentionPolicy',['../group__types_group.html#ga46a0e573b1649245a7c38d217dc88053',1,'nats.h']]],
-  ['natsjsstoragetype',['natsJSStorageType',['../group__types_group.html#gaa2b78a6cf7a6fb0436bd57ee6a6aca26',1,'nats.h']]],
-  ['natsstatus',['natsStatus',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80',1,'status.h']]]
+  ['jsackpolicy',['jsAckPolicy',['../group__types_group.html#ga8fcb50e6e7312834791f9e237d28e873',1,'nats.h']]],
+  ['jsdeliverpolicy',['jsDeliverPolicy',['../group__types_group.html#ga117ed2c35f89ef3144540ed9cbadc818',1,'nats.h']]],
+  ['jsdiscardpolicy',['jsDiscardPolicy',['../group__types_group.html#ga7f88b7d482488398074f9d1419a9b8c2',1,'nats.h']]],
+  ['jserrcode',['jsErrCode',['../status_8h.html#a10731415ffcd3e2330df10c4d5fd3d70',1,'status.h']]],
+  ['jsreplaypolicy',['jsReplayPolicy',['../group__types_group.html#ga8650faf52b0b6b23df376eebeb9d0354',1,'nats.h']]],
+  ['jsretentionpolicy',['jsRetentionPolicy',['../group__types_group.html#ga410f8fb053efa02b2ca1de0c02fa4b6d',1,'nats.h']]],
+  ['jsstoragetype',['jsStorageType',['../group__types_group.html#ga1802a53c79e667f093bba033b16adc98',1,'nats.h']]]
 ];

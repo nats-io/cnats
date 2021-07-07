@@ -1,12 +1,14 @@
 var searchData=
 [
-  ['err',['Err',['../structnats_j_s_pub_ack_err.html#ad9f00c2cc6e1c8f130efaa848943a2ff',1,'natsJSPubAckErr']]],
-  ['errcode',['ErrCode',['../structnats_j_s_pub_ack_err.html#a4a5b0e8d6e1c1ee18695e90a25f775ed',1,'natsJSPubAckErr']]],
-  ['errors',['Errors',['../structnats_j_s_a_p_i_stats.html#a866db13139a5302746971d2280eb214f',1,'natsJSAPIStats']]],
-  ['errtext',['ErrText',['../structnats_j_s_pub_ack_err.html#a279b0804343c03e5636513ef36558d94',1,'natsJSPubAckErr']]],
-  ['expectlastmsgid',['ExpectLastMsgId',['../structnats_j_s_pub_options.html#a8606543350255be884490115305eb17b',1,'natsJSPubOptions']]],
-  ['expectlastseq',['ExpectLastSeq',['../structnats_j_s_pub_options.html#a6e881dc5278784b0ee921e4cfc36dedf',1,'natsJSPubOptions']]],
-  ['expectlastsubjectseq',['ExpectLastSubjectSeq',['../structnats_j_s_pub_options.html#ab45614133b3d23c53c679c9a3bb7028c',1,'natsJSPubOptions']]],
-  ['expectstream',['ExpectStream',['../structnats_j_s_pub_options.html#a3856a9747ac31f7a4c621bd2f30dc3d8',1,'natsJSPubOptions']]],
-  ['external',['External',['../structnats_j_s_stream_source.html#a488be992bfde87792ee53026c571a161',1,'natsJSStreamSource::External()'],['../structnats_j_s_stream_source_info.html#a2c3145db8427bc541d3ba28cd1f95186',1,'natsJSStreamSourceInfo::External()']]]
+  ['err',['Err',['../structjs_pub_ack_err.html#a406e39e818f93bc59ac18cbdf035baf5',1,'jsPubAckErr']]],
+  ['errcode',['ErrCode',['../structjs_pub_ack_err.html#aa558fd192cc6d6c02ad891445ec5aa8a',1,'jsPubAckErr']]],
+  ['errhandler',['ErrHandler',['../structjs_options_1_1js_options_publish_async.html#a0a180995c49990ca277e449b7d43616b',1,'jsOptions::jsOptionsPublishAsync']]],
+  ['errhandlerclosure',['ErrHandlerClosure',['../structjs_options_1_1js_options_publish_async.html#a784a0029c30e82ff37c39ae6c276bc81',1,'jsOptions::jsOptionsPublishAsync']]],
+  ['errors',['Errors',['../structjs_a_p_i_stats.html#a84e85ad9d94dbe9afd1101388574255d',1,'jsAPIStats']]],
+  ['errtext',['ErrText',['../structjs_pub_ack_err.html#ad1a85e6ff4046d7df33c1e24323ddc87',1,'jsPubAckErr']]],
+  ['expectlastmsgid',['ExpectLastMsgId',['../structjs_pub_options.html#a095391b33a261586fc02eaf013b65e61',1,'jsPubOptions']]],
+  ['expectlastseq',['ExpectLastSeq',['../structjs_pub_options.html#a3b02b60b05caa6d242079a4c26b181bf',1,'jsPubOptions']]],
+  ['expectlastsubjectseq',['ExpectLastSubjectSeq',['../structjs_pub_options.html#aeefec1d2c7644562d23b87e55bf2e253',1,'jsPubOptions']]],
+  ['expectstream',['ExpectStream',['../structjs_pub_options.html#ac7ac74d2557d772c3092288dacf3711f',1,'jsPubOptions']]],
+  ['external',['External',['../structjs_stream_source.html#a295458d156af5373bb3f5ab06612a888',1,'jsStreamSource::External()'],['../structjs_stream_source_info.html#a7eb19dd2637079fd1e970a2b38d33e05',1,'jsStreamSourceInfo::External()']]]
 ];

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['filtersubject',['FilterSubject',['../structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21',1,'natsJSStreamSource::FilterSubject()'],['../structnats_j_s_consumer_config.html#a9257111b6c7ffdfda216b283465e76e7',1,'natsJSConsumerConfig::FilterSubject()']]],
-  ['firstseq',['FirstSeq',['../structnats_j_s_stream_state.html#ac2ba1c423dabe50925e9e7d45c53a790',1,'natsJSStreamState']]],
-  ['firsttime',['FirstTime',['../structnats_j_s_stream_state.html#a286d4402e6d6ee9fcea321b2fdf7ab10',1,'natsJSStreamState']]],
-  ['flowcontrol',['FlowControl',['../structnats_j_s_consumer_config.html#aeca148b8421692e957a2bddc86d21444',1,'natsJSConsumerConfig']]]
+  ['filtersubject',['FilterSubject',['../structjs_stream_source.html#af787b51dde9d77626f33860564eb08c3',1,'jsStreamSource::FilterSubject()'],['../structjs_consumer_config.html#af56ab7708b11e85e0b9115d152d281ca',1,'jsConsumerConfig::FilterSubject()']]],
+  ['firstseq',['FirstSeq',['../structjs_stream_state.html#a55bb6719163acef7fdb6d0bc3ae8d5da',1,'jsStreamState']]],
+  ['firsttime',['FirstTime',['../structjs_stream_state.html#afb7a708022faff518c060b33e99b04b0',1,'jsStreamState']]],
+  ['flowcontrol',['FlowControl',['../structjs_consumer_config.html#a484c64b6c54f6f758f54315470ed20d0',1,'jsConsumerConfig']]]
 ];

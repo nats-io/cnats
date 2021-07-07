@@ -41,22 +41,5 @@ var searchData=
   ['nats_5fssl_5ferror',['NATS_SSL_ERROR',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80a892183c32b4929388bb75dc62230ddf3',1,'status.h']]],
   ['nats_5fstale_5fconnection',['NATS_STALE_CONNECTION',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80aa76d5e3ce051bc7510be90e73663c93d',1,'status.h']]],
   ['nats_5fsys_5ferror',['NATS_SYS_ERROR',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80a984189ec4cfe3e7647268c99f7e49ec9',1,'status.h']]],
-  ['nats_5ftimeout',['NATS_TIMEOUT',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80ab88994c9ea9889ac4d9d656d62f550ed',1,'status.h']]],
-  ['natsjs_5fackall',['natsJS_AckAll',['../group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea8eb6f9b8582defb2fea4790f577eafbb',1,'nats.h']]],
-  ['natsjs_5fackexplicit',['natsJS_AckExplicit',['../group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea15b26512da1679c0b39f4200c13ffb60',1,'nats.h']]],
-  ['natsjs_5facknone',['natsJS_AckNone',['../group__types_group.html#gga1595328891eb8f3625cbc52be8c683beaa904698b838200be07d21d872a2eedab',1,'nats.h']]],
-  ['natsjs_5fdeliverall',['natsJS_DeliverAll',['../group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca446b8a87d39941af8ef081f768f02c02',1,'nats.h']]],
-  ['natsjs_5fdeliverbystartsequence',['natsJS_DeliverByStartSequence',['../group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4dd7b7a226787fd8e3384415d2ded838',1,'nats.h']]],
-  ['natsjs_5fdeliverbystarttime',['natsJS_DeliverByStartTime',['../group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bcafd5409d98329298f1beda6b323285f2b',1,'nats.h']]],
-  ['natsjs_5fdeliverlast',['natsJS_DeliverLast',['../group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4aab200a346cf4c0bd23b4a4fcfbc4d0',1,'nats.h']]],
-  ['natsjs_5fdelivernew',['natsJS_DeliverNew',['../group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca7b6ca063e3910517f1aace6061081ca5',1,'nats.h']]],
-  ['natsjs_5fdiscardnew',['natsJS_DiscardNew',['../group__types_group.html#gga002c6e7fa56cbe525bc673b4ffa96678a9e83d9af51716255e79df45c88a7854f',1,'nats.h']]],
-  ['natsjs_5fdiscardold',['natsJS_DiscardOld',['../group__types_group.html#gga002c6e7fa56cbe525bc673b4ffa96678aed7530f029398aaeaac4cd78a5d80649',1,'nats.h']]],
-  ['natsjs_5ffilestorage',['natsJS_FileStorage',['../group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26ab79c322c46a1281a54dd4ddcce48366d',1,'nats.h']]],
-  ['natsjs_5finterestpolicy',['natsJS_InterestPolicy',['../group__types_group.html#gga46a0e573b1649245a7c38d217dc88053ae4d2c17c02203f3b29ffa16ac2058c7e',1,'nats.h']]],
-  ['natsjs_5flimitspolicy',['natsJS_LimitsPolicy',['../group__types_group.html#gga46a0e573b1649245a7c38d217dc88053a58767a257c5c5a2a85270f86c07d5ed0',1,'nats.h']]],
-  ['natsjs_5fmemorystorage',['natsJS_MemoryStorage',['../group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26a34b9c5ebbc445daa289f894710cf26a3',1,'nats.h']]],
-  ['natsjs_5freplayinstant',['natsJS_ReplayInstant',['../group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a6ee33e8281d94ade885af40a1fa7523c',1,'nats.h']]],
-  ['natsjs_5freplayoriginal',['natsJS_ReplayOriginal',['../group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a90a99b93092260245774254ae5fa2c27',1,'nats.h']]],
-  ['natsjs_5fworkqueuepolicy',['natsJS_WorkQueuePolicy',['../group__types_group.html#gga46a0e573b1649245a7c38d217dc88053ad76d786e76310a7c269329d0c47e3ee2',1,'nats.h']]]
+  ['nats_5ftimeout',['NATS_TIMEOUT',['../status_8h.html#a36c934157b663b7b5fb5d6609c897c80ab88994c9ea9889ac4d9d656d62f550ed',1,'status.h']]]
 ];

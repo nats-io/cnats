@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['ackfloor',['AckFloor',['../structnats_j_s_consumer_info.html#a552b8e7200d867809ece53105410355b',1,'natsJSConsumerInfo']]],
-  ['ackpolicy',['AckPolicy',['../structnats_j_s_consumer_config.html#a4bae0bc70c0b35de184aa6bf0270ae58',1,'natsJSConsumerConfig']]],
-  ['ackwait',['AckWait',['../structnats_j_s_consumer_config.html#a6b01c46d7a76cdd9445d8cac19bb0e25',1,'natsJSConsumerConfig']]],
-  ['active',['Active',['../structnats_j_s_peer_info.html#ae3980afc7206e8e264348ebb3ec34ede',1,'natsJSPeerInfo::Active()'],['../structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a',1,'natsJSStreamSourceInfo::Active()']]],
-  ['api',['API',['../structnats_j_s_account_info.html#a7cf05dc5d194d267fb5de4383d5b8d12',1,'natsJSAccountInfo']]],
-  ['apiprefix',['APIPrefix',['../structnats_j_s_external_stream.html#abac8c58f6b3982b92749be3f8bcd853d',1,'natsJSExternalStream']]]
+  ['ackfloor',['AckFloor',['../structjs_consumer_info.html#a1e5a2a0f4686950da292eaec55e01c40',1,'jsConsumerInfo']]],
+  ['ackpolicy',['AckPolicy',['../structjs_consumer_config.html#a8a311af614dfae1b0f4e4af7db467aab',1,'jsConsumerConfig']]],
+  ['ackwait',['AckWait',['../structjs_consumer_config.html#a651a94b9b78668dde830dc7869610e67',1,'jsConsumerConfig']]],
+  ['active',['Active',['../structjs_peer_info.html#a8441d023932c388953197f7ea39402fe',1,'jsPeerInfo::Active()'],['../structjs_stream_source_info.html#a28b8cc0a9d487672955d3a3fa03de247',1,'jsStreamSourceInfo::Active()']]],
+  ['api',['API',['../structjs_account_info.html#a94ab71c69b7883c2731ae8741ddc1e94',1,'jsAccountInfo']]],
+  ['apiprefix',['APIPrefix',['../structjs_external_stream.html#a2eaf2c0c3e77c269f44e254af8b24e96',1,'jsExternalStream']]]
 ];

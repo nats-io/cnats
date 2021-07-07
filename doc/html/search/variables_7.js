@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keep',['Keep',['../structnats_j_s_purge_options.html#a08b34404c58eecb4fc1faa144ca5294d',1,'natsJSPurgeOptions']]]
+  ['info',['Info',['../structjs_options_1_1js_options_stream.html#abd87f515a825bd567d27b952fc5e0bbb',1,'jsOptions::jsOptionsStream']]]
 ];

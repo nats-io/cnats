@@ -1,11 +1,11 @@
 var searchData=
 [
   ['callbacks',['Callbacks',['../group__callbacks_group.html',1,'']]],
-  ['cluster',['Cluster',['../structnats_j_s_placement.html#a7381363eeac70c61d1d2c54e98c3afb0',1,'natsJSPlacement::Cluster()'],['../structnats_j_s_stream_info.html#a292ff50f4d6f2f70808499ffe278f659',1,'natsJSStreamInfo::Cluster()'],['../structnats_j_s_consumer_info.html#ace52d3d0fbdf5ac6bce795d5c31edf7e',1,'natsJSConsumerInfo::Cluster()']]],
-  ['config',['Config',['../structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3',1,'natsJSStreamInfo::Config()'],['../structnats_j_s_consumer_info.html#a582675cea06c9e352f981e8211a9cd3e',1,'natsJSConsumerInfo::Config()']]],
+  ['cluster',['Cluster',['../structjs_placement.html#ad8c83588d57f0e30959cfb6f3d5d61bf',1,'jsPlacement::Cluster()'],['../structjs_stream_info.html#a8d10d6fdc3f713ac726c72cae06a209a',1,'jsStreamInfo::Cluster()'],['../structjs_consumer_info.html#a6f4401563a9fd102226d82cdc6136e32',1,'jsConsumerInfo::Cluster()']]],
+  ['config',['Config',['../structjs_stream_info.html#adcc402d28e0ee443419e9b549da233c6',1,'jsStreamInfo::Config()'],['../structjs_consumer_info.html#a2f63940ca1f024ad3840418c2f6a1ae1',1,'jsConsumerInfo::Config()']]],
   ['connection',['Connection',['../group__conn_group.html',1,'']]],
-  ['consumer',['Consumer',['../structnats_j_s_sequence_pair.html#a6bee81ed66880afcd11ff64a6b6d2c24',1,'natsJSSequencePair']]],
-  ['consumers',['Consumers',['../structnats_j_s_stream_state.html#a76f71b2c364ff491a0de5d5af6ab2ecc',1,'natsJSStreamState::Consumers()'],['../structnats_j_s_account_info.html#ab85d6601508d0f8893cb9da1f7c35847',1,'natsJSAccountInfo::Consumers()']]],
-  ['created',['Created',['../structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19',1,'natsJSStreamInfo::Created()'],['../structnats_j_s_consumer_info.html#a601df7f1f77df58087d14e336d4d313a',1,'natsJSConsumerInfo::Created()']]],
-  ['current',['Current',['../structnats_j_s_peer_info.html#af58233d9dd3b81f276afb6c35971d17f',1,'natsJSPeerInfo']]]
+  ['consumer',['Consumer',['../structjs_sequence_pair.html#a6d205effd29f8994f0028bfaf2e8d816',1,'jsSequencePair']]],
+  ['consumers',['Consumers',['../structjs_stream_state.html#a6159dc8d14f7b465cad12f14d13c5e73',1,'jsStreamState::Consumers()'],['../structjs_account_info.html#ade231a57410dc451ea62b0009b17bb43',1,'jsAccountInfo::Consumers()']]],
+  ['created',['Created',['../structjs_stream_info.html#a578ce52a275c690dd4627c1d119c7838',1,'jsStreamInfo::Created()'],['../structjs_consumer_info.html#a670d38f2e9ba5c354ca3560a8064d00c',1,'jsConsumerInfo::Created()']]],
+  ['current',['Current',['../structjs_peer_info.html#ad8cecd039a8ad1c68daba89007b055d4',1,'jsPeerInfo']]]
 ];

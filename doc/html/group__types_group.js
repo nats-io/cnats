@@ -1,180 +1,186 @@
 var group__types_group =
 [
-    [ "natsJSPubOptions", "structnats_j_s_pub_options.html", [
-      [ "MaxWait", "structnats_j_s_pub_options.html#a6b152f86c87c68034486eb3b292ce1b5", null ],
-      [ "MsgId", "structnats_j_s_pub_options.html#a1ce6804767ed569d59b564b0eecac2de", null ],
-      [ "ExpectStream", "structnats_j_s_pub_options.html#a3856a9747ac31f7a4c621bd2f30dc3d8", null ],
-      [ "ExpectLastMsgId", "structnats_j_s_pub_options.html#a8606543350255be884490115305eb17b", null ],
-      [ "ExpectLastSeq", "structnats_j_s_pub_options.html#a6e881dc5278784b0ee921e4cfc36dedf", null ],
-      [ "ExpectLastSubjectSeq", "structnats_j_s_pub_options.html#ab45614133b3d23c53c679c9a3bb7028c", null ]
+    [ "jsPubOptions", "structjs_pub_options.html", [
+      [ "MaxWait", "structjs_pub_options.html#a1b242c9311b904a2e5337417b5c6d143", null ],
+      [ "MsgId", "structjs_pub_options.html#ac8708487360b784f7dd5d7a21e5617c0", null ],
+      [ "ExpectStream", "structjs_pub_options.html#ac7ac74d2557d772c3092288dacf3711f", null ],
+      [ "ExpectLastMsgId", "structjs_pub_options.html#a095391b33a261586fc02eaf013b65e61", null ],
+      [ "ExpectLastSeq", "structjs_pub_options.html#a3b02b60b05caa6d242079a4c26b181bf", null ],
+      [ "ExpectLastSubjectSeq", "structjs_pub_options.html#aeefec1d2c7644562d23b87e55bf2e253", null ]
     ] ],
-    [ "natsJSPlacement", "structnats_j_s_placement.html", [
-      [ "Cluster", "structnats_j_s_placement.html#a7381363eeac70c61d1d2c54e98c3afb0", null ],
-      [ "Tags", "structnats_j_s_placement.html#aef1c53c42296fd6ba7495b4d0a1cc112", null ],
-      [ "TagsLen", "structnats_j_s_placement.html#abadc4d45ae0f92d754ac42ef4b8b32f7", null ]
+    [ "jsPlacement", "structjs_placement.html", [
+      [ "Cluster", "structjs_placement.html#ad8c83588d57f0e30959cfb6f3d5d61bf", null ],
+      [ "Tags", "structjs_placement.html#af078a85b744b9ff3771bb2da6005b90d", null ],
+      [ "TagsLen", "structjs_placement.html#a35644f07531409518521b1b4fa28c9e3", null ]
     ] ],
-    [ "natsJSExternalStream", "structnats_j_s_external_stream.html", [
-      [ "APIPrefix", "structnats_j_s_external_stream.html#abac8c58f6b3982b92749be3f8bcd853d", null ],
-      [ "DeliverPrefix", "structnats_j_s_external_stream.html#aca01d6d56d4eb77fc50378afee6e82ca", null ]
+    [ "jsExternalStream", "structjs_external_stream.html", [
+      [ "APIPrefix", "structjs_external_stream.html#a2eaf2c0c3e77c269f44e254af8b24e96", null ],
+      [ "DeliverPrefix", "structjs_external_stream.html#a26ca427f3c5be1cae579ddccc16432d3", null ]
     ] ],
-    [ "natsJSStreamSource", "structnats_j_s_stream_source.html", [
-      [ "Name", "structnats_j_s_stream_source.html#a725bacffe83b05a5922e3d03dd32f6e6", null ],
-      [ "OptStartSeq", "structnats_j_s_stream_source.html#a75dbc3eeaaf2d8588de091dd2bd6ba6e", null ],
-      [ "OptStartTime", "structnats_j_s_stream_source.html#adc2544caab935b7b8131c83e8a145550", null ],
-      [ "FilterSubject", "structnats_j_s_stream_source.html#a38ff1717c9296fd54e5a4f061d746a21", null ],
-      [ "External", "structnats_j_s_stream_source.html#a488be992bfde87792ee53026c571a161", null ]
+    [ "jsStreamSource", "structjs_stream_source.html", [
+      [ "Name", "structjs_stream_source.html#a7d9e5c064866b3f0b5601193c5885ec3", null ],
+      [ "OptStartSeq", "structjs_stream_source.html#ad6948b7a34c202f324b6d2beb32fe5ed", null ],
+      [ "OptStartTime", "structjs_stream_source.html#a67eb1dac41b2d826a923cfb23baa24a5", null ],
+      [ "FilterSubject", "structjs_stream_source.html#af787b51dde9d77626f33860564eb08c3", null ],
+      [ "External", "structjs_stream_source.html#a295458d156af5373bb3f5ab06612a888", null ]
     ] ],
-    [ "natsJSStreamConfig", "structnats_j_s_stream_config.html", [
-      [ "Name", "structnats_j_s_stream_config.html#aa16902c94f1ad460f084c22718442dc5", null ],
-      [ "Subjects", "structnats_j_s_stream_config.html#aa26d790f7693940d185eac4e9f9768e7", null ],
-      [ "SubjectsLen", "structnats_j_s_stream_config.html#a0eac327f585d92b3b8358147a95832c0", null ],
-      [ "Retention", "structnats_j_s_stream_config.html#a52239b20f176c39e0a7243131a1668e7", null ],
-      [ "MaxConsumers", "structnats_j_s_stream_config.html#a47704a97637916565000f2ec1cc1a913", null ],
-      [ "MaxMsgs", "structnats_j_s_stream_config.html#a0707c98e03ced635a398858d9bf47568", null ],
-      [ "MaxBytes", "structnats_j_s_stream_config.html#a3537c5e3e34828bfb3839d1864c6be25", null ],
-      [ "MaxAge", "structnats_j_s_stream_config.html#a8e2bf3f913a2ce6e16cff348c85c5564", null ],
-      [ "MaxMsgsPerSubject", "structnats_j_s_stream_config.html#a1cabe12c2e054753ee25fc81ffa24816", null ],
-      [ "MaxMsgSize", "structnats_j_s_stream_config.html#adb3df323d95fdab8fc9db7a90a144dcc", null ],
-      [ "Discard", "structnats_j_s_stream_config.html#ad2a00eae1f2ffd97c88e36ee3790f427", null ],
-      [ "Storage", "structnats_j_s_stream_config.html#ab42e6e55de0dc949c8c6fcc42c412917", null ],
-      [ "Replicas", "structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8", null ],
-      [ "NoAck", "structnats_j_s_stream_config.html#a269a6ca65ee8bfc53733130c7c5eb519", null ],
-      [ "Template", "structnats_j_s_stream_config.html#ab995b4a2b3179e47a110832c4b6cb5a1", null ],
-      [ "Duplicates", "structnats_j_s_stream_config.html#a0a0342e04aa98ac0c4f7e5b93d4ce3c0", null ],
-      [ "Placement", "structnats_j_s_stream_config.html#a8def0cc3d131c44f75fe9d9a74af98ff", null ],
-      [ "Mirror", "structnats_j_s_stream_config.html#a8ec7f1c5651e476b1549a611d0f80621", null ],
-      [ "Sources", "structnats_j_s_stream_config.html#ae3ed8602dd726b55be7b906fbe29fddc", null ],
-      [ "SourcesLen", "structnats_j_s_stream_config.html#ac5249580736136221b34f37397846264", null ]
+    [ "jsStreamConfig", "structjs_stream_config.html", [
+      [ "Name", "structjs_stream_config.html#a7fe3d5086f1c660a6999ae40ecd370e5", null ],
+      [ "Subjects", "structjs_stream_config.html#a0c5f3354073dbe72650e3db7f59a47af", null ],
+      [ "SubjectsLen", "structjs_stream_config.html#ab2186aae798df6c222b3fa69e31597e1", null ],
+      [ "Retention", "structjs_stream_config.html#a5ebc95b76afafa5e7a129953ba1bb3c7", null ],
+      [ "MaxConsumers", "structjs_stream_config.html#a007d89dcbded3c18bf45e674e8a936ba", null ],
+      [ "MaxMsgs", "structjs_stream_config.html#a60a5184d1d97b056dbb31ac6a5b3d82d", null ],
+      [ "MaxBytes", "structjs_stream_config.html#ad75e47d4293441bd5ddbc5eaf01e0451", null ],
+      [ "MaxAge", "structjs_stream_config.html#aa538765ad97d343d60212ebd9894661e", null ],
+      [ "MaxMsgsPerSubject", "structjs_stream_config.html#aa167c7547d13bf2a01510a375ad38340", null ],
+      [ "MaxMsgSize", "structjs_stream_config.html#a93a2336a57b6bfb792d530fd13a90641", null ],
+      [ "Discard", "structjs_stream_config.html#a0b44ea5251ef20bf5b5658bcfbea832d", null ],
+      [ "Storage", "structjs_stream_config.html#a59c34091f336eafa77da2991c852c0d8", null ],
+      [ "Replicas", "structjs_stream_config.html#afb14d07295b18847079d59b9d467f9ee", null ],
+      [ "NoAck", "structjs_stream_config.html#a8e358fbc569a1c6d49c704e6dbdf8609", null ],
+      [ "Template", "structjs_stream_config.html#a50f866f0e73c4ff0a5f43b354a059fa9", null ],
+      [ "Duplicates", "structjs_stream_config.html#a9e0ff10273d0182f885615b4f7d1cc20", null ],
+      [ "Placement", "structjs_stream_config.html#acee6c66afc78d79c2f518eed89177efb", null ],
+      [ "Mirror", "structjs_stream_config.html#acdba5b22e4e60fd81a54769a7d09bc51", null ],
+      [ "Sources", "structjs_stream_config.html#a8f0ee08922e5b2108082b5b9e4a6284b", null ],
+      [ "SourcesLen", "structjs_stream_config.html#a34960d6acc710c2f32b563f4bb7c9c0a", null ]
     ] ],
-    [ "natsJSLostStreamData", "structnats_j_s_lost_stream_data.html", [
-      [ "Msgs", "structnats_j_s_lost_stream_data.html#aa6302b5e9583134140e0857ad22a9797", null ],
-      [ "MsgsLen", "structnats_j_s_lost_stream_data.html#ac1f758ab8a726402499f258b9a845721", null ],
-      [ "Bytes", "structnats_j_s_lost_stream_data.html#a8d5b78b336463f9fa295d51f5ae0b799", null ]
+    [ "jsLostStreamData", "structjs_lost_stream_data.html", [
+      [ "Msgs", "structjs_lost_stream_data.html#a5d2e87697526033c842a7f955776dfda", null ],
+      [ "MsgsLen", "structjs_lost_stream_data.html#abdc373ed7fc9b7cf161c13da1913fc9a", null ],
+      [ "Bytes", "structjs_lost_stream_data.html#a841fcadca3f66e9170a51080dc1acf30", null ]
     ] ],
-    [ "natsJSStreamState", "structnats_j_s_stream_state.html", [
-      [ "Msgs", "structnats_j_s_stream_state.html#abf8e53bfafe35bb70c28d5d8e55f391a", null ],
-      [ "Bytes", "structnats_j_s_stream_state.html#ab00fd826a7a8c59cdb120b04e060f349", null ],
-      [ "FirstSeq", "structnats_j_s_stream_state.html#ac2ba1c423dabe50925e9e7d45c53a790", null ],
-      [ "FirstTime", "structnats_j_s_stream_state.html#a286d4402e6d6ee9fcea321b2fdf7ab10", null ],
-      [ "LastSeq", "structnats_j_s_stream_state.html#a726d171f9d40e38084d51ab97f3c0898", null ],
-      [ "LastTime", "structnats_j_s_stream_state.html#ad8a7daa2489cc98dd014d521bede82f1", null ],
-      [ "NumDeleted", "structnats_j_s_stream_state.html#af3628320a8a495827e9db076c248440f", null ],
-      [ "Deleted", "structnats_j_s_stream_state.html#a94651208e7ae42e1d1e62f7ee7e3ff6b", null ],
-      [ "DeletedLen", "structnats_j_s_stream_state.html#a725edd90020f2f958156fa2a2e0c19a0", null ],
-      [ "Lost", "structnats_j_s_stream_state.html#a11ec011c5b3bfbf1504a19a2834a6ffc", null ],
-      [ "Consumers", "structnats_j_s_stream_state.html#a76f71b2c364ff491a0de5d5af6ab2ecc", null ]
+    [ "jsStreamState", "structjs_stream_state.html", [
+      [ "Msgs", "structjs_stream_state.html#a495269fe83c6bbf2023cca94add0a888", null ],
+      [ "Bytes", "structjs_stream_state.html#ae603fa6ecfb63c93b61272b7d1b8fb4d", null ],
+      [ "FirstSeq", "structjs_stream_state.html#a55bb6719163acef7fdb6d0bc3ae8d5da", null ],
+      [ "FirstTime", "structjs_stream_state.html#afb7a708022faff518c060b33e99b04b0", null ],
+      [ "LastSeq", "structjs_stream_state.html#a22da809fe7a1ec3101841e86d6708827", null ],
+      [ "LastTime", "structjs_stream_state.html#a67cbd0d8b43d8c05c8b4cd6b0e44dab0", null ],
+      [ "NumDeleted", "structjs_stream_state.html#acbec2f01830b56cb4c0bf54ae5170e51", null ],
+      [ "Deleted", "structjs_stream_state.html#abcf4d3c581c06d820f1ad21d640bef3f", null ],
+      [ "DeletedLen", "structjs_stream_state.html#a34a08a64c97269165630bf2e0c78c2c0", null ],
+      [ "Lost", "structjs_stream_state.html#a1adf8991f31fc4db9d6907a0316f8eec", null ],
+      [ "Consumers", "structjs_stream_state.html#a6159dc8d14f7b465cad12f14d13c5e73", null ]
     ] ],
-    [ "natsJSPeerInfo", "structnats_j_s_peer_info.html", [
-      [ "Name", "structnats_j_s_peer_info.html#ada4b99aab3c548ae5b89cd56ca4cd816", null ],
-      [ "Current", "structnats_j_s_peer_info.html#af58233d9dd3b81f276afb6c35971d17f", null ],
-      [ "Offline", "structnats_j_s_peer_info.html#a70d160dec0a5908388f050f3971f2cf3", null ],
-      [ "Active", "structnats_j_s_peer_info.html#ae3980afc7206e8e264348ebb3ec34ede", null ],
-      [ "Lag", "structnats_j_s_peer_info.html#a63dbec0ca22fd8bcdd1ab0f0c6ac7b32", null ]
+    [ "jsPeerInfo", "structjs_peer_info.html", [
+      [ "Name", "structjs_peer_info.html#abf29230ce03a1c14d50227663e07de6a", null ],
+      [ "Current", "structjs_peer_info.html#ad8cecd039a8ad1c68daba89007b055d4", null ],
+      [ "Offline", "structjs_peer_info.html#a3f3e09c5996858ec5faca2dc7fa5224e", null ],
+      [ "Active", "structjs_peer_info.html#a8441d023932c388953197f7ea39402fe", null ],
+      [ "Lag", "structjs_peer_info.html#a49a2623963dad653a6d7996c750056c9", null ]
     ] ],
-    [ "natsJSClusterInfo", "structnats_j_s_cluster_info.html", [
-      [ "Name", "structnats_j_s_cluster_info.html#aae444c08565098e7019043505c29cb82", null ],
-      [ "Leader", "structnats_j_s_cluster_info.html#af0248ecc2b91816a388ce0f9cab6ffc8", null ],
-      [ "Replicas", "structnats_j_s_cluster_info.html#a3d14ecc4d806fe0daad3f12746bbc8c0", null ],
-      [ "ReplicasLen", "structnats_j_s_cluster_info.html#a35816e4ac3ef23e515eddf122b0a454e", null ]
+    [ "jsClusterInfo", "structjs_cluster_info.html", [
+      [ "Name", "structjs_cluster_info.html#a2e13d7ec417574100c938c4df78e5484", null ],
+      [ "Leader", "structjs_cluster_info.html#af7d85652b52f56fa1eedce8f45fe6a19", null ],
+      [ "Replicas", "structjs_cluster_info.html#a8dfcae3bc348a5b595b509e3f3d3500b", null ],
+      [ "ReplicasLen", "structjs_cluster_info.html#a237a639579def1345e02f1490a510ed5", null ]
     ] ],
-    [ "natsJSStreamSourceInfo", "structnats_j_s_stream_source_info.html", [
-      [ "Name", "structnats_j_s_stream_source_info.html#a6df0a068b6632c812ea362ae5a7a16f1", null ],
-      [ "External", "structnats_j_s_stream_source_info.html#a2c3145db8427bc541d3ba28cd1f95186", null ],
-      [ "Lag", "structnats_j_s_stream_source_info.html#ad14e4c07ffea298aa3b52b340abb463b", null ],
-      [ "Active", "structnats_j_s_stream_source_info.html#a5a243d9edd6a2d532f1d74b37390ee4a", null ]
+    [ "jsStreamSourceInfo", "structjs_stream_source_info.html", [
+      [ "Name", "structjs_stream_source_info.html#a6db3c6ff8a465a45f8bd5c7bdf5f6c04", null ],
+      [ "External", "structjs_stream_source_info.html#a7eb19dd2637079fd1e970a2b38d33e05", null ],
+      [ "Lag", "structjs_stream_source_info.html#ab2ee0ca3ecd98c2df6d4e9bd88686863", null ],
+      [ "Active", "structjs_stream_source_info.html#a28b8cc0a9d487672955d3a3fa03de247", null ]
     ] ],
-    [ "natsJSStreamInfo", "structnats_j_s_stream_info.html", [
-      [ "Config", "structnats_j_s_stream_info.html#a2f5e5f5287d1ee98180582f44316f1d3", null ],
-      [ "Created", "structnats_j_s_stream_info.html#aedc6e5f4972c135178496790a60f9f19", null ],
-      [ "State", "structnats_j_s_stream_info.html#ada691d28b73b9620f1546ef463efb493", null ],
-      [ "Cluster", "structnats_j_s_stream_info.html#a292ff50f4d6f2f70808499ffe278f659", null ],
-      [ "Mirror", "structnats_j_s_stream_info.html#af08173c3a1cff4759f0e7bdeaf5e5222", null ],
-      [ "Sources", "structnats_j_s_stream_info.html#ab9d4148610b1948a2a029e36459f37bc", null ],
-      [ "SourcesLen", "structnats_j_s_stream_info.html#a2109b6a46ebe9d73ab70e3941748e65d", null ]
+    [ "jsStreamInfo", "structjs_stream_info.html", [
+      [ "Config", "structjs_stream_info.html#adcc402d28e0ee443419e9b549da233c6", null ],
+      [ "Created", "structjs_stream_info.html#a578ce52a275c690dd4627c1d119c7838", null ],
+      [ "State", "structjs_stream_info.html#a766ac56dec3bd19fa5b9861fb5f64397", null ],
+      [ "Cluster", "structjs_stream_info.html#a8d10d6fdc3f713ac726c72cae06a209a", null ],
+      [ "Mirror", "structjs_stream_info.html#ab71aae7e4f6c62e2a09a3a52c9e4fa2a", null ],
+      [ "Sources", "structjs_stream_info.html#a2e7ca48a93fe57265609e7e0cd3fa386", null ],
+      [ "SourcesLen", "structjs_stream_info.html#af14110cb1f8e16e3dade8d9f7c2fd672", null ]
     ] ],
-    [ "natsJSConsumerConfig", "structnats_j_s_consumer_config.html", [
-      [ "Durable", "structnats_j_s_consumer_config.html#abf47ae99f6ad388d4c4a996a5efabf21", null ],
-      [ "DeliverSubject", "structnats_j_s_consumer_config.html#a8d1f9b0e2994d86ea2595c0b250bc1db", null ],
-      [ "DeliverPolicy", "structnats_j_s_consumer_config.html#ac18e2cb6dc2441f90f0e5b2d566690fc", null ],
-      [ "OptStartSeq", "structnats_j_s_consumer_config.html#a97c83ac7c7f3ac6dfb2628b75811ad31", null ],
-      [ "OptStartTime", "structnats_j_s_consumer_config.html#ae4be34f2efd792969f4bf0f89ebd308a", null ],
-      [ "AckPolicy", "structnats_j_s_consumer_config.html#a4bae0bc70c0b35de184aa6bf0270ae58", null ],
-      [ "AckWait", "structnats_j_s_consumer_config.html#a6b01c46d7a76cdd9445d8cac19bb0e25", null ],
-      [ "MaxDeliver", "structnats_j_s_consumer_config.html#aab6e0a8d8c9116f90698e67bb5448473", null ],
-      [ "FilterSubject", "structnats_j_s_consumer_config.html#a9257111b6c7ffdfda216b283465e76e7", null ],
-      [ "ReplayPolicy", "structnats_j_s_consumer_config.html#aca30ed1b2b91c4a72a512187bf14380d", null ],
-      [ "RateLimit", "structnats_j_s_consumer_config.html#adeb3eaaa3f5736111fed84723bf73670", null ],
-      [ "SampleFrequency", "structnats_j_s_consumer_config.html#a0f71f05855cf9940b0de19e6783d34f2", null ],
-      [ "MaxWaiting", "structnats_j_s_consumer_config.html#aca533d718aa53b7ea1b17a323c87724c", null ],
-      [ "MaxAckPending", "structnats_j_s_consumer_config.html#a79afef2d09c2c5901a70bf909b7379bb", null ],
-      [ "FlowControl", "structnats_j_s_consumer_config.html#aeca148b8421692e957a2bddc86d21444", null ],
-      [ "Heartbeat", "structnats_j_s_consumer_config.html#ab472e11c8bc4012fb715df4cf898b934", null ]
+    [ "jsConsumerConfig", "structjs_consumer_config.html", [
+      [ "Durable", "structjs_consumer_config.html#a36cf121162cf0b40edf051991d851ee0", null ],
+      [ "DeliverSubject", "structjs_consumer_config.html#a95aa4184ed77f69b7674756572da1ded", null ],
+      [ "DeliverPolicy", "structjs_consumer_config.html#a364127e68bf0d3bf13efdc0b416667f4", null ],
+      [ "OptStartSeq", "structjs_consumer_config.html#a2f0243899885dc97f304f48ca52b5356", null ],
+      [ "OptStartTime", "structjs_consumer_config.html#a802ea3bf0669395bee28611f4ecede80", null ],
+      [ "AckPolicy", "structjs_consumer_config.html#a8a311af614dfae1b0f4e4af7db467aab", null ],
+      [ "AckWait", "structjs_consumer_config.html#a651a94b9b78668dde830dc7869610e67", null ],
+      [ "MaxDeliver", "structjs_consumer_config.html#a6d19960bff2221af374cc8d63b4ffe90", null ],
+      [ "FilterSubject", "structjs_consumer_config.html#af56ab7708b11e85e0b9115d152d281ca", null ],
+      [ "ReplayPolicy", "structjs_consumer_config.html#ade510daf7c5d67553d2cd20b64ab9939", null ],
+      [ "RateLimit", "structjs_consumer_config.html#a351b388a36ccb7978e6e85a6f4fc0816", null ],
+      [ "SampleFrequency", "structjs_consumer_config.html#a43f40b8eef0074b4146fb945b4645584", null ],
+      [ "MaxWaiting", "structjs_consumer_config.html#ac00ca43a30cbae483895ceeb4dd1ec29", null ],
+      [ "MaxAckPending", "structjs_consumer_config.html#a42ecc6163bd68dffe46900d350ad9f70", null ],
+      [ "FlowControl", "structjs_consumer_config.html#a484c64b6c54f6f758f54315470ed20d0", null ],
+      [ "Heartbeat", "structjs_consumer_config.html#ac439828c3bedb8826a1e92de13280d53", null ]
     ] ],
-    [ "natsJSSequencePair", "structnats_j_s_sequence_pair.html", [
-      [ "Consumer", "structnats_j_s_sequence_pair.html#a6bee81ed66880afcd11ff64a6b6d2c24", null ],
-      [ "Stream", "structnats_j_s_sequence_pair.html#a3571b38f2a0f476ed4e7366bf9e8f987", null ]
+    [ "jsSequencePair", "structjs_sequence_pair.html", [
+      [ "Consumer", "structjs_sequence_pair.html#a6d205effd29f8994f0028bfaf2e8d816", null ],
+      [ "Stream", "structjs_sequence_pair.html#ab051e0815302c48ba6122bd18d9d76f7", null ]
     ] ],
-    [ "natsJSConsumerInfo", "structnats_j_s_consumer_info.html", [
-      [ "Stream", "structnats_j_s_consumer_info.html#a897e52dc1e2a150a2e1cc1078ef27dd4", null ],
-      [ "Name", "structnats_j_s_consumer_info.html#a07ea772616d53a4c53749fde9ff4d721", null ],
-      [ "Created", "structnats_j_s_consumer_info.html#a601df7f1f77df58087d14e336d4d313a", null ],
-      [ "Config", "structnats_j_s_consumer_info.html#a582675cea06c9e352f981e8211a9cd3e", null ],
-      [ "Delivered", "structnats_j_s_consumer_info.html#a37a17fdf55eca04950095758b68724ef", null ],
-      [ "AckFloor", "structnats_j_s_consumer_info.html#a552b8e7200d867809ece53105410355b", null ],
-      [ "NumAckPending", "structnats_j_s_consumer_info.html#ae5cccf4842432a8c0de5409a5776bf22", null ],
-      [ "NumRedelivered", "structnats_j_s_consumer_info.html#aaef4686115cc7c6050e2872048ed446e", null ],
-      [ "NumWaiting", "structnats_j_s_consumer_info.html#a5659b4d49925799a44dec478f989f880", null ],
-      [ "NumPending", "structnats_j_s_consumer_info.html#ad5e84f5a66a21807a8ed5e3f34a8770a", null ],
-      [ "Cluster", "structnats_j_s_consumer_info.html#ace52d3d0fbdf5ac6bce795d5c31edf7e", null ]
+    [ "jsConsumerInfo", "structjs_consumer_info.html", [
+      [ "Stream", "structjs_consumer_info.html#a8f21939613163a7c0ebfb521aa471260", null ],
+      [ "Name", "structjs_consumer_info.html#a9359aea7cd05a27b2a15f8a35cdb1008", null ],
+      [ "Created", "structjs_consumer_info.html#a670d38f2e9ba5c354ca3560a8064d00c", null ],
+      [ "Config", "structjs_consumer_info.html#a2f63940ca1f024ad3840418c2f6a1ae1", null ],
+      [ "Delivered", "structjs_consumer_info.html#a3be1ac5aa4cc71609197b9b777b761d0", null ],
+      [ "AckFloor", "structjs_consumer_info.html#a1e5a2a0f4686950da292eaec55e01c40", null ],
+      [ "NumAckPending", "structjs_consumer_info.html#afd402d80d18d1de79f02c67dcb992866", null ],
+      [ "NumRedelivered", "structjs_consumer_info.html#a24014a26d3258a99d9ff64905c03a88d", null ],
+      [ "NumWaiting", "structjs_consumer_info.html#a3515d671c4eebf883e9ed8a0a419fe0e", null ],
+      [ "NumPending", "structjs_consumer_info.html#aeaefd5a500996013b1ce13d8872e869b", null ],
+      [ "Cluster", "structjs_consumer_info.html#a6f4401563a9fd102226d82cdc6136e32", null ]
     ] ],
-    [ "natsJSAPIStats", "structnats_j_s_a_p_i_stats.html", [
-      [ "Total", "structnats_j_s_a_p_i_stats.html#a31fc0a5f1bba1ae3c760a0e53a79f634", null ],
-      [ "Errors", "structnats_j_s_a_p_i_stats.html#a866db13139a5302746971d2280eb214f", null ]
+    [ "jsAPIStats", "structjs_a_p_i_stats.html", [
+      [ "Total", "structjs_a_p_i_stats.html#a1545170bebb347d0ea1254f51c3027cf", null ],
+      [ "Errors", "structjs_a_p_i_stats.html#a84e85ad9d94dbe9afd1101388574255d", null ]
     ] ],
-    [ "natsJSAccountLimits", "structnats_j_s_account_limits.html", [
-      [ "MaxMemory", "structnats_j_s_account_limits.html#add443db27c99178878b79a89624a762a", null ],
-      [ "MaxStore", "structnats_j_s_account_limits.html#a59dd6c9aa043618ff1e96c69ebedb88c", null ],
-      [ "MaxStreams", "structnats_j_s_account_limits.html#a02d825cc0481926b3434ced88c2439f6", null ],
-      [ "MaxConsumers", "structnats_j_s_account_limits.html#a7526b96c7cae57b2cf754bef05862d59", null ]
+    [ "jsAccountLimits", "structjs_account_limits.html", [
+      [ "MaxMemory", "structjs_account_limits.html#a7bfc63e6f49ce724663ee534c5efdfa4", null ],
+      [ "MaxStore", "structjs_account_limits.html#a6fff014c46739410ecf298b0cf643b30", null ],
+      [ "MaxStreams", "structjs_account_limits.html#a6d6199ac64efbeafc6118b2a658d43bf", null ],
+      [ "MaxConsumers", "structjs_account_limits.html#a594ca4f4aa85550dd475afeeb06c036f", null ]
     ] ],
-    [ "natsJSAccountInfo", "structnats_j_s_account_info.html", [
-      [ "Memory", "structnats_j_s_account_info.html#aefc7a8df0e6071e3fc89213b8be444c0", null ],
-      [ "Store", "structnats_j_s_account_info.html#a0ec74bc1dc7d950dfd1a5b979818d466", null ],
-      [ "Streams", "structnats_j_s_account_info.html#a52dcd1c1af9d06ae926d874f1f139038", null ],
-      [ "Consumers", "structnats_j_s_account_info.html#ab85d6601508d0f8893cb9da1f7c35847", null ],
-      [ "Domain", "structnats_j_s_account_info.html#a2f95aaa470b6b97e9a7f58060169a8c8", null ],
-      [ "API", "structnats_j_s_account_info.html#a7cf05dc5d194d267fb5de4383d5b8d12", null ],
-      [ "Limits", "structnats_j_s_account_info.html#af287e7e9b719e2da1aed0838ad76be37", null ]
+    [ "jsAccountInfo", "structjs_account_info.html", [
+      [ "Memory", "structjs_account_info.html#a448578d621e878267ad5f1792002a665", null ],
+      [ "Store", "structjs_account_info.html#ad1c254c5b8f11f57062a4e2d5fb10ae3", null ],
+      [ "Streams", "structjs_account_info.html#aadeea4fc077ffd26589cefeac8bcebfb", null ],
+      [ "Consumers", "structjs_account_info.html#ade231a57410dc451ea62b0009b17bb43", null ],
+      [ "Domain", "structjs_account_info.html#ab6ba03298e1863132550b9b08d06048c", null ],
+      [ "API", "structjs_account_info.html#a94ab71c69b7883c2731ae8741ddc1e94", null ],
+      [ "Limits", "structjs_account_info.html#aad93cf4bb6c1fbb09ae8545c03f315a9", null ]
     ] ],
-    [ "natsJSPubAck", "structnats_j_s_pub_ack.html", [
-      [ "Stream", "structnats_j_s_pub_ack.html#a33a7b7ef5346afce536c709ec40d68f7", null ],
-      [ "Sequence", "structnats_j_s_pub_ack.html#ae0d1c697cdcb2b7ba68b964e2fdd8932", null ],
-      [ "Duplicate", "structnats_j_s_pub_ack.html#a64d0f3a5b06b07b553293a5f1f69404d", null ]
+    [ "jsPubAck", "structjs_pub_ack.html", [
+      [ "Stream", "structjs_pub_ack.html#a4fd5e6cdb7217d72c553afcc75358893", null ],
+      [ "Sequence", "structjs_pub_ack.html#a01d302d5e1a2e71487a8c74c3fed1691", null ],
+      [ "Duplicate", "structjs_pub_ack.html#a0381a49ff62e8fac7a52cad6a5eb7243", null ]
     ] ],
-    [ "natsJSPubAckErr", "structnats_j_s_pub_ack_err.html", [
-      [ "Msg", "structnats_j_s_pub_ack_err.html#a01c90acadb3f4fc98929eabee5871032", null ],
-      [ "Err", "structnats_j_s_pub_ack_err.html#ad9f00c2cc6e1c8f130efaa848943a2ff", null ],
-      [ "ErrCode", "structnats_j_s_pub_ack_err.html#a4a5b0e8d6e1c1ee18695e90a25f775ed", null ],
-      [ "ErrText", "structnats_j_s_pub_ack_err.html#a279b0804343c03e5636513ef36558d94", null ]
+    [ "jsPubAckErr", "structjs_pub_ack_err.html", [
+      [ "Msg", "structjs_pub_ack_err.html#a156ca2f779d132ffa8c519124cf9739b", null ],
+      [ "Err", "structjs_pub_ack_err.html#a406e39e818f93bc59ac18cbdf035baf5", null ],
+      [ "ErrCode", "structjs_pub_ack_err.html#aa558fd192cc6d6c02ad891445ec5aa8a", null ],
+      [ "ErrText", "structjs_pub_ack_err.html#ad1a85e6ff4046d7df33c1e24323ddc87", null ]
     ] ],
-    [ "natsJSPurgeOptions", "structnats_j_s_purge_options.html", [
-      [ "Subject", "structnats_j_s_purge_options.html#a894c47b6bd0c08222dc68a9e302596a4", null ],
-      [ "Sequence", "structnats_j_s_purge_options.html#a9b2336ed218e1fb7189bb76c98a88a29", null ],
-      [ "Keep", "structnats_j_s_purge_options.html#a08b34404c58eecb4fc1faa144ca5294d", null ]
-    ] ],
-    [ "natsJSStreamInfoOptions", "structnats_j_s_stream_info_options.html", [
-      [ "DeletedDetails", "structnats_j_s_stream_info_options.html#a736823c512b5bbe1ec7a9038a4d9c084", null ]
-    ] ],
-    [ "natsJSOptions", "structnats_j_s_options.html", [
-      [ "Prefix", "structnats_j_s_options.html#af3dbdcf6326bf1cf3d0feb64b737b41b", null ],
-      [ "Domain", "structnats_j_s_options.html#ab51a4042e1f0a840023a2ceeae2263d7", null ],
-      [ "Wait", "structnats_j_s_options.html#abf6f71b6feeb91b96d44acd117af44ec", null ],
-      [ "PublishAsyncMaxPending", "structnats_j_s_options.html#ade56d397700121cad8f3b18333b96392", null ],
-      [ "PublishAsyncErrHandler", "structnats_j_s_options.html#a8d484c1b12b2c2ea2445c690536b89e8", null ],
-      [ "PublishAsyncErrHandlerClosure", "structnats_j_s_options.html#a9cafe89994a2a1edf9de1feaecf43ca9", null ],
-      [ "PublishAsyncStallWait", "structnats_j_s_options.html#a53b265874adca2f53fe35ac664a9e18c", null ],
-      [ "Purge", "structnats_j_s_options.html#a5ac7c71d9a11c0988922e84efbeec4a3", null ],
-      [ "StreamInfo", "structnats_j_s_options.html#a35b873c5236188d2ec5af3a14b1271cc", null ]
+    [ "jsOptions", "structjs_options.html", [
+      [ "jsOptionsPublishAsync", "structjs_options_1_1js_options_publish_async.html", [
+        [ "MaxPending", "structjs_options_1_1js_options_publish_async.html#a2f732ec474afc7aef316f47be1aaf0e1", null ],
+        [ "ErrHandler", "structjs_options_1_1js_options_publish_async.html#a0a180995c49990ca277e449b7d43616b", null ],
+        [ "ErrHandlerClosure", "structjs_options_1_1js_options_publish_async.html#a784a0029c30e82ff37c39ae6c276bc81", null ],
+        [ "StallWait", "structjs_options_1_1js_options_publish_async.html#ada58fefe0ed40157b5f5d44b9dd175f9", null ]
+      ] ],
+      [ "jsOptionsStream", "structjs_options_1_1js_options_stream.html", [
+        [ "jsOptionsStreamInfo", "structjs_options_1_1js_options_stream_1_1js_options_stream_info.html", [
+          [ "DeletedDetails", "structjs_options_1_1js_options_stream_1_1js_options_stream_info.html#a73f847afe18f56eaaf6788900270bef7", null ]
+        ] ],
+        [ "jsOptionsStreamPurge", "structjs_options_1_1js_options_stream_1_1js_options_stream_purge.html", [
+          [ "Subject", "structjs_options_1_1js_options_stream_1_1js_options_stream_purge.html#aa99e6ee3bef1c22243f01544181315fe", null ],
+          [ "Sequence", "structjs_options_1_1js_options_stream_1_1js_options_stream_purge.html#a0d61e5d3c9c518f455549086ababe7f6", null ],
+          [ "Keep", "structjs_options_1_1js_options_stream_1_1js_options_stream_purge.html#a882c1ce1e636817450893caa72aa4eda", null ]
+        ] ],
+        [ "Purge", "structjs_options_1_1js_options_stream.html#a7990230aa266660e022474466b9d7855", null ],
+        [ "Info", "structjs_options_1_1js_options_stream.html#abd87f515a825bd567d27b952fc5e0bbb", null ]
+      ] ],
+      [ "Prefix", "structjs_options.html#ab06e45296fccf0fe6152e083e38d916f", null ],
+      [ "Domain", "structjs_options.html#ae4df6c9c01c0ea9ab0e6d5a6ec8af74e", null ],
+      [ "Wait", "structjs_options.html#a7fd42e1f83da5861e716137c16f8b72f", null ],
+      [ "PublishAsync", "structjs_options.html#a57caa00d016a7aac5c7dcf63bcc46a21", null ],
+      [ "Stream", "structjs_options.html#ae5fd7134dc6e66355c08d27f4907b92a", null ]
     ] ],
     [ "natsConnection", "group__types_group.html#gaf88dca0a18efb5c5e994d265a9f04aec", null ],
     [ "natsStatistics", "group__types_group.html#ga57a4b8c7109e2773878655722ce028aa", null ],
@@ -182,61 +188,59 @@ var group__types_group =
     [ "natsMsg", "group__types_group.html#gadcab54026c4ed78f344ce03ce31bb61a", null ],
     [ "natsOptions", "group__types_group.html#gabcc48b40a81fe302188f4ee06ea9c54e", null ],
     [ "natsInbox", "group__types_group.html#ga206c3d4d6f4f6f96fd2cae53a3df31c1", null ],
-    [ "natsJS", "group__types_group.html#ga5c1ca83285b1229ad2d4e156b945f30f", null ],
-    [ "natsJSPubOptions", "group__types_group.html#gae205311caed55289fbe725c8ede34869", null ],
-    [ "natsJSPlacement", "group__types_group.html#ga3cb69dd8b992a2fecdb70ca79be7afeb", null ],
-    [ "natsJSExternalStream", "group__types_group.html#gadcd7a6d29ea21751ba9922ab798de3d2", null ],
-    [ "natsJSStreamSource", "group__types_group.html#gad0ce5471d2fcbe0073d759dc19d43514", null ],
-    [ "natsJSStreamConfig", "group__types_group.html#gabb0b8c3e01b8d3c31871ca165afc9086", null ],
-    [ "natsJSLostStreamData", "group__types_group.html#gaa58dbf2f844747984eff9111a8b02dee", null ],
-    [ "natsJSStreamState", "group__types_group.html#ga9134c9bac58b547924c10760496644d3", null ],
-    [ "natsJSPeerInfo", "group__types_group.html#ga24a62e09e157b958a8fa3eab5a4bec73", null ],
-    [ "natsJSClusterInfo", "group__types_group.html#ga8d90f93d145459940c62291b5a8e1ce7", null ],
-    [ "natsJSStreamSourceInfo", "group__types_group.html#gafa98854b7601f629a3cb4cccbfc4fa72", null ],
-    [ "natsJSStreamInfo", "group__types_group.html#ga3e372350ef24216c98592f0491588448", null ],
-    [ "natsJSConsumerConfig", "group__types_group.html#ga1a487451d6e7d7788a3d9ca6dde7e65d", null ],
-    [ "natsJSSequencePair", "group__types_group.html#gaee8ec7612db4fd7854e61ddb768ee0b0", null ],
-    [ "natsJSConsumerInfo", "group__types_group.html#ga17d108bd92d64d234886b54ed8a1c443", null ],
-    [ "natsJSAPIStats", "group__types_group.html#gab1e0f41c33f44ad7f1cb043e4fdf918d", null ],
-    [ "natsJSAccountLimits", "group__types_group.html#gae05fbff7b337a7603c333ab5a343d14a", null ],
-    [ "natsJSAccountInfo", "group__types_group.html#ga2016a7fc3460b079134c31098435ef67", null ],
-    [ "natsJSPubAck", "group__types_group.html#ga8f102acafd680ec83c71d49cedd80203", null ],
-    [ "natsJSPubAckErr", "group__types_group.html#gaa236f3abe77ed87fee9421509210cc8c", null ],
-    [ "natsJSPurgeOptions", "group__types_group.html#ga5718ed2a2d49a7c311e10ef383635163", null ],
-    [ "natsJSStreamInfoOptions", "group__types_group.html#ga1a925ef15b2d2b436f2bb893dc0ac9ec", null ],
-    [ "natsJSOptions", "group__types_group.html#gabd9eacdfaa4e1eb16554026eff4d170c", null ],
+    [ "jsCtx", "group__types_group.html#gaaf12cdd24c6cc23a57c20466c92ff8c1", null ],
+    [ "jsPubOptions", "group__types_group.html#gadca2fea69fd9e2602bb6b601eb25c6b5", null ],
+    [ "jsPlacement", "group__types_group.html#gaea5e7b629dfa8604b99b62efd448f756", null ],
+    [ "jsExternalStream", "group__types_group.html#ga3b516d90e9eecee18d3b8673b52fec33", null ],
+    [ "jsStreamSource", "group__types_group.html#gaef1e04a9eaadead7a746bf78bea5d599", null ],
+    [ "jsStreamConfig", "group__types_group.html#gae5c5216968b2e59cf33e3a47d248a2e5", null ],
+    [ "jsLostStreamData", "group__types_group.html#ga321ed8f931ce5f9b98edd7adb0e86bec", null ],
+    [ "jsStreamState", "group__types_group.html#ga2361463bd3b01b231b18c2bd9ed033f6", null ],
+    [ "jsPeerInfo", "group__types_group.html#ga6cbd384da0c5dc9217bf37b894acfc34", null ],
+    [ "jsClusterInfo", "group__types_group.html#ga1c49060cf1d14583ca8cc092b5d8f869", null ],
+    [ "jsStreamSourceInfo", "group__types_group.html#ga534e8f7c2b74eb10b2a3fb53be8a7222", null ],
+    [ "jsStreamInfo", "group__types_group.html#ga6b5c9352e517866d759b88f86c98af4e", null ],
+    [ "jsConsumerConfig", "group__types_group.html#ga53a67024d000b6f5f8c8ee31e200418e", null ],
+    [ "jsSequencePair", "group__types_group.html#ga369383a68835322b3848f5f3ce55620b", null ],
+    [ "jsConsumerInfo", "group__types_group.html#ga0d0b5f0885d7853e5999839154271279", null ],
+    [ "jsAPIStats", "group__types_group.html#ga4836a8f864516db4c2f061d076830229", null ],
+    [ "jsAccountLimits", "group__types_group.html#gae3d8e4d1e3b8e37466e2527764eeceba", null ],
+    [ "jsAccountInfo", "group__types_group.html#ga3454e5e615ec45667bc8a81220a7b8b7", null ],
+    [ "jsPubAck", "group__types_group.html#ga5ff09c5d0d2f4ebbfc43d51af8e5f836", null ],
+    [ "jsPubAckErr", "group__types_group.html#gaf89c0143530b20bc978cb023a740ca01", null ],
+    [ "jsOptions", "group__types_group.html#ga83f1cab4ab8781d69e1399d5a6d423e4", null ],
     [ "stanConnection", "group__types_group.html#ga9e826493769d23086cfccefe95cdf64c", null ],
     [ "stanSubscription", "group__types_group.html#gae4dae869fb614536f0f027c2e2660cc5", null ],
     [ "stanMsg", "group__types_group.html#ga2cf5db7703b42d97abe56a3e83b2a87d", null ],
     [ "stanConnOptions", "group__types_group.html#ga13d64411878ba13a6ca39c915f2447c1", null ],
     [ "stanSubOptions", "group__types_group.html#ga023712711f5c289663fc2223e83686d3", null ],
-    [ "natsJSRetentionPolicy", "group__types_group.html#ga46a0e573b1649245a7c38d217dc88053", [
-      [ "natsJS_LimitsPolicy", "group__types_group.html#gga46a0e573b1649245a7c38d217dc88053a58767a257c5c5a2a85270f86c07d5ed0", null ],
-      [ "natsJS_InterestPolicy", "group__types_group.html#gga46a0e573b1649245a7c38d217dc88053ae4d2c17c02203f3b29ffa16ac2058c7e", null ],
-      [ "natsJS_WorkQueuePolicy", "group__types_group.html#gga46a0e573b1649245a7c38d217dc88053ad76d786e76310a7c269329d0c47e3ee2", null ]
+    [ "jsRetentionPolicy", "group__types_group.html#ga410f8fb053efa02b2ca1de0c02fa4b6d", [
+      [ "js_LimitsPolicy", "group__types_group.html#gga410f8fb053efa02b2ca1de0c02fa4b6da6a2aa02f32acec6526d81f6e974e690f", null ],
+      [ "js_InterestPolicy", "group__types_group.html#gga410f8fb053efa02b2ca1de0c02fa4b6dae874de4a787cfbec4c6d0eb1a3f05ebd", null ],
+      [ "js_WorkQueuePolicy", "group__types_group.html#gga410f8fb053efa02b2ca1de0c02fa4b6daf7e6581e69572691b01d1294a3c3a478", null ]
     ] ],
-    [ "natsJSDiscardPolicy", "group__types_group.html#ga002c6e7fa56cbe525bc673b4ffa96678", [
-      [ "natsJS_DiscardOld", "group__types_group.html#gga002c6e7fa56cbe525bc673b4ffa96678aed7530f029398aaeaac4cd78a5d80649", null ],
-      [ "natsJS_DiscardNew", "group__types_group.html#gga002c6e7fa56cbe525bc673b4ffa96678a9e83d9af51716255e79df45c88a7854f", null ]
+    [ "jsDiscardPolicy", "group__types_group.html#ga7f88b7d482488398074f9d1419a9b8c2", [
+      [ "js_DiscardOld", "group__types_group.html#gga7f88b7d482488398074f9d1419a9b8c2abb31b828421634f1e6a1ef9359bc91f6", null ],
+      [ "js_DiscardNew", "group__types_group.html#gga7f88b7d482488398074f9d1419a9b8c2a99d7f2d740af26c340c0a4e2b72fb6ab", null ]
     ] ],
-    [ "natsJSStorageType", "group__types_group.html#gaa2b78a6cf7a6fb0436bd57ee6a6aca26", [
-      [ "natsJS_FileStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26ab79c322c46a1281a54dd4ddcce48366d", null ],
-      [ "natsJS_MemoryStorage", "group__types_group.html#ggaa2b78a6cf7a6fb0436bd57ee6a6aca26a34b9c5ebbc445daa289f894710cf26a3", null ]
+    [ "jsStorageType", "group__types_group.html#ga1802a53c79e667f093bba033b16adc98", [
+      [ "js_FileStorage", "group__types_group.html#gga1802a53c79e667f093bba033b16adc98a1d9dad1854cf374b22e3688b98284dec", null ],
+      [ "js_MemoryStorage", "group__types_group.html#gga1802a53c79e667f093bba033b16adc98a428ed10448726ad01c1db77a7f748314", null ]
     ] ],
-    [ "natsJSDeliverPolicy", "group__types_group.html#ga83eb9e05d76d9de7f470499b91cec5bc", [
-      [ "natsJS_DeliverAll", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca446b8a87d39941af8ef081f768f02c02", null ],
-      [ "natsJS_DeliverLast", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4aab200a346cf4c0bd23b4a4fcfbc4d0", null ],
-      [ "natsJS_DeliverNew", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca7b6ca063e3910517f1aace6061081ca5", null ],
-      [ "natsJS_DeliverByStartSequence", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bca4dd7b7a226787fd8e3384415d2ded838", null ],
-      [ "natsJS_DeliverByStartTime", "group__types_group.html#gga83eb9e05d76d9de7f470499b91cec5bcafd5409d98329298f1beda6b323285f2b", null ]
+    [ "jsDeliverPolicy", "group__types_group.html#ga117ed2c35f89ef3144540ed9cbadc818", [
+      [ "js_DeliverAll", "group__types_group.html#gga117ed2c35f89ef3144540ed9cbadc818ac692ba1363103768ac4bb58695549758", null ],
+      [ "js_DeliverLast", "group__types_group.html#gga117ed2c35f89ef3144540ed9cbadc818abbd81d6c4e0f17f30e2186f1335e991d", null ],
+      [ "js_DeliverNew", "group__types_group.html#gga117ed2c35f89ef3144540ed9cbadc818a82b8d36e17391212398984f92db9c381", null ],
+      [ "js_DeliverByStartSequence", "group__types_group.html#gga117ed2c35f89ef3144540ed9cbadc818a06299d9c8262a16306ba6cc16d293c5e", null ],
+      [ "js_DeliverByStartTime", "group__types_group.html#gga117ed2c35f89ef3144540ed9cbadc818a33317133d42f21bf5919827a691543f6", null ]
     ] ],
-    [ "natsJSAckPolicy", "group__types_group.html#ga1595328891eb8f3625cbc52be8c683be", [
-      [ "natsJS_AckNone", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683beaa904698b838200be07d21d872a2eedab", null ],
-      [ "natsJS_AckAll", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea8eb6f9b8582defb2fea4790f577eafbb", null ],
-      [ "natsJS_AckExplicit", "group__types_group.html#gga1595328891eb8f3625cbc52be8c683bea15b26512da1679c0b39f4200c13ffb60", null ]
+    [ "jsAckPolicy", "group__types_group.html#ga8fcb50e6e7312834791f9e237d28e873", [
+      [ "js_AckNone", "group__types_group.html#gga8fcb50e6e7312834791f9e237d28e873afd91fe31cf57c68863ca3090b07c296c", null ],
+      [ "js_AckAll", "group__types_group.html#gga8fcb50e6e7312834791f9e237d28e873a1232af28bf4e4b82e962174f1432ed4a", null ],
+      [ "js_AckExplicit", "group__types_group.html#gga8fcb50e6e7312834791f9e237d28e873a02d46a6395933c55c95ee5194bb6b80e", null ]
     ] ],
-    [ "natsJSReplayPolicy", "group__types_group.html#gadf5ec9a558bc736aab4689a46dfb11e6", [
-      [ "natsJS_ReplayInstant", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a6ee33e8281d94ade885af40a1fa7523c", null ],
-      [ "natsJS_ReplayOriginal", "group__types_group.html#ggadf5ec9a558bc736aab4689a46dfb11e6a90a99b93092260245774254ae5fa2c27", null ]
+    [ "jsReplayPolicy", "group__types_group.html#ga8650faf52b0b6b23df376eebeb9d0354", [
+      [ "js_ReplayInstant", "group__types_group.html#gga8650faf52b0b6b23df376eebeb9d0354a2c4a1e2b75f31dd69a89b541d75afa44", null ],
+      [ "js_ReplayOriginal", "group__types_group.html#gga8650faf52b0b6b23df376eebeb9d0354a6ee3851dac5c90a61492193dd55931f5", null ]
     ] ]
 ];

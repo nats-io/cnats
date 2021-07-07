@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['ratelimit',['RateLimit',['../structnats_j_s_consumer_config.html#adeb3eaaa3f5736111fed84723bf73670',1,'natsJSConsumerConfig']]],
-  ['replaypolicy',['ReplayPolicy',['../structnats_j_s_consumer_config.html#aca30ed1b2b91c4a72a512187bf14380d',1,'natsJSConsumerConfig']]],
-  ['replicas',['Replicas',['../structnats_j_s_stream_config.html#af11cfc53c9ce4cced976ef40783d6bd8',1,'natsJSStreamConfig::Replicas()'],['../structnats_j_s_cluster_info.html#a3d14ecc4d806fe0daad3f12746bbc8c0',1,'natsJSClusterInfo::Replicas()']]],
-  ['replicaslen',['ReplicasLen',['../structnats_j_s_cluster_info.html#a35816e4ac3ef23e515eddf122b0a454e',1,'natsJSClusterInfo']]],
-  ['retention',['Retention',['../structnats_j_s_stream_config.html#a52239b20f176c39e0a7243131a1668e7',1,'natsJSStreamConfig']]]
+  ['ratelimit',['RateLimit',['../structjs_consumer_config.html#a351b388a36ccb7978e6e85a6f4fc0816',1,'jsConsumerConfig']]],
+  ['replaypolicy',['ReplayPolicy',['../structjs_consumer_config.html#ade510daf7c5d67553d2cd20b64ab9939',1,'jsConsumerConfig']]],
+  ['replicas',['Replicas',['../structjs_stream_config.html#afb14d07295b18847079d59b9d467f9ee',1,'jsStreamConfig::Replicas()'],['../structjs_cluster_info.html#a8dfcae3bc348a5b595b509e3f3d3500b',1,'jsClusterInfo::Replicas()']]],
+  ['replicaslen',['ReplicasLen',['../structjs_cluster_info.html#a237a639579def1345e02f1490a510ed5',1,'jsClusterInfo']]],
+  ['retention',['Retention',['../structjs_stream_config.html#a5ebc95b76afafa5e7a129953ba1bb3c7',1,'jsStreamConfig']]]
 ];

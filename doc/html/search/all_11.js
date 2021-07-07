@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['tags',['Tags',['../structnats_j_s_placement.html#aef1c53c42296fd6ba7495b4d0a1cc112',1,'natsJSPlacement']]],
-  ['tagslen',['TagsLen',['../structnats_j_s_placement.html#abadc4d45ae0f92d754ac42ef4b8b32f7',1,'natsJSPlacement']]],
-  ['template',['Template',['../structnats_j_s_stream_config.html#ab995b4a2b3179e47a110832c4b6cb5a1',1,'natsJSStreamConfig']]],
-  ['total',['Total',['../structnats_j_s_a_p_i_stats.html#a31fc0a5f1bba1ae3c760a0e53a79f634',1,'natsJSAPIStats']]],
+  ['tags',['Tags',['../structjs_placement.html#af078a85b744b9ff3771bb2da6005b90d',1,'jsPlacement']]],
+  ['tagslen',['TagsLen',['../structjs_placement.html#a35644f07531409518521b1b4fa28c9e3',1,'jsPlacement']]],
+  ['template',['Template',['../structjs_stream_config.html#a50f866f0e73c4ff0a5f43b354a059fa9',1,'jsStreamConfig']]],
+  ['total',['Total',['../structjs_a_p_i_stats.html#a1545170bebb347d0ea1254f51c3027cf',1,'jsAPIStats']]],
   ['types',['Types',['../group__types_group.html',1,'']]]
 ];
