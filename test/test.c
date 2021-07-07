@@ -20857,8 +20857,6 @@ test_JetStreamMgtStreams(void)
     char                datastore[256] = {'\0'};
     char                cmdLine[1024] = {'\0'};
     natsJSOptions       o;
-    natsJSPurgeOptions  po;
-    natsJSStreamInfoOptions so;
 
     _makeUniqueDir(datastore, sizeof(datastore), "datastore_");
 
@@ -21035,19 +21033,12 @@ test_JetStreamMgtStreams(void)
     s = natsConnection_SubscribeSync(&sub, nc, "$JS.API.STREAM.PURGE.TEST3");
     testCond(s == NATS_OK);
 
-    test("Purge options init (bad args): ");
-    s = natsJSPurgeOptions_Init(NULL);
-    testCond(s == NATS_INVALID_ARG);
-    nats_clearLastError();
-
     test("Purge with options (subj+seq): ");
-    natsJSPurgeOptions_Init(&po);
-    // Will purge only messages from "foo"
-    po.Subject = "foo";
-    // Purge up-to but do not include this sequence.
-    po.Sequence = 4;
     natsJSOptions_Init(&o);
-    o.Purge = &po;
+    // Will purge only messages from "foo"
+    o.Stream.Purge.Subject = "foo";
+    // Purge up-to but do not include this sequence.
+    o.Stream.Purge.Sequence = 4;
     // We care only on the outbound request, not the result of the API call.
     natsJS_PurgeStream(js, "TEST3", &o, NULL);
     nats_clearLastError();
@@ -21061,12 +21052,10 @@ test_JetStreamMgtStreams(void)
     resp = NULL;
 
     test("Purge with options (seq and keep mutually exclusive): ");
-    natsJSPurgeOptions_Init(&po);
-    po.Subject = "bar";
-    po.Sequence = 8;
-    po.Keep = 2;
     natsJSOptions_Init(&o);
-    o.Purge = &po;
+    o.Stream.Purge.Subject = "bar";
+    o.Stream.Purge.Sequence = 8;
+    o.Stream.Purge.Keep = 2;
     s = natsJS_PurgeStream(js, "TEST3", &o, &jerr);
     testCond((s == NATS_INVALID_ARG)
                 && (jerr == 0)
@@ -21079,12 +21068,10 @@ test_JetStreamMgtStreams(void)
     nats_clearLastError();
 
     test("Purge with options (subj+keep): ");
-    natsJSPurgeOptions_Init(&po);
-    po.Subject = "bar";
-    // Keep 2 messages in the stream's bar subject space.
-    po.Keep = 2;
     natsJSOptions_Init(&o);
-    o.Purge = &po;
+    o.Stream.Purge.Subject = "bar";
+    // Keep 2 messages in the stream's bar subject space.
+    o.Stream.Purge.Keep = 2;
     // We care only on the outbound request, not the result of the API call.
     natsJS_PurgeStream(js, "TEST3", &o, NULL);
     nats_clearLastError();
@@ -21126,11 +21113,6 @@ test_JetStreamMgtStreams(void)
                 && (si == NULL)
                 && (nats_GetLastError(NULL) == NULL));
 
-    test("Stream info options init (bad args): ");
-    s = natsJSStreamInfoOptions_Init(NULL);
-    testCond(s == NATS_INVALID_ARG);
-    nats_clearLastError();
-
     natsSubscription_Destroy(sub);
     sub = NULL;
     test("Create sub to check stream info req: ");
@@ -21138,12 +21120,7 @@ test_JetStreamMgtStreams(void)
     testCond(s == NATS_OK);
 
     test("StreamInfo with detailed delete: ");
-    s = natsJSStreamInfoOptions_Init(&so);
-    if (s == NATS_OK)
-    {
-        so.DeletedDetails = true;
-        o.StreamInfo = &so;
-    }
+    o.Stream.Info.DeletedDetails = true;
     IFOK(s, natsJS_GetStreamInfo(&si, js, "TEST3", &o, &jerr));
     IFOK(s, natsSubscription_NextMsg(&resp, sub, 1000));
     testCond((s == NATS_OK)
@@ -21786,8 +21763,8 @@ test_JetStreamPublishAsync(void)
     s = natsJSOptions_Init(&o);
     if (s == NATS_OK)
     {
-        o.PublishAsyncErrHandler        = _jsPubAckErrHandler;
-        o.PublishAsyncErrHandlerClosure = &args;
+        o.PublishAsync.ErrHandler        = _jsPubAckErrHandler;
+        o.PublishAsync.ErrHandlerClosure = &args;
     }
     testCond(s == NATS_OK);
 
@@ -21956,16 +21933,16 @@ test_JetStreamPublishAsync(void)
     js = NULL;
     natsJSOptions_Init(&o);
     test("Stall wait bad args: ");
-    o.PublishAsyncStallWait = -10;
+    o.PublishAsync.StallWait = -10;
     s = natsJS_NewContext(&js, nc, &o);
     testCond((s == NATS_INVALID_ARG) && (js == NULL));
     nats_clearLastError();
 
     test("Recreate context: ");
-    o.PublishAsyncMaxPending        = 1;
-    o.PublishAsyncStallWait         = 100;
-    o.PublishAsyncErrHandler        = _jsPubAckErrHandler;
-    o.PublishAsyncErrHandlerClosure = &args;
+    o.PublishAsync.MaxPending        = 1;
+    o.PublishAsync.StallWait         = 100;
+    o.PublishAsync.ErrHandler        = _jsPubAckErrHandler;
+    o.PublishAsync.ErrHandlerClosure = &args;
     s = natsJS_NewContext(&js, nc, &o);
     testCond(s == NATS_OK);
 
@@ -21991,7 +21968,7 @@ test_JetStreamPublishAsync(void)
     // have time to start a publish here that we will check gets unstalled.
     // Artificially increase the stallWait so that we don't flap on Travis/etc..
     natsMutex_Lock(js->mu);
-    js->opts.PublishAsyncStallWait = 10000;
+    js->opts.PublishAsync.StallWait = 10000;
     natsMutex_Unlock(js->mu);
     // should unstall the publish that we are going to make here.
     natsMutex_Lock(args.m);
@@ -22038,8 +22015,8 @@ test_JetStreamPublishAsync(void)
     s = natsJSOptions_Init(&o);
     if (s == NATS_OK)
     {
-        o.PublishAsyncErrHandler        = _jsPubAckErrHandler;
-        o.PublishAsyncErrHandlerClosure = &args;
+        o.PublishAsync.ErrHandler        = _jsPubAckErrHandler;
+        o.PublishAsync.ErrHandlerClosure = &args;
     }
     IFOK(s, natsJS_NewContext(&js, nc, &o));
     testCond((s == NATS_OK) && (js != NULL));

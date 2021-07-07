@@ -631,42 +631,6 @@ typedef void (*natsJSPubAckErrHandler)(natsJS *js, natsJSPubAckErr *pae, void *c
 #endif
 
 /**
- * Advanced stream purge options
- *
- * #natsJSPurgeOptions is an optional request information to the purge API.
- *
- * * `Subject` will filter the purge request to only messages that match the subject, which can have wildcards.<br>
- * * `Sequence` will purge up to but not including this sequence and can be combined with subject filtering.<br>
- * * `Keep` will specify how many messages to keep. This can also be combined with subject filtering.<br>
- *
- * \note `Sequence` and `Keep` are mutually exclusive, so both can not be set at the same time.
- *
- * @see natsJSPurgeOptions_Init
- */
-typedef struct natsJSPurgeOptions
-{
-        const char              *Subject;                       ///< This is the subject to match against messages for the purge command.
-        uint64_t                Sequence;                       ///< Purge up to but not including sequence.
-        uint64_t                Keep;                           ///< Number of messages to keep.
-
-} natsJSPurgeOptions;
-
-/**
- * Advanced stream info options
- *
- * #natsJSStreamInfoOptions is an optional request information to the stream information API.
- *
- * * `DeletedDetails` will cause the server to include the list of deleted message sequences in the #natsJSStreamInfo's `State` structure.
- *
- * @see natsJSSreamInfoOptions_Init
- */
-typedef struct natsJSStreamInfoOptions
-{
-        bool                    DeletedDetails;                 ///< Get the list of deleted message sequences.
-
-} natsJSStreamInfoOptions;
-
-/**
  * JetStream context options.
  *
  * Initialize the object with #natsJSOptions_Init.
@@ -676,12 +640,54 @@ typedef struct natsJSOptions
         const char              *Prefix;                        ///< JetStream prefix, default is "$JS.API"
         const char              *Domain;                        ///< Domain changes the domain part of JetSteam API prefix.
         int64_t                 Wait;                           ///< Amount of time (in milliseconds) to wait for various JetStream API requests, default is 5000 ms (5 seconds).
-        int                     PublishAsyncMaxPending;         ///< Maximum outstanding asynchronous publishes that can be inflight at one time.
-        natsJSPubAckErrHandler  PublishAsyncErrHandler;         ///< Callback invoked when error encountered publishing a given message.
-        void                    *PublishAsyncErrHandlerClosure; ///< Closure (or user data) passed to #natsJSPubAckErrHandler callback.
-        int64_t                 PublishAsyncStallWait;          ///< Amount of time (in milliseconds) to wait in a PublishAsync call when there is MaxPending inflight messages, default is 200 ms.
-        natsJSPurgeOptions      *Purge;                         ///< Optional stream purge options.
-        natsJSStreamInfoOptions *StreamInfo;                    ///< Optional stream info options.
+
+        /**
+         * Publish Async options
+         */
+        struct natsJSOptionsPublishAsync
+        {
+                int                     MaxPending;             ///< Maximum outstanding asynchronous publishes that can be inflight at one time.
+                natsJSPubAckErrHandler  ErrHandler;             ///< Callback invoked when error encountered publishing a given message.
+                void                    *ErrHandlerClosure;     ///< Closure (or user data) passed to #natsJSPubAckErrHandler callback.
+                int64_t                 StallWait;              ///< Amount of time (in milliseconds) to wait in a PublishAsync call when there is MaxPending inflight messages, default is 200 ms.
+
+        } PublishAsync;
+
+        /**
+         * Advanced stream options
+         *
+         * * `Purge` for advanced purge options.
+         * * `Info` for advanced information retrieval options.
+         */
+        struct natsJSOptionsStream
+        {
+                /**
+                 * Advanced stream purge options
+                 *
+                 * * `Subject` will filter the purge request to only messages that match the subject, which can have wildcards.<br>
+                 * * `Sequence` will purge up to but not including this sequence and can be combined with subject filtering.<br>
+                 * * `Keep` will specify how many messages to keep and can be combined with subject filtering.<br>
+                 *
+                 * \note `Sequence` and `Keep` are mutually exclusive, so both can not be set at the same time.
+                 */
+                struct natsJSOptionsStreamPurge
+                {
+                        const char      *Subject;       ///< This is the subject to match against messages for the purge command.
+                        uint64_t        Sequence;       ///< Purge up to but not including sequence.
+                        uint64_t        Keep;           ///< Number of messages to keep.
+
+                } Purge;                                ///< Optional stream purge options.
+
+                /**
+                 * Advance stream information retrieval options
+                 */
+                struct natsJSOptionsStreamInfo
+                {
+                        bool            DeletedDetails; ///< Get the list of deleted message sequences.
+
+                } Info;                                 ///< Optional stream information retrieval options.
+
+        } Stream;                                       ///< Optional stream options.
 
 } natsJSOptions;
 
@@ -4752,35 +4758,21 @@ natsJS_AddStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, nat
 NATS_EXTERN natsStatus
 natsJS_UpdateStream(natsJSStreamInfo **si, natsJS *js, natsJSStreamConfig *cfg, natsJSOptions *opts, natsJSErrCode *errCode);
 
-/** \brief Initializes a streaming purge options structure.
- *
- * Use this before setting stream purge options.
- *
- * \code{.unparsed}
- * natsJSOptions        o;
- * natsJSPurgeOptions   po;
- *
- * natsJSPurgeOptions_Init(&po);
- * po.Subject = "foo";
- * po.Sequence = 4;
- * natsJSOptions_Init(&o);
- * o.Purge = &o;
- *
- * natsJS_PurgeStream(js, "MY_STREAM", &o, &jerr);
- * \endcode
- *
- * @param opts the pointer to the #natsJSPurgeOptions to initialize.
- */
-NATS_EXTERN natsStatus
-natsJSPurgeOptions_Init(natsJSPurgeOptions *opts);
-
 /** \brief Purges a stream.
  *
  * Purges the stream named <c>stream</c>.
  *
- * For more advanced purge options, see #natsJSPurgeOptions
+ * For more advanced purge options, you can specify them through #natsJSOptions.
  *
- * @see natsJSPurgeOptions_Init
+ * \code{.unparsed}
+ * natsJSOptions        o;
+ *
+ * natsJSOptions_Init(&o);
+ * o.Stream.Purge.Subject  = "foo";
+ * o.Stream.Purge.Sequence = 4;
+ *
+ * natsJS_PurgeStream(js, "MY_STREAM", &o, &jerr);
+ * \endcode
  *
  * @param js the pointer to the #natsJS context.
  * @param stream the name of the stream to purge.
@@ -4804,32 +4796,21 @@ natsJS_PurgeStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSEr
 NATS_EXTERN natsStatus
 natsJS_DeleteStream(natsJS *js, const char *stream, natsJSOptions *opts, natsJSErrCode *errCode);
 
-/** \brief Initializes a streaming information options structure.
- *
- * Use this before setting stream information options.
- *
- * \code{.unparsed}
- * natsJSOptions                o;
- * natsJSStreamInfoOptions      so;
- *
- * natsJSStreamInfoOptions_Init(&so);
- * so.DeletedDetails = true;
- * natsJSOptions_Init(&o);
- * o.StreamInfo = &so;
- *
- * natsJS_GetStreamInfo(&si, js, "MY_STREAM", &o, &jerr);
- * \endcode
- *
- * @param opts the pointer to the #natsJSStreamInfoOptions to initialize.
- */
-NATS_EXTERN natsStatus
-natsJSStreamInfoOptions_Init(natsJSStreamInfoOptions *opts);
-
 /** \brief Retreives information from a stream.
  *
  * Returns information about the stream named <c>stream</c>.
- * s
+ *
  * \note You need to free the returned object.
+ *
+ * To get some detailed information about deleted messages, set this option:
+ *
+ * \code{.unparsed}
+ * natsJSOptions                o;
+ *
+ * natsJSOptions_Init(&o);
+ * o.Stream.Info.DeletedDetails = true;
+ * natsJS_GetStreamInfo(&si, js, "MY_STREAM", &o, &jerr);
+ * \endcode
  *
  * @see natsJSStreamInfo_Destroy
  *

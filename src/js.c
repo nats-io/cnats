@@ -43,30 +43,10 @@ const int        jsBase                  = 62;
 #define jsReplyPrefixLen    (NATS_INBOX_PRE_LEN + (jsReplyTokenSize) + 1)
 
 static void
-_destroyPurgeOptions(natsJSPurgeOptions *o)
-{
-    if (o == NULL)
-        return;
-
-    NATS_FREE((char*) o->Subject);
-    NATS_FREE(o);
-}
-
-static void
-_destroyStreamInfoOptions(natsJSStreamInfoOptions *o)
-{
-    if (o == NULL)
-        return;
-
-    NATS_FREE(o);
-}
-
-static void
 _destroyOptions(natsJSOptions *o)
 {
     NATS_FREE((char*) o->Prefix);
-    _destroyPurgeOptions(o->Purge);
-    _destroyStreamInfoOptions(o->StreamInfo);
+    NATS_FREE((char*) o->Stream.Purge.Subject);
 }
 
 static void
@@ -192,14 +172,10 @@ natsJS_freeApiRespContent(natsJSApiResponse *ar)
 }
 
 static natsStatus
-_copyPurgeOptions(natsJS *js, natsJSPurgeOptions *o)
+_copyPurgeOptions(natsJS *js, struct natsJSOptionsStreamPurge *o)
 {
-    natsStatus          s   = NATS_OK;
-    natsJSPurgeOptions  *po = NULL;
-
-    po = (natsJSPurgeOptions*) NATS_CALLOC(1, sizeof(natsJSPurgeOptions));
-    if (po == NULL)
-        return nats_setDefaultError(NATS_NO_MEMORY);
+    natsStatus                      s   = NATS_OK;
+    struct natsJSOptionsStreamPurge *po = &(js->opts.Stream.Purge);
 
     po->Sequence = o->Sequence;
     po->Keep     = o->Keep;
@@ -210,26 +186,14 @@ _copyPurgeOptions(natsJS *js, natsJSPurgeOptions *o)
         if (po->Subject == NULL)
             s = nats_setDefaultError(NATS_NO_MEMORY);
     }
-    if (s == NATS_OK)
-        js->opts.Purge = po;
-    else
-        _destroyPurgeOptions(po);
 
     return NATS_UPDATE_ERR_STACK(s);
 }
 
 static natsStatus
-_copyStreamInfoOptions(natsJS *js, natsJSStreamInfoOptions *o)
+_copyStreamInfoOptions(natsJS *js, struct natsJSOptionsStreamInfo *o)
 {
-    natsJSStreamInfoOptions *so = NULL;
-
-    so = (natsJSStreamInfoOptions*) NATS_CALLOC(1, sizeof(natsJSStreamInfoOptions));
-    if (so == NULL)
-        return nats_setDefaultError(NATS_NO_MEMORY);
-
-    so->DeletedDetails = o->DeletedDetails;
-    js->opts.StreamInfo = so;
-
+    js->opts.Stream.Info.DeletedDetails = o->DeletedDetails;
     return NATS_OK;
 }
 
@@ -246,8 +210,8 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
     {
         if (opts->Wait < 0)
             return nats_setError(NATS_INVALID_ARG, "option 'Wait' (%" PRId64 ") cannot be negative", opts->Wait);
-        if (opts->PublishAsyncStallWait < 0)
-            return nats_setError(NATS_INVALID_ARG, "option 'PublishAsyncStallWait' (%" PRId64 ") cannot be negative", opts->PublishAsyncStallWait);
+        if (opts->PublishAsync.StallWait < 0)
+            return nats_setError(NATS_INVALID_ARG, "option 'PublishAsyncStallWait' (%" PRId64 ") cannot be negative", opts->PublishAsync.StallWait);
     }
 
     js = (natsJS*) NATS_CALLOC(1, sizeof(natsJS));
@@ -287,20 +251,23 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
     }
     if ((s == NATS_OK) && (opts != NULL))
     {
-        js->opts.PublishAsyncMaxPending = opts->PublishAsyncMaxPending;
-        js->opts.PublishAsyncErrHandler = opts->PublishAsyncErrHandler;
-        js->opts.PublishAsyncErrHandlerClosure = opts->PublishAsyncErrHandlerClosure;
-        js->opts.PublishAsyncStallWait = opts->PublishAsyncStallWait;
-        js->opts.Wait = opts->Wait;
+        struct natsJSOptionsPublishAsync *pa = &(js->opts.PublishAsync);
+
+        pa->MaxPending          = opts->PublishAsync.MaxPending;
+        pa->ErrHandler          = opts->PublishAsync.ErrHandler;
+        pa->ErrHandlerClosure   = opts->PublishAsync.ErrHandlerClosure;
+        pa->StallWait           = opts->PublishAsync.StallWait;
+        js->opts.Wait           = opts->Wait;
     }
     if (js->opts.Wait == 0)
         js->opts.Wait = jsDefaultRequestWait;
-    if (js->opts.PublishAsyncStallWait == 0)
-        js->opts.PublishAsyncStallWait = jsDefaultStallWait;
-    if ((s == NATS_OK) && (opts != NULL) && (opts->Purge != NULL))
-        s = _copyPurgeOptions(js, opts->Purge);
-    if ((s == NATS_OK) && (opts != NULL) && (opts->StreamInfo != NULL))
-        s = _copyStreamInfoOptions(js, opts->StreamInfo);
+    if (js->opts.PublishAsync.StallWait == 0)
+        js->opts.PublishAsync.StallWait = jsDefaultStallWait;
+    if ((s == NATS_OK) && (opts != NULL))
+    {
+        s = _copyPurgeOptions(js, &(opts->Stream.Purge));
+        IFOK(s, _copyStreamInfoOptions(js, &(opts->Stream.Info)));
+    }
 
     if (s == NATS_OK)
         *new_js = js;
@@ -344,14 +311,31 @@ natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *op
     }
     if (s == NATS_OK)
     {
+        struct natsJSOptionsStreamPurge *po = &(js->opts.Stream.Purge);
+
         natsJS_lock(js);
         // If not set above...
         if (resOpts->Prefix == NULL)
             resOpts->Prefix = (opts == NULL || nats_IsStringEmpty(opts->Prefix)) ? js->opts.Prefix : opts->Prefix;
+
         // Take provided one or default to context's.
         resOpts->Wait = (opts == NULL || opts->Wait <= 0) ? js->opts.Wait : opts->Wait;
-        resOpts->Purge = (opts == NULL || opts->Purge == NULL) ? js->opts.Purge : opts->Purge;
-        resOpts->StreamInfo = (opts == NULL || opts->StreamInfo == NULL) ? js->opts.StreamInfo : opts->StreamInfo;
+
+        // Purge options
+        if (opts != NULL)
+        {
+            struct natsJSOptionsStreamPurge *opo = &(opts->Stream.Purge);
+
+            // If any field is set, use `opts`, otherwise, we will use the
+            // context's purge options.
+            if ((opo->Subject != NULL) || (opo->Sequence > 0) || (opo->Keep > 0))
+                po = opo;
+        }
+        memcpy(&(resOpts->Stream.Purge), po, sizeof(*po));
+
+        // Stream info options
+        resOpts->Stream.Info.DeletedDetails = (opts == NULL ? js->opts.Stream.Info.DeletedDetails : opts->Stream.Info.DeletedDetails);
+
         *nc = js->nc;
         natsJS_unlock(js);
     }
@@ -516,6 +500,7 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     bool            freeMsg     = true;
     char            *rplyToFree = NULL;
     char            errTxt[256] = {'\0'};
+    struct natsJSOptionsPublishAsync *opa = NULL;
     natsJSPubAckErr pae;
 
     if ((subject == NULL) || (int) strlen(subject) <= jsReplyPrefixLen)
@@ -537,7 +522,8 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
         return;
     }
 
-    if (js->opts.PublishAsyncErrHandler != NULL)
+    opa = &(js->opts.PublishAsync);
+    if (opa->ErrHandler != NULL)
     {
         natsStatus s = NATS_OK;
 
@@ -594,7 +580,7 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 
             natsJS_unlock(js);
 
-            (js->opts.PublishAsyncErrHandler)(js, &pae, js->opts.PublishAsyncErrHandlerClosure);
+            (opa->ErrHandler)(js, &pae, opa->ErrHandlerClosure);
 
             natsJS_lock(js);
 
@@ -610,7 +596,7 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     // If there are callers waiting for async pub completion, or stalled async
     // publish calls and we are now below max pending, broadcast to unblock them.
     if (((js->pacw > 0) && (js->pmcount == 0))
-        || ((js->stalled > 0) && (js->pmcount <= js->opts.PublishAsyncMaxPending)))
+        || ((js->stalled > 0) && (js->pmcount <= opa->MaxPending)))
     {
         natsCondition_Broadcast(js->cond);
     }
@@ -719,7 +705,7 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
 
     natsJS_lock(js);
 
-    maxp = js->opts.PublishAsyncMaxPending;
+    maxp = js->opts.PublishAsync.MaxPending;
 
     js->pmcount++;
     s = _newAsyncReply(&id, js, msg);
@@ -727,7 +713,7 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
             && (maxp > 0)
             && (js->pmcount > maxp))
     {
-        int64_t target = nats_setTargetTime(js->opts.PublishAsyncStallWait);
+        int64_t target = nats_setTargetTime(js->opts.PublishAsync.StallWait);
 
         _retain(js);
 

@@ -64,8 +64,8 @@ int main(int argc, char **argv)
     {
         if (async)
         {
-            jsOpts.PublishAsyncErrHandler           = _jsPubErr;
-            jsOpts.PublishAsyncErrHandlerClosure    = (void*) &errors;
+            jsOpts.PublishAsync.ErrHandler           = _jsPubErr;
+            jsOpts.PublishAsync.ErrHandlerClosure    = (void*) &errors;
         }
         s = natsJS_NewContext(&js, conn, &jsOpts);
     }

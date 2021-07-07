@@ -933,7 +933,7 @@ natsJSStreamConfig_Init(natsJSStreamConfig *cfg)
 }
 
 static natsStatus
-_marshalStreamInfoReq(natsBuffer **new_buf, natsJSStreamInfoOptions *o)
+_marshalStreamInfoReq(natsBuffer **new_buf)
 {
     natsBuffer  *buf = NULL;
     natsStatus  s;
@@ -998,11 +998,11 @@ _addUpdateOrGet(natsJSStreamInfo **new_si, jsStreamAction action, natsJS *js, na
         // Marshal the stream create/update request
         IFOK(s, natsJS_marshalStreamConfig(&buf, cfg));
     }
-    else if ((o.StreamInfo != NULL) && o.StreamInfo->DeletedDetails)
+    else if (o.Stream.Info.DeletedDetails)
     {
         // For GetStreamInfo, if there is an option to get deleted details,
         // we need to request it.
-        IFOK(s, _marshalStreamInfoReq(&buf, o.StreamInfo));
+        IFOK(s, _marshalStreamInfoReq(&buf));
     }
     if ((s == NATS_OK) && (buf != NULL))
     {
@@ -1105,13 +1105,13 @@ _unmarshalSuccessResp(bool *success, natsMsg *resp, natsJSErrCode *errCode)
 }
 
 static natsStatus
-_marshalPurgeRequest(natsBuffer **new_buf, natsJSPurgeOptions *opts)
+_marshalPurgeRequest(natsBuffer **new_buf, struct natsJSOptionsStreamPurge *opts)
 {
     natsStatus          s       = NATS_OK;
     natsBuffer          *buf    = NULL;
     bool                comma   = false;
 
-    if (nats_IsStringEmpty(opts->Subject) && (opts->Sequence <= 0) && opts->Keep <= 0)
+    if (nats_IsStringEmpty(opts->Subject) && (opts->Sequence == 0) && (opts->Keep == 0))
         return NATS_OK;
 
     if ((opts->Sequence > 0) && (opts->Keep > 0))
@@ -1177,9 +1177,9 @@ _purgeOrDelete(bool purge, natsJS *js, const char *stream, natsJSOptions *opts, 
         if (freePfx)
             NATS_FREE((char*) o.Prefix);
     }
-    if ((s == NATS_OK) && purge && (o.Purge != NULL))
+    if ((s == NATS_OK) && purge)
     {
-        s = _marshalPurgeRequest(&buf, o.Purge);
+        s = _marshalPurgeRequest(&buf, &(o.Stream.Purge));
         if ((s == NATS_OK) && (buf != NULL))
         {
             data = (const void*) natsBuf_Data(buf);
@@ -1370,26 +1370,6 @@ natsJSExternalStream_Init(natsJSExternalStream *external)
         return nats_setDefaultError(NATS_INVALID_ARG);
 
     memset(external, 0, sizeof(natsJSExternalStream));
-    return NATS_OK;
-}
-
-natsStatus
-natsJSPurgeOptions_Init(natsJSPurgeOptions *po)
-{
-    if (po == NULL)
-        return nats_setDefaultError(NATS_INVALID_ARG);
-
-    memset(po, 0, sizeof(natsJSPurgeOptions));
-    return NATS_OK;
-}
-
-natsStatus
-natsJSStreamInfoOptions_Init(natsJSStreamInfoOptions *so)
-{
-    if (so == NULL)
-        return nats_setDefaultError(NATS_INVALID_ARG);
-
-    memset(so, 0, sizeof(natsJSStreamInfoOptions));
     return NATS_OK;
 }
 
