@@ -118,7 +118,6 @@ natsJS_DestroyContext(natsJS *js)
         return;
 
     natsJS_lock(js);
-    js->destroyed = true;
     if (js->rsub != NULL)
     {
         natsSubscription_Destroy(js->rsub);
@@ -517,7 +516,6 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     bool            freeMsg     = true;
     char            *rplyToFree = NULL;
     char            errTxt[256] = {'\0'};
-    int             count       = 0;
     natsJSPubAckErr pae;
 
     if ((subject == NULL) || (int) strlen(subject) <= jsReplyPrefixLen)
@@ -531,21 +529,15 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 
     natsJS_lock(js);
 
-    if (js->opts.PublishAsyncErrHandler != NULL)
+    pmsg = natsStrHash_Remove(js->pm, id);
+    if (pmsg == NULL)
     {
-        pmsg = natsStrHash_Get(js->pm, id);
-        if (pmsg == NULL)
-        {
-            natsMsg_Destroy(msg);
-            natsJS_unlock(js);
-            return;
-        }
+        natsMsg_Destroy(msg);
+        natsJS_unlock(js);
+        return;
     }
 
-    // `pmsg` will be not NULL only if we do error callback *and* we found the
-    // message. If there is no callback, there is a bunch that we don't even
-    // have to do.
-    if (pmsg != NULL)
+    if (js->opts.PublishAsyncErrHandler != NULL)
     {
         natsStatus s = NATS_OK;
 
@@ -608,21 +600,17 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 
             // If the user took ownership of the message (by resending it),
             // then we should not destroy the message at the end of this callback.
-            freeMsg = (!js->destroyed && (pae.Msg != NULL));
+            freeMsg = (pae.Msg != NULL);
         }
     }
 
-    // Don't try to remove if context has been destroyed in the callback
-    // since message has been destroyed and no longer valid.
-    if (!js->destroyed)
-    {
-        // Now that we have possibly invoked the callback, remove the message
-        // from pending and notify waiters on PublishAsyncComplete if count is 0.
-        pmsg = natsStrHash_Remove(js->pm, id);
-    }
-    count = natsStrHash_Count(js->pm);
-    if (((js->opts.PublishAsyncMaxPending > 0) && (count < js->opts.PublishAsyncMaxPending))
-        || ((pmsg != NULL) && (js->pacw > 0) && (count == 0)))
+    // Now that the callback has returned, decrement the number of pending messages.
+    js->pmcount--;
+
+    // If there are callers waiting for async pub completion, or stalled async
+    // publish calls and we are now below max pending, broadcast to unblock them.
+    if (((js->pacw > 0) && (js->pmcount == 0))
+        || ((js->stalled > 0) && (js->pmcount <= js->opts.PublishAsyncMaxPending)))
     {
         natsCondition_Broadcast(js->cond);
     }
@@ -726,7 +714,6 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
 {
     natsStatus  s       = NATS_OK;
     char        *id     = NULL;
-    bool        added   = false;
     bool        release = false;
     int         maxp    = 0;
 
@@ -734,23 +721,20 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
 
     maxp = js->opts.PublishAsyncMaxPending;
 
+    js->pmcount++;
     s = _newAsyncReply(&id, js, msg);
-    if (s == NATS_OK)
-    {
-        s = natsStrHash_Set(js->pm, id, false, msg, NULL);
-        if (s == NATS_OK)
-            added = true;
-    }
     if ((s == NATS_OK)
             && (maxp > 0)
-            && (natsStrHash_Count(js->pm) > maxp))
+            && (js->pmcount > maxp))
     {
         int64_t target = nats_setTargetTime(js->opts.PublishAsyncStallWait);
 
         _retain(js);
 
-        while ((s != NATS_TIMEOUT) && (natsStrHash_Count(js->pm) > maxp))
+        js->stalled++;
+        while ((s != NATS_TIMEOUT) && (js->pmcount > maxp))
             s = natsCondition_AbsoluteTimedWait(js->cond, js->mu, target);
+        js->stalled--;
 
         if (s == NATS_TIMEOUT)
             s = nats_setError(s, "%s", "stalled with too many outstanding async published messages");
@@ -758,13 +742,15 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
         release = true;
     }
     if (s == NATS_OK)
+        s = natsStrHash_Set(js->pm, id, false, msg, NULL);
+    if (s == NATS_OK)
     {
         *new_id = id;
         *nc     = js->nc;
     }
-    else if (added && !js->destroyed)
+    else
     {
-        natsStrHash_Remove(js->pm, id);
+        js->pmcount--;
     }
     if (release)
         natsJS_unlockAndRelease(js);
@@ -827,6 +813,8 @@ natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts)
             // If msg no longer in map, Remove() will return NULL.
             if (natsStrHash_Remove(js->pm, id) == NULL)
                 s = NATS_OK;
+            else
+                js->pmcount--;
             natsJS_unlock(js);
         }
     }
@@ -858,7 +846,7 @@ natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts)
     }
 
     natsJS_lock(js);
-    if ((js->pm == NULL) || (natsStrHash_Count(js->pm) == 0))
+    if ((js->pm == NULL) || (js->pmcount == 0))
     {
         natsJS_unlock(js);
         return NATS_OK;
@@ -868,7 +856,7 @@ natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts)
 
     _retain(js);
     js->pacw++;
-    while ((s != NATS_TIMEOUT) && (natsStrHash_Count(js->pm) > 0))
+    while ((s != NATS_TIMEOUT) && (js->pmcount > 0))
     {
         if (target > 0)
             s = natsCondition_AbsoluteTimedWait(js->cond, js->mu, target);

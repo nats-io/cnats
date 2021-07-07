@@ -21716,6 +21716,28 @@ _jsPubAckErrHandler(natsJS *js, natsJSPubAckErr *pae, void *closure)
         while (!args->done)
             natsCondition_Wait(args->c, args->m);
         nats_Sleep(500);
+
+        args->closed = true;
+        natsCondition_Broadcast(args->c);
+    }
+    else if (strcmp(natsMsg_GetData(pae->Msg), "destroyed") == 0)
+    {
+        // Notify that we are in the callback.
+        args->msgReceived = true;
+        natsCondition_Broadcast(args->c);
+
+        // Now wait to be notified that the context was destroyed.
+        while (!args->closed)
+            natsCondition_Wait(args->c, args->m);
+
+        // Then access the message content again to make sure that message
+        // is still valid.
+        if (strcmp(natsMsg_GetData(pae->Msg), "destroyed") != 0)
+            args->status = NATS_ERR;
+
+        // Notify that we are done.
+        args->done = true;
+        natsCondition_Broadcast(args->c);
     }
     natsMutex_Unlock(args->m);
 }
@@ -21940,8 +21962,10 @@ test_JetStreamPublishAsync(void)
     nats_clearLastError();
 
     test("Recreate context: ");
-    o.PublishAsyncMaxPending = 1;
-    o.PublishAsyncStallWait  = 100;
+    o.PublishAsyncMaxPending        = 1;
+    o.PublishAsyncStallWait         = 100;
+    o.PublishAsyncErrHandler        = _jsPubAckErrHandler;
+    o.PublishAsyncErrHandlerClosure = &args;
     s = natsJS_NewContext(&js, nc, &o);
     testCond(s == NATS_OK);
 
@@ -21952,6 +21976,8 @@ test_JetStreamPublishAsync(void)
     natsMutex_Unlock(args.m);
     // Pass options so that we add an expected last msg ID which will
     // cause failure.
+    natsJSPubOptions_Init(&opts);
+    opts.ExpectLastMsgId = "WRONG";
     s = natsJS_PublishAsync(js, "foo", "block", 5, &opts);
     testCond(s == NATS_OK);
 
@@ -21981,6 +22007,13 @@ test_JetStreamPublishAsync(void)
     s = natsJS_PublishAsyncComplete(js, NULL);
     testCond(s == NATS_OK);
 
+    test("Wait for CB to return: ");
+    natsMutex_Lock(args.m);
+    while ((s != NATS_TIMEOUT) && !args.closed)
+        s = natsCondition_TimedWait(args.c, args.m, 2000);
+    natsMutex_Unlock(args.m);
+    testCond(s == NATS_OK);
+
     test("Msg needs to be destroyed on failure: ");
     natsSubscription_Destroy(sub);
     natsConnection_Destroy(nc);
@@ -21995,6 +22028,60 @@ test_JetStreamPublishAsync(void)
     testCond(true);
 
     natsJS_DestroyContext(js);
+    js = NULL;
+
+    test("Connect: ");
+    s = natsConnection_ConnectTo(&nc, NATS_DEFAULT_URL);
+    testCond(s == NATS_OK);
+
+    test("Create context: ");
+    s = natsJSOptions_Init(&o);
+    if (s == NATS_OK)
+    {
+        o.PublishAsyncErrHandler        = _jsPubAckErrHandler;
+        o.PublishAsyncErrHandlerClosure = &args;
+    }
+    IFOK(s, natsJS_NewContext(&js, nc, &o));
+    testCond((s == NATS_OK) && (js != NULL));
+
+    test("Produce failed message: ");
+    natsJSPubOptions_Init(&opts);
+    opts.ExpectStream = "WRONG";
+    natsMutex_Lock(args.m);
+    args.done        = false;
+    args.closed      = false;
+    args.msgReceived = false;
+    args.status      = NATS_OK;
+    natsMutex_Unlock(args.m);
+    // Pass options with wrong expected stream, so pub will fail.
+    s = natsJS_PublishAsync(js, "foo", "destroyed", 9, &opts);
+    testCond(s == NATS_OK);
+
+    test("Wait for msg in CB: ");
+    natsMutex_Lock(args.m);
+    while ((s != NATS_TIMEOUT) && !args.msgReceived)
+        s = natsCondition_TimedWait(args.c, args.m, 2000);
+    natsMutex_Unlock(args.m);
+    testCond(s == NATS_OK);
+
+    test("Destroy context, notify CB: ");
+    natsJS_DestroyContext(js);
+    js = NULL;
+    natsMutex_Lock(args.m);
+    args.closed = true;
+    natsCondition_Broadcast(args.c);
+    natsMutex_Unlock(args.m);
+
+    test("Wait for CB to return: ");
+    natsMutex_Lock(args.m);
+    while ((s != NATS_TIMEOUT) && !args.done)
+        s = natsCondition_TimedWait(args.c, args.m, 2000);
+    if (s == NATS_OK)
+        s = args.status;
+    natsMutex_Unlock(args.m);
+    testCond(s == NATS_OK);
+
+    natsConnection_Destroy(nc);
     _destroyDefaultThreadArgs(&args);
     _stopServer(pid);
     rmtree(datastore);

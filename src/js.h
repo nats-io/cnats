@@ -116,7 +116,8 @@ struct __natsJS
     natsSubscription    *rsub;
     char                *rpre;
     int                 pacw;
-    bool                destroyed;
+    int                 pmcount;
+    int                 stalled;
 };
 
 // natsJSApiError is included in all API responses if there was an error.
