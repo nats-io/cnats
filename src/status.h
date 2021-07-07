@@ -236,7 +236,7 @@ typedef enum {
     JSConsumerExistingActiveErr = 10105,                ///< Consumer already exists and is still active
     JSConsumerReplacementWithDifferentNameErr = 10106,  ///< Consumer replacement durable config not the same
 
-} natsJSErrCode;
+} jsErrCode;
 
 #ifdef __cplusplus
 }

@@ -20,7 +20,7 @@ static const char *usage = ""\
 "-sync          publish synchronously (default is async)\n";
 
 static void
-_jsPubErr(natsJS *js, natsJSPubAckErr *pae, void *closure)
+_jsPubErr(jsCtx *js, jsPubAckErr *pae, void *closure)
 {
     int *errors = (int*) closure;
 
@@ -31,7 +31,7 @@ _jsPubErr(natsJS *js, natsJSPubAckErr *pae, void *closure)
 
     // If we wanted to resend the original message, we would do something like that:
     //
-    // natsJS_PublishMsgAsync(js, &(pae->Msg), NULL);
+    // js_PublishMsgAsync(js, &(pae->Msg), NULL);
     //
     // Note that we use `&(pae->Msg)` so that the library set it to NULL if it takes
     // ownership, and the library will not destroy the message when this callback returns.
@@ -44,9 +44,9 @@ int main(int argc, char **argv)
     natsConnection      *conn  = NULL;
     natsStatistics      *stats = NULL;
     natsOptions         *opts  = NULL;
-    natsJS              *js    = NULL;
-    natsJSOptions       jsOpts;
-    natsJSErrCode       jerr   = 0;
+    jsCtx               *js    = NULL;
+    jsOptions           jsOpts;
+    jsErrCode           jerr   = 0;
     natsStatus          s;
     int                 dataLen=0;
     volatile int        errors = 0;
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     s = natsConnection_Connect(&conn, opts);
 
     if (s == NATS_OK)
-        s = natsJSOptions_Init(&jsOpts);
+        s = jsOptions_Init(&jsOpts);
 
     if (s == NATS_OK)
     {
@@ -67,30 +67,30 @@ int main(int argc, char **argv)
             jsOpts.PublishAsync.ErrHandler           = _jsPubErr;
             jsOpts.PublishAsync.ErrHandlerClosure    = (void*) &errors;
         }
-        s = natsJS_NewContext(&js, conn, &jsOpts);
+        s = natsConnection_JetStream(&js, conn, &jsOpts);
     }
 
     if (s == NATS_OK)
     {
-        natsJSStreamInfo    *si = NULL;
+        jsStreamInfo    *si = NULL;
 
         // First check if the stream already exists.
-        s = natsJS_GetStreamInfo(&si, js, stream, NULL, &jerr);
+        s = js_GetStreamInfo(&si, js, stream, NULL, &jerr);
         if (s == NATS_NOT_FOUND)
         {
-            natsJSStreamConfig  cfg;
+            jsStreamConfig  cfg;
 
             // Since we are the one creating this stream, we can delete at the end.
             delStream = true;
 
             // Initialize the configuration structure.
-            natsJSStreamConfig_Init(&cfg);
+            jsStreamConfig_Init(&cfg);
             // Since we don't provide subjects, the subjects it will default to the stream name.
             cfg.Name = stream;
             // Make it a memory stream.
-            cfg.Storage = natsJS_MemoryStorage;
+            cfg.Storage = js_MemoryStorage;
             // Add the stream,
-            s = natsJS_AddStream(&si, js, &cfg, NULL, &jerr);
+            s = js_AddStream(&si, js, &cfg, NULL, &jerr);
         }
         if (s == NATS_OK)
         {
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
                 si->Config->Name, si->State.Msgs, si->State.Bytes);
 
             // Need to destroy the returned stream object.
-            natsJSStreamInfo_Destroy(si);
+            jsStreamInfo_Destroy(si);
         }
     }
 
@@ -114,37 +114,37 @@ int main(int argc, char **argv)
     for (count = 0; (s == NATS_OK) && (count < total); count++)
     {
         if (async)
-            s = natsJS_PublishAsync(js, stream, (const void*) payload, dataLen, NULL);
+            s = js_PublishAsync(js, stream, (const void*) payload, dataLen, NULL);
         else
         {
-            natsJSPubAck *pa = NULL;
+            jsPubAck *pa = NULL;
 
-            s = natsJS_Publish(&pa, js, stream, (const void*) payload, dataLen, NULL, &jerr);
+            s = js_Publish(&pa, js, stream, (const void*) payload, dataLen, NULL, &jerr);
             if (s == NATS_OK)
             {
                 if (pa->Duplicate)
                     printf("Got a duplicate message! Sequence=%" PRIu64 "\n", pa->Sequence);
 
-                natsJSPubAck_Destroy(pa);
+                jsPubAck_Destroy(pa);
             }
         }
     }
 
     if ((s == NATS_OK) && async)
     {
-        natsJSPubOptions    jsPubOpts;
+        jsPubOptions    jsPubOpts;
 
-        natsJSPubOptions_Init(&jsPubOpts);
+        jsPubOptions_Init(&jsPubOpts);
         // Let's set it to 30 seconds, if getting "Timeout" errors,
         // this may need to be increased based on the number of messages
         // being sent.
         jsPubOpts.MaxWait = 30000;
-        s = natsJS_PublishAsyncComplete(js, &jsPubOpts);
+        s = js_PublishAsyncComplete(js, &jsPubOpts);
     }
 
     if (s == NATS_OK)
     {
-        natsJSStreamInfo *si = NULL;
+        jsStreamInfo *si = NULL;
 
         elapsed = nats_Now() - start;
         printStats(STATS_OUT, conn, NULL, stats);
@@ -154,19 +154,19 @@ int main(int argc, char **argv)
             printf("There were %d asynchronous errors\n", errors);
 
         // Let's report some stats after the run
-        s = natsJS_GetStreamInfo(&si, js, stream, NULL, &jerr);
+        s = js_GetStreamInfo(&si, js, stream, NULL, &jerr);
         if (s == NATS_OK)
         {
             printf("\nStream %s has %" PRIu64 " messages (%" PRIu64 " bytes)\n",
                 si->Config->Name, si->State.Msgs, si->State.Bytes);
 
-            natsJSStreamInfo_Destroy(si);
+            jsStreamInfo_Destroy(si);
         }
     }
     if (delStream && (js != NULL))
     {
         printf("\nDeleting stream %s: ", stream);
-        s = natsJS_DeleteStream(js, stream, NULL, &jerr);
+        s = js_DeleteStream(js, stream, NULL, &jerr);
         if (s == NATS_OK)
             printf("OK!");
         printf("\n");
@@ -178,8 +178,8 @@ int main(int argc, char **argv)
     }
 
     // Destroy all our objects to avoid report of memory leak
+    jsCtx_Destroy(js);
     natsStatistics_Destroy(stats);
-    natsJS_DestroyContext(js);
     natsConnection_Destroy(conn);
     natsOptions_Destroy(opts);
 

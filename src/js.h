@@ -17,14 +17,14 @@
 #ifdef DEV_MODE
 // For type safety
 
-void natsJS_lock(natsJS *js);
-void natsJS_unlock(natsJS *js);
+void js_lock(jsCtx *js);
+void js_unlock(jsCtx *js);
 
 #else
 // We know what we are doing :-)
 
-#define natsJS_lock(js)     (natsMutex_Lock((js)->mu))
-#define natsJS_unlock(c)    (natsMutex_Unlock((js)->mu))
+#define js_lock(js)     (natsMutex_Lock((js)->mu))
+#define js_unlock(c)    (natsMutex_Unlock((js)->mu))
 
 #endif // DEV_MODE
 
@@ -96,20 +96,20 @@ extern const int64_t    jsDefaultRequestWait;
 */
 
 // Creates a subject based on the option's prefix, the subject format and its values.
-#define natsJS_apiSubj(s, o, f, ...) (nats_asprintf((s), (f), (o)->Prefix, __VA_ARGS__) < 0 ? NATS_NO_MEMORY : NATS_OK)
+#define js_apiSubj(s, o, f, ...) (nats_asprintf((s), (f), (o)->Prefix, __VA_ARGS__) < 0 ? NATS_NO_MEMORY : NATS_OK)
 
 // Execute the JS API request if status is OK on entry. If the result is NATS_NO_RESPONDERS,
 // and `errCode` is not NULL, set it to JSNotEnabledErr.
 #define IFOK_JSR(s, c)  if (s == NATS_OK) { s = (c); if ((s == NATS_NO_RESPONDERS) && (errCode != NULL)) { *errCode = JSNotEnabledErr; } }
 
 // Returns true if the API response has a Code or ErrCode that is not 0.
-#define natsJS_apiResponseIsErr(ar)	(((ar)->Error.Code != 0) || ((ar)->Error.ErrCode != 0))
+#define js_apiResponseIsErr(ar)	(((ar)->Error.Code != 0) || ((ar)->Error.ErrCode != 0))
 
-struct __natsJS
+struct __jsCtx
 {
     natsMutex		    *mu;
     natsConnection      *nc;
-    natsJSOptions  	    opts;
+    jsOptions  	    opts;
     int				    refs;
     natsCondition       *cond;
     natsStrHash         *pm;
@@ -120,53 +120,53 @@ struct __natsJS
     int                 stalled;
 };
 
-// natsJSApiError is included in all API responses if there was an error.
-typedef struct __natsJSApiError
+// jsApiError is included in all API responses if there was an error.
+typedef struct __jsApiError
 {
     int         Code;           //`json:"code"`
     uint16_t    ErrCode;        //`json:"err_code,omitempty"`
     char        *Description;   //`json:"description,omitempty"
 
-} natsJSApiError;
+} jsApiError;
 
 // apiResponse is a standard response from the JetStream JSON API
-typedef struct __natsJSApiResponse
+typedef struct __jsApiResponse
 {
     char            *Type;  //`json:"type"`
-    natsJSApiError 	Error;  //`json:"error,omitempty"`
+    jsApiError 	Error;  //`json:"error,omitempty"`
 
-} natsJSApiResponse;
+} jsApiResponse;
 
 // Sets the options in `resOpts` based on the given `opts` and defaults to the context
 // own options when some options are not specified.
 // Returns also the NATS connection to be used to send the request.
 // This function will get/release the context's lock.
 natsStatus
-natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *opts, natsJSOptions *resOpts);
+js_setOpts(natsConnection **nc, bool *freePfx, jsCtx *js, jsOptions *opts, jsOptions *resOpts);
 
 int
-natsJS_lenWithoutTrailingDot(const char *str);
+js_lenWithoutTrailingDot(const char *str);
 
 natsStatus
-natsJS_unmarshalResponse(natsJSApiResponse *ar, nats_JSON **new_json, natsMsg *resp);
+js_unmarshalResponse(jsApiResponse *ar, nats_JSON **new_json, natsMsg *resp);
 
 void
-natsJS_freeApiRespContent(natsJSApiResponse *ar);
+js_freeApiRespContent(jsApiResponse *ar);
 
 natsStatus
-natsJS_unmarshalAccountInfo(nats_JSON *json, natsJSAccountInfo **new_ai);
+js_unmarshalAccountInfo(nats_JSON *json, jsAccountInfo **new_ai);
 
 natsStatus
-natsJS_marshalStreamConfig(natsBuffer **new_buf, natsJSStreamConfig *cfg);
+js_marshalStreamConfig(natsBuffer **new_buf, jsStreamConfig *cfg);
 
 natsStatus
-natsJS_unmarshalStreamConfig(nats_JSON *json, const char *fieldName, natsJSStreamConfig **new_cfg);
+js_unmarshalStreamConfig(nats_JSON *json, const char *fieldName, jsStreamConfig **new_cfg);
 
 void
-natsJS_destroyStreamConfig(natsJSStreamConfig *cfg);
+js_destroyStreamConfig(jsStreamConfig *cfg);
 
 natsStatus
-natsJS_unmarshalStreamState(nats_JSON *pjson, const char *fieldName, natsJSStreamState *state);
+js_unmarshalStreamState(nats_JSON *pjson, const char *fieldName, jsStreamState *state);
 
 void
-natsJS_cleanStreamState(natsJSStreamState *state);
+js_cleanStreamState(jsStreamState *state);

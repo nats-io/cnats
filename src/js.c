@@ -19,11 +19,11 @@
 #ifdef DEV_MODE
 // For type safety
 
-void natsJS_lock(natsJS *js)   { natsMutex_Lock(js->mu);   }
-void natsJS_unlock(natsJS *js) { natsMutex_Unlock(js->mu); }
+void js_lock(jsCtx *js)   { natsMutex_Lock(js->mu);   }
+void js_unlock(jsCtx *js) { natsMutex_Unlock(js->mu); }
 
-static void _retain(natsJS *js)  { js->refs++; }
-static void _release(natsJS *js) { js->refs--; }
+static void _retain(jsCtx *js)  { js->refs++; }
+static void _release(jsCtx *js) { js->refs--; }
 
 #else
 
@@ -43,14 +43,14 @@ const int        jsBase                  = 62;
 #define jsReplyPrefixLen    (NATS_INBOX_PRE_LEN + (jsReplyTokenSize) + 1)
 
 static void
-_destroyOptions(natsJSOptions *o)
+_destroyOptions(jsOptions *o)
 {
     NATS_FREE((char*) o->Prefix);
     NATS_FREE((char*) o->Stream.Purge.Subject);
 }
 
 static void
-_freeContext(natsJS *js)
+_freeContext(jsCtx *js)
 {
     natsConnection *nc = NULL;
 
@@ -67,7 +67,7 @@ _freeContext(natsJS *js)
 }
 
 void
-natsJS_release(natsJS *js)
+js_release(jsCtx *js)
 {
     bool doFree;
 
@@ -80,7 +80,7 @@ natsJS_release(natsJS *js)
 }
 
 static void
-natsJS_unlockAndRelease(natsJS *js)
+js_unlockAndRelease(jsCtx *js)
 {
     bool doFree;
 
@@ -92,12 +92,12 @@ natsJS_unlockAndRelease(natsJS *js)
 }
 
 void
-natsJS_DestroyContext(natsJS *js)
+jsCtx_Destroy(jsCtx *js)
 {
     if (js == NULL)
         return;
 
-    natsJS_lock(js);
+    js_lock(js);
     if (js->rsub != NULL)
     {
         natsSubscription_Destroy(js->rsub);
@@ -116,29 +116,29 @@ natsJS_DestroyContext(natsJS *js)
             natsMsg_Destroy(msg);
         }
     }
-    natsJS_unlockAndRelease(js);
+    js_unlockAndRelease(js);
 }
 
 natsStatus
-natsJSOptions_Init(natsJSOptions *opts)
+jsOptions_Init(jsOptions *opts)
 {
     if (opts == NULL)
         return nats_setDefaultError(NATS_INVALID_ARG);
 
-    memset(opts, 0, sizeof(natsJSOptions));
+    memset(opts, 0, sizeof(jsOptions));
     return NATS_OK;
 }
 
 // Parse the JSON represented by the NATS message's payload and returns the JSON object.
 // Unmarshal the API response.
 natsStatus
-natsJS_unmarshalResponse(natsJSApiResponse *ar, nats_JSON **new_json, natsMsg *resp)
+js_unmarshalResponse(jsApiResponse *ar, nats_JSON **new_json, natsMsg *resp)
 {
     nats_JSON   *json = NULL;
     nats_JSON   *err  = NULL;
     natsStatus  s;
 
-    memset(ar, 0, sizeof(natsJSApiResponse));
+    memset(ar, 0, sizeof(jsApiResponse));
 
     s = nats_JSONParse(&json, natsMsg_GetData(resp), natsMsg_GetDataLength(resp));
     if (s != NATS_OK)
@@ -162,7 +162,7 @@ natsJS_unmarshalResponse(natsJSApiResponse *ar, nats_JSON **new_json, natsMsg *r
 }
 
 void
-natsJS_freeApiRespContent(natsJSApiResponse *ar)
+js_freeApiRespContent(jsApiResponse *ar)
 {
     if (ar == NULL)
         return;
@@ -172,10 +172,10 @@ natsJS_freeApiRespContent(natsJSApiResponse *ar)
 }
 
 static natsStatus
-_copyPurgeOptions(natsJS *js, struct natsJSOptionsStreamPurge *o)
+_copyPurgeOptions(jsCtx *js, struct jsOptionsStreamPurge *o)
 {
     natsStatus                      s   = NATS_OK;
-    struct natsJSOptionsStreamPurge *po = &(js->opts.Stream.Purge);
+    struct jsOptionsStreamPurge *po = &(js->opts.Stream.Purge);
 
     po->Sequence = o->Sequence;
     po->Keep     = o->Keep;
@@ -191,16 +191,16 @@ _copyPurgeOptions(natsJS *js, struct natsJSOptionsStreamPurge *o)
 }
 
 static natsStatus
-_copyStreamInfoOptions(natsJS *js, struct natsJSOptionsStreamInfo *o)
+_copyStreamInfoOptions(jsCtx *js, struct jsOptionsStreamInfo *o)
 {
     js->opts.Stream.Info.DeletedDetails = o->DeletedDetails;
     return NATS_OK;
 }
 
 natsStatus
-natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
+natsConnection_JetStream(jsCtx **new_js, natsConnection *nc, jsOptions *opts)
 {
-    natsJS      *js = NULL;
+    jsCtx       *js = NULL;
     natsStatus  s;
 
     if ((new_js == NULL) || (nc == NULL))
@@ -214,7 +214,7 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
             return nats_setError(NATS_INVALID_ARG, "option 'PublishAsyncStallWait' (%" PRId64 ") cannot be negative", opts->PublishAsync.StallWait);
     }
 
-    js = (natsJS*) NATS_CALLOC(1, sizeof(natsJS));
+    js = (jsCtx*) NATS_CALLOC(1, sizeof(jsCtx));
     if (js == NULL)
         return nats_setDefaultError(NATS_NO_MEMORY);
 
@@ -232,7 +232,7 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
         if ((opts != NULL) && !nats_IsStringEmpty(opts->Domain))
         {
             if (nats_asprintf((char**) &(js->opts.Prefix), "$JS.%.*s.API",
-                natsJS_lenWithoutTrailingDot(opts->Domain), opts->Domain) < 0)
+                js_lenWithoutTrailingDot(opts->Domain), opts->Domain) < 0)
             {
                 s = nats_setDefaultError(NATS_NO_MEMORY);
             }
@@ -244,14 +244,14 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
                 s = nats_setDefaultError(NATS_NO_MEMORY);
         }
         else if (nats_asprintf((char**) &(js->opts.Prefix), "%.*s",
-                natsJS_lenWithoutTrailingDot(opts->Prefix), opts->Prefix) < 0)
+                js_lenWithoutTrailingDot(opts->Prefix), opts->Prefix) < 0)
         {
                 s = nats_setDefaultError(NATS_NO_MEMORY);
         }
     }
     if ((s == NATS_OK) && (opts != NULL))
     {
-        struct natsJSOptionsPublishAsync *pa = &(js->opts.PublishAsync);
+        struct jsOptionsPublishAsync *pa = &(js->opts.PublishAsync);
 
         pa->MaxPending          = opts->PublishAsync.MaxPending;
         pa->ErrHandler          = opts->PublishAsync.ErrHandler;
@@ -272,13 +272,13 @@ natsJS_NewContext(natsJS **new_js, natsConnection *nc, natsJSOptions *opts)
     if (s == NATS_OK)
         *new_js = js;
     else
-        natsJS_DestroyContext(js);
+        jsCtx_Destroy(js);
 
     return NATS_UPDATE_ERR_STACK(s);
 }
 
 int
-natsJS_lenWithoutTrailingDot(const char *str)
+js_lenWithoutTrailingDot(const char *str)
 {
     int l = (int) strlen(str);
 
@@ -288,18 +288,18 @@ natsJS_lenWithoutTrailingDot(const char *str)
 }
 
 natsStatus
-natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *opts, natsJSOptions *resOpts)
+js_setOpts(natsConnection **nc, bool *freePfx, jsCtx *js, jsOptions *opts, jsOptions *resOpts)
 {
     natsStatus s = NATS_OK;
 
     *freePfx = false;
-    natsJSOptions_Init(resOpts);
+    jsOptions_Init(resOpts);
 
     if ((opts != NULL) && !nats_IsStringEmpty(opts->Domain))
     {
         char *pfx = NULL;
         if (nats_asprintf(&pfx, "$JS.%.*s.API",
-                natsJS_lenWithoutTrailingDot(opts->Domain), opts->Domain) < 0)
+                js_lenWithoutTrailingDot(opts->Domain), opts->Domain) < 0)
         {
             s = nats_setDefaultError(NATS_NO_MEMORY);
         }
@@ -311,9 +311,9 @@ natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *op
     }
     if (s == NATS_OK)
     {
-        struct natsJSOptionsStreamPurge *po = &(js->opts.Stream.Purge);
+        struct jsOptionsStreamPurge *po = &(js->opts.Stream.Purge);
 
-        natsJS_lock(js);
+        js_lock(js);
         // If not set above...
         if (resOpts->Prefix == NULL)
             resOpts->Prefix = (opts == NULL || nats_IsStringEmpty(opts->Prefix)) ? js->opts.Prefix : opts->Prefix;
@@ -324,7 +324,7 @@ natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *op
         // Purge options
         if (opts != NULL)
         {
-            struct natsJSOptionsStreamPurge *opo = &(opts->Stream.Purge);
+            struct jsOptionsStreamPurge *opo = &(opts->Stream.Purge);
 
             // If any field is set, use `opts`, otherwise, we will use the
             // context's purge options.
@@ -337,37 +337,37 @@ natsJS_setOpts(natsConnection **nc, bool *freePfx, natsJS *js, natsJSOptions *op
         resOpts->Stream.Info.DeletedDetails = (opts == NULL ? js->opts.Stream.Info.DeletedDetails : opts->Stream.Info.DeletedDetails);
 
         *nc = js->nc;
-        natsJS_unlock(js);
+        js_unlock(js);
     }
     return NATS_UPDATE_ERR_STACK(s);
 }
 
 natsStatus
-natsJSPubOptions_Init(natsJSPubOptions *opts)
+jsPubOptions_Init(jsPubOptions *opts)
 {
     if (opts == NULL)
         return nats_setDefaultError(NATS_INVALID_ARG);
 
-    memset(opts, 0, sizeof(natsJSPubOptions));
+    memset(opts, 0, sizeof(jsPubOptions));
     return NATS_OK;
 }
 
 natsStatus
-natsJS_Publish(natsJSPubAck **new_puback, natsJS *js, const char *subj, const void *data, int dataLen,
-               natsJSPubOptions *opts, natsJSErrCode *errCode)
+js_Publish(jsPubAck **new_puback, jsCtx *js, const char *subj, const void *data, int dataLen,
+               jsPubOptions *opts, jsErrCode *errCode)
 {
     natsStatus s;
     natsMsg    msg;
 
     natsMsg_init(&msg, subj, NULL, (const char*) data, dataLen);
-    s = natsJS_PublishMsg(new_puback, js, &msg, opts, errCode);
+    s = js_PublishMsg(new_puback, js, &msg, opts, errCode);
     natsMsg_freeHeaders(&msg);
 
     return NATS_UPDATE_ERR_STACK(s);
 }
 
 static natsStatus
-_setHeadersFromOptions(natsMsg *msg, natsJSPubOptions *opts)
+_setHeadersFromOptions(natsMsg *msg, jsPubOptions *opts)
 {
     natsStatus  s        = NATS_OK;
     char        temp[64] = {'\0'};
@@ -397,7 +397,7 @@ _setHeadersFromOptions(natsMsg *msg, natsJSPubOptions *opts)
 }
 
 static natsStatus
-_checkMaxWaitOpt(int64_t *new_ttl, natsJSPubOptions *opts)
+_checkMaxWaitOpt(int64_t *new_ttl, jsPubOptions *opts)
 {
     int64_t ttl;
 
@@ -409,14 +409,14 @@ _checkMaxWaitOpt(int64_t *new_ttl, natsJSPubOptions *opts)
 }
 
 natsStatus
-natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
-                  natsJSPubOptions *opts, natsJSErrCode *errCode)
+js_PublishMsg(jsPubAck **new_puback,jsCtx *js, natsMsg *msg,
+                  jsPubOptions *opts, jsErrCode *errCode)
 {
     natsStatus          s       = NATS_OK;
     int64_t             ttl     = 0;
     nats_JSON           *json   = NULL;
     natsMsg             *resp   = NULL;
-    natsJSApiResponse   ar;
+    jsApiResponse   ar;
 
     if (errCode != NULL)
         *errCode = 0;
@@ -444,10 +444,10 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
 
     IFOK_JSR(s, natsConnection_RequestMsg(&resp, js->nc, msg, ttl));
     if (s == NATS_OK)
-        s = natsJS_unmarshalResponse(&ar, &json, resp);
+        s = js_unmarshalResponse(&ar, &json, resp);
     if (s == NATS_OK)
     {
-        if (natsJS_apiResponseIsErr(&ar))
+        if (js_apiResponseIsErr(&ar))
         {
              if (errCode != NULL)
                 *errCode = (int) ar.Error.ErrCode;
@@ -455,10 +455,10 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
         }
         else if (new_puback != NULL)
         {
-            // The user wants the natsJSPubAck object back, so we need to unmarshal it.
-            natsJSPubAck *pa = NULL;
+            // The user wants the jsPubAck object back, so we need to unmarshal it.
+            jsPubAck *pa = NULL;
 
-            pa = (natsJSPubAck*) NATS_CALLOC(1, sizeof(natsJSPubAck));
+            pa = (jsPubAck*) NATS_CALLOC(1, sizeof(jsPubAck));
             if (pa == NULL)
                 s = nats_setDefaultError(NATS_NO_MEMORY);
             else
@@ -470,10 +470,10 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
                 if (s == NATS_OK)
                     *new_puback = pa;
                 else
-                    natsJSPubAck_Destroy(pa);
+                    jsPubAck_Destroy(pa);
             }
         }
-        natsJS_freeApiRespContent(&ar);
+        js_freeApiRespContent(&ar);
         nats_JSONDestroy(json);
     }
     natsMsg_Destroy(resp);
@@ -481,7 +481,7 @@ natsJS_PublishMsg(natsJSPubAck **new_puback,natsJS *js, natsMsg *msg,
 }
 
 void
-natsJSPubAck_Destroy(natsJSPubAck *pa)
+jsPubAck_Destroy(jsPubAck *pa)
 {
     if (pa == NULL)
         return;
@@ -495,13 +495,13 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 {
     const char      *subject    = natsMsg_GetSubject(msg);
     char            *id         = NULL;
-    natsJS          *js         = NULL;
+    jsCtx           *js         = NULL;
     natsMsg         *pmsg       = NULL;
     bool            freeMsg     = true;
     char            *rplyToFree = NULL;
     char            errTxt[256] = {'\0'};
-    struct natsJSOptionsPublishAsync *opa = NULL;
-    natsJSPubAckErr pae;
+    jsPubAckErr     pae;
+    struct jsOptionsPublishAsync *opa = NULL;
 
     if ((subject == NULL) || (int) strlen(subject) <= jsReplyPrefixLen)
     {
@@ -510,15 +510,15 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     }
 
     id = (char*) (subject+jsReplyPrefixLen);
-    js = (natsJS*) closure;
+    js = (jsCtx*) closure;
 
-    natsJS_lock(js);
+    js_lock(js);
 
     pmsg = natsStrHash_Remove(js->pm, id);
     if (pmsg == NULL)
     {
         natsMsg_Destroy(msg);
-        natsJS_unlock(js);
+        js_unlock(js);
         return;
     }
 
@@ -527,7 +527,7 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     {
         natsStatus s = NATS_OK;
 
-        memset(&pae, 0, sizeof(natsJSPubAckErr));
+        memset(&pae, 0, sizeof(jsPubAckErr));
 
         // Check for no responders
         if (natsMsg_IsNoResponders(msg))
@@ -537,18 +537,18 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
         else
         {
             nats_JSON           *json = NULL;
-            natsJSApiResponse   ar;
+            jsApiResponse       ar;
 
             // Now unmarshal the API response and check if there was an error.
 
-            s = natsJS_unmarshalResponse(&ar, &json, msg);
-            if ((s == NATS_OK) && natsJS_apiResponseIsErr(&ar))
+            s = js_unmarshalResponse(&ar, &json, msg);
+            if ((s == NATS_OK) && js_apiResponseIsErr(&ar))
             {
                 pae.Err     = NATS_ERR;
                 pae.ErrCode = (int) ar.Error.ErrCode;
                 snprintf(errTxt, sizeof(errTxt), "%s", ar.Error.Description);
             }
-            natsJS_freeApiRespContent(&ar);
+            js_freeApiRespContent(&ar);
             nats_JSONDestroy(json);
         }
         if (s != NATS_OK)
@@ -578,11 +578,11 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
                 pmsg->reply = NULL;
             }
 
-            natsJS_unlock(js);
+            js_unlock(js);
 
             (opa->ErrHandler)(js, &pae, opa->ErrHandlerClosure);
 
-            natsJS_lock(js);
+            js_lock(js);
 
             // If the user took ownership of the message (by resending it),
             // then we should not destroy the message at the end of this callback.
@@ -600,7 +600,7 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
     {
         natsCondition_Broadcast(js->cond);
     }
-    natsJS_unlock(js);
+    js_unlock(js);
 
     if (freeMsg)
         natsMsg_Destroy(pmsg);
@@ -611,11 +611,11 @@ _handleAsyncReply(natsConnection *nc, natsSubscription *sub, natsMsg *msg, void 
 static void
 _subComplete(void *closure)
 {
-    natsJS_release((natsJS*) closure);
+    js_release((jsCtx*) closure);
 }
 
 static natsStatus
-_newAsyncReply(char **new_id, natsJS *js, natsMsg *msg)
+_newAsyncReply(char **new_id, jsCtx *js, natsMsg *msg)
 {
     natsStatus  s           = NATS_OK;
 
@@ -696,14 +696,14 @@ _newAsyncReply(char **new_id, natsJS *js, natsMsg *msg)
 }
 
 static natsStatus
-_registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
+_registerPubMsg(natsConnection **nc, char **new_id, jsCtx *js, natsMsg *msg)
 {
     natsStatus  s       = NATS_OK;
     char        *id     = NULL;
     bool        release = false;
     int         maxp    = 0;
 
-    natsJS_lock(js);
+    js_lock(js);
 
     maxp = js->opts.PublishAsync.MaxPending;
 
@@ -739,22 +739,22 @@ _registerPubMsg(natsConnection **nc, char **new_id, natsJS *js, natsMsg *msg)
         js->pmcount--;
     }
     if (release)
-        natsJS_unlockAndRelease(js);
+        js_unlockAndRelease(js);
     else
-        natsJS_unlock(js);
+        js_unlock(js);
 
     return NATS_UPDATE_ERR_STACK(s);
 }
 
 natsStatus
-natsJS_PublishAsync(natsJS *js, const char *subj, const void *data, int dataLen,
-                    natsJSPubOptions *opts)
+js_PublishAsync(jsCtx *js, const char *subj, const void *data, int dataLen,
+                jsPubOptions *opts)
 {
     natsStatus s;
     natsMsg    *msg = NULL;
 
     s = natsMsg_Create(&msg, subj, NULL, (const char*) data, dataLen);
-    IFOK(s, natsJS_PublishMsgAsync(js, &msg, opts));
+    IFOK(s, js_PublishMsgAsync(js, &msg, opts));
 
     // The `msg` pointer will have been set to NULL if the library took ownership.
     natsMsg_Destroy(msg);
@@ -763,7 +763,7 @@ natsJS_PublishAsync(natsJS *js, const char *subj, const void *data, int dataLen,
 }
 
 natsStatus
-natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts)
+js_PublishMsgAsync(jsCtx *js, natsMsg **msg, jsPubOptions *opts)
 {
     natsStatus      s   = NATS_OK;
     natsConnection  *nc = NULL;
@@ -795,13 +795,13 @@ natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts)
             // it means that its ack has already been processed, so we consider
             // this call a success. If there was a pub ack failure, it is handled
             // with the error callback, but regardless, the library owns the message.
-            natsJS_lock(js);
+            js_lock(js);
             // If msg no longer in map, Remove() will return NULL.
             if (natsStrHash_Remove(js->pm, id) == NULL)
                 s = NATS_OK;
             else
                 js->pmcount--;
-            natsJS_unlock(js);
+            js_unlock(js);
         }
     }
 
@@ -815,7 +815,7 @@ natsJS_PublishMsgAsync(natsJS *js, natsMsg **msg, natsJSPubOptions *opts)
 }
 
 natsStatus
-natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts)
+js_PublishAsyncComplete(jsCtx *js, jsPubOptions *opts)
 {
     natsStatus  s       = NATS_OK;
     int64_t     ttl     = 0;
@@ -831,10 +831,10 @@ natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts)
             return NATS_UPDATE_ERR_STACK(s);
     }
 
-    natsJS_lock(js);
+    js_lock(js);
     if ((js->pm == NULL) || (js->pmcount == 0))
     {
-        natsJS_unlock(js);
+        js_unlock(js);
         return NATS_OK;
     }
     if (ttl > 0)
@@ -850,7 +850,7 @@ natsJS_PublishAsyncComplete(natsJS *js, natsJSPubOptions *opts)
             natsCondition_Wait(js->cond, js->mu);
     }
     js->pacw--;
-    natsJS_unlockAndRelease(js);
+    js_unlockAndRelease(js);
 
     return NATS_UPDATE_ERR_STACK(s);
 }
